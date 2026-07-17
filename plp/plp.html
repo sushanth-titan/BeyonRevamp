@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jewellery Collection — Beyon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#BF0E23', 'primary-dark': '#9B0B1C',
+            dark: '#2C2C2C', 'warm-grey': '#B0ABAB',
+            cream: '#EFEAE3', gold: '#C5A575', 'soft-grey': '#F6F6F6',
+          },
+          fontFamily: { sans: ['Outfit', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Outfit',sans-serif;background:#fff;color:#2C2C2C;-webkit-font-smoothing:antialiased}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#D5D5D5;border-radius:10px}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes heart-pop{
+      0%{transform:scale(1)}
+      15%{transform:scale(1.4)}
+      30%{transform:scale(.85)}
+      45%{transform:scale(1.2)}
+      60%{transform:scale(.95)}
+      75%{transform:scale(1.08)}
+      100%{transform:scale(1)}
+    }
+    @keyframes ring-burst{
+      0%{transform:translate(-50%,-50%) scale(.3);opacity:1}
+      100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}
+    }
+    @keyframes particle-fly{
+      0%{transform:translate(0,0) scale(1);opacity:1}
+      100%{opacity:0}
+    }
+    @keyframes toast-in{
+      0%{transform:translateX(-50%) translateY(20px);opacity:0}
+      100%{transform:translateX(-50%) translateY(0);opacity:1}
+    }
+    @keyframes toast-out{
+      0%{transform:translateX(-50%) translateY(0);opacity:1}
+      100%{transform:translateX(-50%) translateY(20px);opacity:0}
+    }
+    .wishlist-btn.pop svg{animation:heart-pop .55s cubic-bezier(.17,.89,.32,1.49)}
+    .wishlist-btn.pop::after{
+      content:'';position:absolute;top:50%;left:50%;width:28px;height:28px;
+      border:2px solid #BF0E23;border-radius:50%;
+      animation:ring-burst .5s ease-out forwards;pointer-events:none;
+    }
+    .wishlist-toast{
+      position:fixed;bottom:32px;left:50%;transform:translateX(-50%);
+      background:#BF0E23;color:#fff;font-size:13px;font-weight:600;
+      padding:10px 24px;border-radius:10px;z-index:100;
+      box-shadow:0 6px 24px rgba(191,14,35,.3);
+      animation:toast-in .3s ease forwards;
+      pointer-events:none;letter-spacing:.3px;
+      display:flex;align-items:center;gap:6px;
+    }
+    .wishlist-toast.hide{animation:toast-out .3s ease forwards}
+    .wishlist-toast svg{flex-shrink:0}
+    .anim{animation:fadeUp .45s ease forwards;opacity:0}
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:#B0ABAB;flex-wrap:wrap}
+    .breadcrumb a{color:#B0ABAB;text-decoration:none;transition:color .2s}
+    .breadcrumb a:hover{color:#BF0E23}
+    .breadcrumb .active{color:#2C2C2C;font-weight:600}
+
+    /* ── PRODUCT CARD ── */
+    .product-card{
+      background:#fff;border-radius:6px;overflow:hidden;
+      transition:all .3s ease;position:relative;
+    }
+    .product-card:hover{transform:translateY(-3px)}
+    .product-card:hover .img-wrap img{transform:scale(1.05)}
+    .product-card .img-wrap{position:relative;overflow:hidden;background:#F8F5F0;aspect-ratio:1/1;border-radius:6px}
+    .product-card .img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+    .product-card .wishlist-btn{
+      position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;
+      background:rgba(255,255,255,.85);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:all .25s;border:none;z-index:2;
+    }
+    .product-card .wishlist-btn:hover{background:#fff;transform:scale(1.15)}
+    .product-card .wishlist-btn.active svg{fill:#BF0E23;stroke:#BF0E23}
+    .product-card .card-body{padding:10px 4px 14px}
+    .catalog-mode .product-card .card-body{display:none}
+    .catalog-mode .product-card{gap:0}
+
+    /* ── COLOR DOTS ── */
+    .color-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6);cursor:pointer;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+    .color-dot:hover{transform:scale(1.2);box-shadow:0 2px 6px rgba(0,0,0,.2)}
+    .color-dot.active{box-shadow:0 0 0 2px #fff,0 0 0 3.5px #2C2C2C}
+
+    /* ── RIBBON TAGS ── */
+    .ribbon{
+      position:absolute;top:10px;left:0;z-index:2;
+      padding:4px 10px 4px 8px;font-size:9px;font-weight:700;letter-spacing:.7px;
+      color:#fff;border-radius:0 5px 5px 0;text-transform:uppercase;
+    }
+    .ribbon-red{background:#BF0E23}
+    .ribbon-gold{background:#C5A575}
+    .ribbon-dark{background:#2C2C2C}
+
+    /* ── TOOLBAR ── */
+    .tool-pill{
+      display:inline-flex;align-items:center;gap:5px;padding:7px 14px;
+      font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;
+      color:#2C2C2C;background:transparent;border:none;border-radius:8px;
+    }
+    .tool-pill:hover{background:#F5F2ED}
+    .tool-pill.active{color:#BF0E23;font-weight:600}
+    .tool-divider{width:1px;height:18px;background:#E5DDD3;margin:0 4px}
+
+    .sort-select{
+      appearance:none;padding:7px 28px 7px 10px;border:none;border-radius:8px;
+      font-size:12px;font-weight:500;cursor:pointer;background:transparent;font-family:inherit;color:#2C2C2C;
+      background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' fill='none' stroke='%23B0ABAB' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 8px center;transition:all .2s;
+    }
+    .sort-select:hover{background:#F5F2ED}
+    .sort-select:focus{outline:none;background:#F5F2ED}
+
+    /* ── GRID TOGGLE (simple text) ── */
+    .grid-pick{
+      width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:all .2s;font-size:11px;font-weight:700;color:#B0ABAB;
+    }
+    .grid-pick:hover{color:#2C2C2C;background:#F5F2ED}
+    .grid-pick.active{color:#BF0E23;background:#FFF5F5}
+
+    /* ── BANNER (1:1 image) ── */
+    .promo-banner{
+      border-radius:6px;overflow:hidden;position:relative;aspect-ratio:1/1;
+      background:linear-gradient(135deg,#EFEAE3 0%,#F5F0E8 100%);
+      display:flex;align-items:flex-end;
+    }
+    .promo-banner .banner-inner{padding:20px;width:100%;position:relative;z-index:1;
+      background:linear-gradient(0deg,rgba(0,0,0,.45) 0%,transparent 100%);border-radius:0 0 6px 6px}
+
+    /* ── OVERLAY/DRAWER ── */
+    .overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+    .overlay.active{opacity:1;pointer-events:auto}
+    .drawer{position:fixed;z-index:50;background:#fff;overflow-y:auto;overflow-x:hidden;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .35s;scrollbar-width:thin;scrollbar-color:rgba(197,165,117,.4) transparent}
+    .drawer::-webkit-scrollbar{width:6px}
+    .drawer::-webkit-scrollbar-track{background:transparent;margin:12px 0}
+    .drawer::-webkit-scrollbar-thumb{background:rgba(197,165,117,.4);border-radius:20px;transition:background .2s}
+    .drawer::-webkit-scrollbar-thumb:hover{background:rgba(197,165,117,.7)}
+    .drawer::-webkit-scrollbar-thumb:active{background:rgba(191,14,35,.5)}
+    @media(max-width:767px){.drawer{bottom:0;left:0;right:0;border-radius:18px 18px 0 0;transform:translateY(100%);max-height:85vh}.drawer.open{transform:translateY(0)}}
+    @media(min-width:768px){.drawer{top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);border-radius:18px;width:460px;max-height:80vh;opacity:0;pointer-events:none;box-shadow:0 32px 80px rgba(0,0,0,.18)}.drawer.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto}}
+
+    .filter-chip{
+      display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:20px;
+      border:1.5px solid #E5DDD3;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;background:#fff;
+    }
+    .filter-chip:hover{border-color:#C5A575}
+    .filter-chip.selected{border-color:#BF0E23;background:#FFF5F5;color:#BF0E23}
+
+    .btn-cta{
+      background:linear-gradient(135deg,#BF0E23 0%,#D4162E 40%,#E8334A 60%,#BF0E23 100%);
+      background-size:200% 200%;animation:gradient-shift 3s ease infinite;
+      color:#fff;font-weight:700;border:none;cursor:pointer;border-radius:12px;
+      transition:all .3s;letter-spacing:.8px;
+      box-shadow:0 4px 16px rgba(191,14,35,.25);position:relative;overflow:hidden;
+    }
+    .btn-cta::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .6s}
+    .btn-cta:hover::before{left:100%}
+    .btn-cta:hover{box-shadow:0 8px 28px rgba(191,14,35,.35);transform:translateY(-2px)}
+
+    .btn-outline{
+      border:1.5px solid #E5DDD3;border-radius:12px;padding:10px 20px;font-size:13px;font-weight:600;
+      cursor:pointer;transition:all .2s;background:#fff;color:#2C2C2C;
+    }
+    .btn-outline:hover{border-color:#BF0E23;color:#BF0E23}
+
+    /* ── PROMO RIBBON ── */
+    .promo-ribbon{
+      position:fixed;top:0;left:0;right:0;z-index:60;
+      height:30px;display:flex;align-items:center;justify-content:center;gap:12px;
+      background:linear-gradient(90deg,#f7f0e4,#fdf8f0,#f7f0e4);border-bottom:1px solid rgba(197,165,117,.2);
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .promo-ribbon.hidden-ribbon{transform:translateY(-100%)}
+    .promo-ribbon span{font-size:11px;letter-spacing:.3px;color:#BF0E23;font-weight:500}
+    .promo-ribbon a{
+      font-size:11px;font-weight:700;color:#2C2C2C;text-decoration:underline;
+      text-underline-offset:2px;text-decoration-color:rgba(44,44,44,.25);
+      transition:text-decoration-color .2s;
+    }
+    .promo-ribbon a:hover{text-decoration-color:#2C2C2C}
+    .promo-ribbon .ribbon-close{
+      position:absolute;right:10px;top:50%;transform:translateY(-50%);
+      background:none;border:none;cursor:pointer;padding:4px;
+      color:rgba(138,122,96,.3);transition:color .2s;line-height:0;
+    }
+    .promo-ribbon .ribbon-close:hover{color:rgba(138,122,96,.7)}
+
+    /* ── MOBILE ── */
+    @media(max-width:767px){
+      body{font-size:12px}
+      h1,h2,h3,.text-lg{font-size:14px !important}
+      .text-base{font-size:13px !important}
+      .text-sm{font-size:11px !important}
+      .text-xs{font-size:10px !important}
+      .text-\[11px\]{font-size:9px !important}
+      .product-card .card-body{padding:8px 2px 12px}
+      .ribbon{font-size:8px;padding:3px 8px 3px 6px}
+      .color-dot{width:12px;height:12px}
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ═══ PROMO RIBBON ═══ -->
+  <div class="promo-ribbon" id="promoRibbon">
+    <span>New Evil Eye Collection</span>
+    <a href="#">Shop Now</a>
+    <button class="ribbon-close" onclick="document.getElementById('promoRibbon').classList.add('hidden-ribbon')" aria-label="Close">
+      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 lg:py-8" style="margin-top:30px">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb mb-4 anim">
+      <a href="#">Home</a>
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="3" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+      <a href="#">Jewellery</a>
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="3" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+      <span class="active">All Collections</span>
+    </div>
+
+    <!-- Title row: title + count | sort + filter + grid -->
+    <div class="flex items-center justify-between mb-5 anim" style="animation-delay:50ms">
+      <div class="flex items-baseline gap-2">
+        <h2 class="text-base sm:text-lg font-bold tracking-wide">All Collections</h2>
+        <span class="text-xs text-warm-grey" id="productCount">(24)</span>
+      </div>
+      <div class="flex items-center gap-0.5 bg-[#F9F7F4] rounded-xl px-1.5 py-1">
+        <button class="tool-pill" onclick="openFilterDrawer()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
+          <span class="hidden sm:inline">Filters</span>
+        </button>
+        <div class="tool-divider"></div>
+        <select class="sort-select" id="sortSelect" onchange="sortProducts()">
+          <option value="best-matches">Best Matches</option>
+          <option value="new-arrivals">New Arrivals</option>
+          <option value="best-sellers">Best Sellers</option>
+          <option value="popularity">Popularity</option>
+          <option value="price-low">Price (Low To High)</option>
+          <option value="price-high">Price (High To Low)</option>
+          <option value="discount">Discount</option>
+        </select>
+        <div class="tool-divider hidden sm:block"></div>
+        <div class="hidden sm:flex items-center gap-0.5" id="gridToggle">
+          <button class="grid-pick" data-cols="3" onclick="setGrid(3)">3</button>
+          <button class="grid-pick active" data-cols="4" onclick="setGrid(4)">4</button>
+          <button class="grid-pick" data-cols="5" onclick="setGrid(5)">5</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Filters -->
+    <div id="activeFilters" class="hidden flex flex-wrap gap-2 mb-4"></div>
+
+    <!-- ═══ PRODUCT GRID ═══ -->
+    <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5"></div>
+
+    <!-- Load More -->
+    <div class="text-center mt-10 mb-6 anim" style="animation-delay:200ms">
+      <button onclick="loadMore()" id="loadMoreBtn" class="btn-outline px-10 py-3">Load More</button>
+      <p class="text-xs text-warm-grey mt-3" id="showingText">Showing 24 of 48 products</p>
+    </div>
+  </main>
+
+  <!-- ═══ FILTER DRAWER ═══ -->
+  <div id="filterOverlay" class="overlay" onclick="closeFilterDrawer()"></div>
+  <div id="filterDrawer" class="drawer">
+    <div class="p-5 sm:p-6">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden"></div>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-base font-semibold">Refine By</h3>
+        <button onclick="closeFilterDrawer()" class="p-2 rounded-full hover:bg-soft-grey transition-colors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Price Range -->
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase">Price Range</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="filter-chip" data-filter="price" data-val="under-10k" onclick="toggleFilter(this)">Under ₹10,000</span>
+        <span class="filter-chip" data-filter="price" data-val="10k-25k" onclick="toggleFilter(this)">₹10K – ₹25K</span>
+        <span class="filter-chip" data-filter="price" data-val="25k-50k" onclick="toggleFilter(this)">₹25K – ₹50K</span>
+        <span class="filter-chip" data-filter="price" data-val="50k-1l" onclick="toggleFilter(this)">₹50K – ₹1L</span>
+        <span class="filter-chip" data-filter="price" data-val="1l-2l" onclick="toggleFilter(this)">₹1L – ₹2L</span>
+        <span class="filter-chip" data-filter="price" data-val="2l-plus" onclick="toggleFilter(this)">₹2L+</span>
+      </div>
+
+      <!-- Jewellery Type -->
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase">Jewellery Type</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="filter-chip" data-filter="jtype" data-val="gold" onclick="toggleFilter(this)">Gold Jewellery</span>
+        <span class="filter-chip" data-filter="jtype" data-val="silver" onclick="toggleFilter(this)">Silver Jewellery</span>
+      </div>
+
+      <!-- Category -->
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase">Category</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="filter-chip" data-filter="cat" data-val="bangle" onclick="toggleFilter(this)">Bangle</span>
+        <span class="filter-chip" data-filter="cat" data-val="bracelet" onclick="toggleFilter(this)">Bracelet</span>
+        <span class="filter-chip" data-filter="cat" data-val="earrings" onclick="toggleFilter(this)">Earrings</span>
+        <span class="filter-chip" data-filter="cat" data-val="finger-ring" onclick="toggleFilter(this)">Finger Ring</span>
+        <span class="filter-chip" data-filter="cat" data-val="mangalsutra" onclick="toggleFilter(this)">Mangalsutra</span>
+        <span class="filter-chip" data-filter="cat" data-val="necklace" onclick="toggleFilter(this)">Necklace</span>
+        <span class="filter-chip" data-filter="cat" data-val="necklace-set" onclick="toggleFilter(this)">Necklace Set</span>
+        <span class="filter-chip" data-filter="cat" data-val="nose-pin" onclick="toggleFilter(this)">Nose Pin</span>
+        <span class="filter-chip" data-filter="cat" data-val="pendant" onclick="toggleFilter(this)">Pendant</span>
+        <span class="filter-chip" data-filter="cat" data-val="pendant-earrings-set" onclick="toggleFilter(this)">Pendant and Earrings Set</span>
+        <span class="filter-chip" data-filter="cat" data-val="pendant-chain" onclick="toggleFilter(this)">Pendant With Chain</span>
+      </div>
+
+      <!-- Diamond Carat -->
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M2 9h20"/><path d="M10 3l-4 6 6 13 6-13-4-6"/></svg>
+        <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase">Diamond Carat</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="filter-chip" data-filter="carat" data-val="under-030" onclick="toggleFilter(this)">Under 0.30 carat</span>
+        <span class="filter-chip" data-filter="carat" data-val="030-050" onclick="toggleFilter(this)">0.30 – 0.50 carat</span>
+        <span class="filter-chip" data-filter="carat" data-val="050-1" onclick="toggleFilter(this)">0.50 – 1 carat</span>
+        <span class="filter-chip" data-filter="carat" data-val="1-2" onclick="toggleFilter(this)">1 – 2 carat</span>
+        <span class="filter-chip" data-filter="carat" data-val="2-3" onclick="toggleFilter(this)">2 – 3 carat</span>
+        <span class="filter-chip" data-filter="carat" data-val="3-plus" onclick="toggleFilter(this)">3 carat and above</span>
+      </div>
+
+      <!-- Shop For -->
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase">Shop For</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="filter-chip" data-filter="gender" data-val="men" onclick="toggleFilter(this)">Men</span>
+        <span class="filter-chip" data-filter="gender" data-val="women" onclick="toggleFilter(this)">Women</span>
+      </div>
+
+      <!-- Gold Karat -->
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase">Gold Karat</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="filter-chip" data-filter="karat" data-val="9kt" onclick="toggleFilter(this)">9KT</span>
+        <span class="filter-chip" data-filter="karat" data-val="14kt" onclick="toggleFilter(this)">14KT</span>
+        <span class="filter-chip" data-filter="karat" data-val="18kt" onclick="toggleFilter(this)">18KT</span>
+      </div>
+
+      <!-- Metal Colour -->
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12a10 10 0 005.012 8.662"/></svg>
+        <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase">Metal Colour</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="filter-chip" data-filter="mcolor" data-val="rose" onclick="toggleFilter(this)">Rose</span>
+        <span class="filter-chip" data-filter="mcolor" data-val="yellow" onclick="toggleFilter(this)">Yellow</span>
+        <span class="filter-chip" data-filter="mcolor" data-val="white" onclick="toggleFilter(this)">White</span>
+      </div>
+
+      <!-- Size -->
+      <div class="flex items-center gap-2 mb-3">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3H3v18h18V3z"/><path d="M3 9h4"/><path d="M3 15h4"/><path d="M9 3v4"/><path d="M15 3v4"/><path d="M17 9h4"/><path d="M17 15h4"/><path d="M9 17v4"/><path d="M15 17v4"/></svg>
+        <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase">Size</p>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-8">
+        <span class="filter-chip" data-filter="size" data-val="5" onclick="toggleFilter(this)">5</span>
+        <span class="filter-chip" data-filter="size" data-val="6" onclick="toggleFilter(this)">6</span>
+        <span class="filter-chip" data-filter="size" data-val="7" onclick="toggleFilter(this)">7</span>
+        <span class="filter-chip" data-filter="size" data-val="8" onclick="toggleFilter(this)">8</span>
+        <span class="filter-chip" data-filter="size" data-val="9" onclick="toggleFilter(this)">9</span>
+        <span class="filter-chip" data-filter="size" data-val="10" onclick="toggleFilter(this)">10</span>
+        <span class="filter-chip" data-filter="size" data-val="12" onclick="toggleFilter(this)">12</span>
+        <span class="filter-chip" data-filter="size" data-val="14" onclick="toggleFilter(this)">14</span>
+        <span class="filter-chip" data-filter="size" data-val="16" onclick="toggleFilter(this)">16</span>
+        <span class="filter-chip" data-filter="size" data-val="18" onclick="toggleFilter(this)">18</span>
+        <span class="filter-chip" data-filter="size" data-val="2.4" onclick="toggleFilter(this)">2.4</span>
+        <span class="filter-chip" data-filter="size" data-val="2.6" onclick="toggleFilter(this)">2.6</span>
+        <span class="filter-chip" data-filter="size" data-val="2.8" onclick="toggleFilter(this)">2.8</span>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="clearFilters()" class="flex-1 btn-outline py-3 text-sm">Clear All</button>
+        <button onclick="applyFilters()" class="flex-1 btn-cta py-3 text-sm">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const IMAGES=['ring 1.webp','ring 2.webp','ring 4.webp','ring 6.webp','ring 7.webp','ring 8.webp','ring 8 copy.webp','ring 9.webp','ring 11.webp'];
+    const NAMES=[
+      'Cross My Lines Pendant','Split Love Diamond Ring','Golden Harmony Bracelet',
+      'Ethereal Bloom Earrings','Celestial Wave Necklace','Radiant Hoop Earrings',
+      'Twisted Love Ring','Infinity Chain Bracelet','Dewdrop Diamond Pendant',
+      'Aurora Cocktail Ring','Pearl Cascade Necklace','Moonlit Bangle Set',
+      'Sapphire Cluster Ring','Vintage Charm Bracelet','Diamond Solitaire Pendant',
+      'Rose Petal Earrings','Heritage Gold Chain','Starlight Tennis Bracelet',
+      'Emerald Cut Ring','Filigree Drop Earrings','Geometric Bar Necklace',
+      'Knot of Love Ring','Beaded Layered Bracelet','Crystal Huggie Earrings',
+    ];
+    const CATEGORIES=['pendants','rings','bracelets','earrings','necklaces','earrings','rings','bracelets','pendants','rings','necklaces','bracelets','rings','bracelets','pendants','earrings','chains','bracelets','rings','earrings','necklaces','rings','bracelets','earrings'];
+    const METALS=['Rose Gold','White Gold','Yellow Gold','Rose Gold','Platinum','Yellow Gold','White Gold','Rose Gold','Yellow Gold','Platinum','White Gold','Yellow Gold','Rose Gold','Yellow Gold','White Gold','Rose Gold','Yellow Gold','Platinum','White Gold','Rose Gold','Yellow Gold','Rose Gold','Yellow Gold','White Gold'];
+    const RIBBONS={0:'selling fast',2:'just dropped',5:'stackable',8:'selling fast',11:'just dropped',14:'stackable',17:'selling fast',20:'just dropped',23:'stackable'};
+    const COLOR_CARDS=new Set([0,3,6,9,12,15,18,21]);
+
+    const allProducts=[];
+    for(let i=0;i<48;i++){
+      const idx=i%24;
+      let ribbon=null;
+      if(i<24) ribbon=RIBBONS[i]||null;
+      else if(i===26) ribbon='just dropped';
+      else if(i===33) ribbon='selling fast';
+      else if(i===40) ribbon='stackable';
+      allProducts.push({
+        id:'p'+(i+1),name:NAMES[idx],price:Math.floor(Math.random()*45000)+8000,
+        mrp: i===2 ? Math.floor(Math.random()*15000)+55000 : null,
+        img:IMAGES[i%IMAGES.length],category:CATEGORIES[idx],metal:METALS[idx],
+        ribbon,wishlisted:false,outOfStock:i===0,
+      });
+    }
+    let products=allProducts.slice(0,24);
+
+    let currentCols=4;
+    let shown=24;
+    let activeFilterSet={};
+    const fmt=n=>'₹'+n.toLocaleString('en-IN');
+
+    // Banner images — 1:1 ratio, placed as grid items
+    const BANNER_AFTER={3:0,9:1,18:2};
+    const BANNER_DATA=[
+      {title:'New Arrivals',sub:'Crafted for the modern you',cta:'Shop Now'},
+      {title:'Gold Edit',sub:'Timeless pieces from ₹8,000',cta:'Explore'},
+      {title:'Stack & Style',sub:'Layer your look',cta:'Discover'},
+    ];
+
+    function ribbonClass(r){if(r==='selling fast')return'ribbon-red';if(r==='just dropped')return'ribbon-dark';return'ribbon-gold'}
+
+    function renderGrid(){
+      const grid=document.getElementById('productGrid');
+      const vis=products.slice(0,shown);
+      let html='';
+
+      for(let i=0;i<vis.length;i++){
+        // Insert banner (1:1 square, same as product tile)
+        if(BANNER_AFTER[i]!==undefined){
+          const bd=BANNER_DATA[BANNER_AFTER[i]];
+          html+=`<div class="promo-banner anim" style="animation-delay:${i*25}ms">
+            <div class="banner-inner">
+              <p class="text-sm sm:text-base font-bold text-white">${bd.title}</p>
+              <p class="text-[11px] text-white/70 mt-0.5">${bd.sub}</p>
+              <button class="mt-2 px-4 py-1.5 text-[10px] font-bold tracking-wider text-white border border-white/40 rounded-md hover:bg-white/10 transition-colors">${bd.cta}</button>
+            </div>
+          </div>`;
+        }
+
+        const p=vis[i];
+        const hasColors=COLOR_CARDS.has(i);
+        html+=`<div class="product-card anim" style="animation-delay:${(i%currentCols)*50+60}ms">
+          <div class="img-wrap">
+            ${p.ribbon?`<span class="ribbon ${ribbonClass(p.ribbon)}">${p.ribbon}</span>`:''}
+            <img src="${p.img}" alt="${p.name}" loading="lazy" style="${p.outOfStock?'opacity:.45;filter:grayscale(.3)':''}" />
+            <button class="wishlist-btn ${p.wishlisted?'active':''}" data-id="${p.id}" onclick="event.stopPropagation();toggleWishlist('${p.id}')" title="Wishlist">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="${p.wishlisted?'#BF0E23':'none'}" stroke="${p.wishlisted?'#BF0E23':'#555'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+          </div>
+          <div class="card-body cursor-pointer" onclick="window.location.href='../Beyon PDP/PDP.html'">
+            <p class="text-sm font-medium truncate">${p.name}</p>
+            <div class="flex items-center justify-between mt-1">
+              ${p.outOfStock?`<p class="text-[11px] font-semibold text-[#2c2c2c] tracking-wide">Available On Request</p>`:
+              p.mrp?`<div>
+                <div class="flex items-center gap-1.5">
+                  <p class="text-sm font-bold">${fmt(p.price)}</p>
+                  <p class="text-[11px] text-gray-400 line-through">${fmt(p.mrp)}</p>
+                </div>
+                <div class="flex items-center gap-1 mt-1" style="background:linear-gradient(90deg,#fff5f5,#fff);padding:2px 6px;border-radius:4px;border:1px solid rgba(191,14,35,0.1)">
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                  <span style="font-size:8px;font-weight:700;color:#BF0E23;letter-spacing:.3px">15% OFF ON MAKING CHARGES</span>
+                </div>
+              </div>`:
+              `<p class="text-sm font-bold">${fmt(p.price)}</p>`}
+              ${hasColors?`<div class="flex items-center gap-1.5">
+                <span class="color-dot active" style="background:#E8B4B8" title="Rose Gold"></span>
+                <span class="color-dot" style="background:#F0D080" title="Yellow Gold"></span>
+                <span class="color-dot" style="background:#E0E0E0" title="White Gold"></span>
+              </div>`:''}
+            </div>
+          </div>
+        </div>`;
+      }
+
+      const colsMap={3:'grid-cols-2 sm:grid-cols-3',4:'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4',5:'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'};
+      grid.className='grid gap-3 sm:gap-4 lg:gap-5 '+(colsMap[currentCols]||colsMap[4]);
+      grid.classList.toggle('catalog-mode',currentCols===5);
+
+      grid.innerHTML=html;
+      document.getElementById('productCount').textContent='('+products.length+')';
+      document.getElementById('showingText').textContent='Showing '+Math.min(shown,products.length)+' of '+allProducts.length+' products';
+      document.getElementById('loadMoreBtn').style.display=shown>=products.length?'none':'inline-block';
+      document.querySelectorAll('.grid-pick').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.cols)===currentCols));
+    }
+
+    function setGrid(cols){currentCols=cols;renderGrid()}
+
+    let toastTimer=null;
+    function showToast(msg){
+      const old=document.querySelector('.wishlist-toast');
+      if(old)old.remove();
+      clearTimeout(toastTimer);
+      const t=document.createElement('div');
+      t.className='wishlist-toast';
+      t.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>'+msg;
+      document.body.appendChild(t);
+      toastTimer=setTimeout(()=>{t.classList.add('hide');setTimeout(()=>t.remove(),300)},1500);
+    }
+
+    function spawnParticles(btn){
+      const rect=btn.getBoundingClientRect();
+      const cx=rect.left+rect.width/2;
+      const cy=rect.top+rect.height/2;
+      for(let i=0;i<6;i++){
+        const dot=document.createElement('div');
+        const angle=(Math.PI*2/6)*i;
+        const dist=18+Math.random()*10;
+        const dx=Math.cos(angle)*dist;
+        const dy=Math.sin(angle)*dist;
+        Object.assign(dot.style,{
+          position:'fixed',left:cx+'px',top:cy+'px',width:'5px',height:'5px',
+          borderRadius:'50%',background:i%2?'#BF0E23':'#C5A575',zIndex:'99',
+          pointerEvents:'none',animation:'particle-fly .5s ease-out forwards',
+        });
+        dot.style.setProperty('--dx',dx+'px');
+        dot.style.setProperty('--dy',dy+'px');
+        dot.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx}px,${dy}px) scale(0)`,opacity:0}],{duration:450,easing:'ease-out'});
+        document.body.appendChild(dot);
+        setTimeout(()=>dot.remove(),500);
+      }
+    }
+
+    function toggleWishlist(id){
+      const p=products.find(x=>x.id===id);
+      const ap=allProducts.find(x=>x.id===id);
+      if(ap) ap.wishlisted=!ap.wishlisted;
+      if(p) p.wishlisted=ap.wishlisted;
+      const wishlisted=ap?ap.wishlisted:false;
+      const btn=document.querySelector('.wishlist-btn[data-id="'+id+'"');
+      if(!btn)return;
+      const svg=btn.querySelector('svg');
+      if(svg){
+        svg.setAttribute('fill',wishlisted?'#BF0E23':'none');
+        svg.setAttribute('stroke',wishlisted?'#BF0E23':'#555');
+      }
+      btn.classList.toggle('active',wishlisted);
+      btn.classList.remove('pop');void btn.offsetWidth;btn.classList.add('pop');
+      btn.addEventListener('animationend',()=>btn.classList.remove('pop'),{once:true});
+      if(wishlisted){
+        spawnParticles(btn);
+        showToast('Wishlisted');
+      }
+    }
+
+    function loadMore(){
+      shown=Math.min(shown+12,allProducts.length);
+      products=allProducts.slice(0,shown);
+      renderGrid();
+    }
+
+    function sortProducts(){
+      const v=document.getElementById('sortSelect').value;
+      if(v==='price-low') products.sort((a,b)=>a.price-b.price);
+      else if(v==='price-high'||v==='discount') products.sort((a,b)=>b.price-a.price);
+      else if(v==='new-arrivals') products.sort((a,b)=>parseInt(b.id.slice(1))-parseInt(a.id.slice(1)));
+      else products.sort((a,b)=>parseInt(a.id.slice(1))-parseInt(b.id.slice(1)));
+      renderGrid();
+    }
+
+    function openFilterDrawer(){document.getElementById('filterOverlay').classList.add('active');document.getElementById('filterDrawer').classList.add('open')}
+    function closeFilterDrawer(){document.getElementById('filterOverlay').classList.remove('active');document.getElementById('filterDrawer').classList.remove('open')}
+    function toggleFilter(el){el.classList.toggle('selected')}
+
+    function clearFilters(){
+      document.querySelectorAll('.filter-chip.selected').forEach(c=>c.classList.remove('selected'));
+      activeFilterSet={};shown=24;products=allProducts.slice(0,shown);renderActiveFilters();renderGrid();
+    }
+
+    function applyFilters(){
+      activeFilterSet={};
+      document.querySelectorAll('.filter-chip.selected').forEach(c=>{
+        const f=c.dataset.filter,v=c.dataset.val;
+        if(!activeFilterSet[f])activeFilterSet[f]=[];
+        activeFilterSet[f].push(v);
+      });
+      let filtered=allProducts;
+      if(activeFilterSet.cat&&activeFilterSet.cat.length)filtered=filtered.filter(p=>activeFilterSet.cat.includes(p.category));
+      if(activeFilterSet.mcolor&&activeFilterSet.mcolor.length){
+        const mm={'rose':'Rose Gold','yellow':'Yellow Gold','white':'White Gold'};
+        const ms=activeFilterSet.mcolor.map(m=>mm[m]);
+        filtered=filtered.filter(p=>ms.includes(p.metal));
+      }
+      if(activeFilterSet.price&&activeFilterSet.price.length){
+        filtered=filtered.filter(p=>activeFilterSet.price.some(r=>{
+          if(r==='under-10k')return p.price<10000;if(r==='10k-25k')return p.price>=10000&&p.price<=25000;
+          if(r==='25k-50k')return p.price>25000&&p.price<=50000;if(r==='50k-1l')return p.price>50000&&p.price<=100000;
+          if(r==='1l-2l')return p.price>100000&&p.price<=200000;return p.price>200000;
+        }));
+      }
+      products=filtered;shown=products.length;
+      closeFilterDrawer();renderActiveFilters();renderGrid();
+    }
+
+    function renderActiveFilters(){
+      const wrap=document.getElementById('activeFilters');
+      const keys=Object.keys(activeFilterSet).filter(k=>activeFilterSet[k].length);
+      if(!keys.length){wrap.classList.add('hidden');return}
+      wrap.classList.remove('hidden');
+      wrap.innerHTML=keys.flatMap(k=>activeFilterSet[k].map(v=>
+        `<span class="filter-chip selected text-xs">${v.replace(/-/g,' ')}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="cursor-pointer ml-1" onclick="removeFilter('${k}','${v}')"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>`
+      )).join('')+`<button onclick="clearFilters()" class="text-xs text-primary font-semibold hover:underline ml-1">Clear</button>`;
+    }
+
+    function removeFilter(key,val){
+      if(activeFilterSet[key])activeFilterSet[key]=activeFilterSet[key].filter(v=>v!==val);
+      document.querySelectorAll(`.filter-chip[data-filter="${key}"][data-val="${val}"]`).forEach(c=>c.classList.remove('selected'));
+      applyFilters();
+    }
+
+    renderGrid();
+  </script>
+</body>
+</html>

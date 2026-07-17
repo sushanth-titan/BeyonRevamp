@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beyon — Cross My Lines Pendant With Chain</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['"DM Sans"', 'sans-serif'] },
+          },
+        },
+      }
+    </script>
+    <style>
+      * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+      body { color: #3c3c3c; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background: #f7f7f7; margin: 0; font-family: 'DM Sans', sans-serif; }
+      #root { width: 100%; max-width: 100%; min-height: 100svh; }
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 99px; }
+
+      @keyframes metalShine { 0% { background-position: -200%; } to { background-position: 200%; } }
+      @keyframes lbFadeIn { 0% { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+      @keyframes truckDriveOnce { 0% { opacity: 0; transform: translate(-24px); } 10% { opacity: 1; } 72% { opacity: 1; transform: translate(116px); } 88% { opacity: 0.6; transform: translate(150px); } to { opacity: 0; transform: translate(168px); } }
+      @keyframes deliveryTextWipe { 0% { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0% 0 0); } }
+
+      .metal-text-shine-gold, .metal-text-shine-rose, .metal-text-shine-silver {
+        -webkit-text-fill-color: transparent;
+        background-size: 250%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        animation: 3s linear infinite metalShine;
+      }
+      .metal-text-shine-gold { background-image: linear-gradient(90deg, #b8860b 0% 30%, #f5d77a 45%, #fff8dc 50%, #f5d77a 55%, #b8860b 70% 100%); }
+      .metal-text-shine-rose { background-image: linear-gradient(90deg, #b76e79 0% 30%, #e8b4b8 45%, #ffd9d9 50%, #e8b4b8 55%, #b76e79 70% 100%); }
+      .metal-text-shine-silver { background-image: linear-gradient(90deg, #8a8a8a 0% 30%, #d8d8d8 45%, #fff 50%, #d8d8d8 55%, #8a8a8a 70% 100%); }
+
+      .delivery-heading-anim { width: 124px; height: 14px; display: inline-block; position: relative; overflow: visible; }
+      .delivery-heading-anim .truck-icon { z-index: 2; will-change: transform, opacity; filter: drop-shadow(0 1px 2px rgba(211,11,57,0.15)); margin-top: -8px; animation: 2.2s cubic-bezier(0.4,0,0.2,1) 0.15s both truckDriveOnce; display: inline-flex; position: absolute; top: 50%; left: 0; }
+      .delivery-heading-anim .truck-text { white-space: nowrap; clip-path: inset(0 100% 0 0); will-change: clip-path; animation: 2s cubic-bezier(0.4,0,0.2,1) 0.3s both deliveryTextWipe; position: absolute; top: 50%; left: 0; transform: translateY(-50%); }
+
+      .pdp-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-80px);background:#BF0E23;color:#fff;font-size:13px;font-weight:500;padding:10px 24px;border-radius:12px;z-index:9999;opacity:0;transition:all .35s cubic-bezier(.4,0,.2,1);pointer-events:none;box-shadow:0 4px 20px rgba(191,14,35,.25)}
+      .pdp-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+      .ribbon { position: absolute; top: 10px; left: 0; z-index: 2; padding: 4px 10px 4px 8px; font-size: 9px; font-weight: 700; letter-spacing: .7px; color: #fff; border-radius: 0 5px 5px 0; text-transform: uppercase; }
+      .ribbon-red { background: #BF0E23; }
+      .ribbon-gold { background: #C5A575; }
+      .ribbon-dark { background: #2C2C2C; }
+
+      .pill-selected { background: #3c3c3c; color: #fff; box-shadow: 0 2px 8px rgba(60,60,60,0.2); }
+      .pill-default { background: rgba(0,0,0,0.03); color: #8a7a60; border: 1.5px solid rgba(0,0,0,0.08); }
+      .section-gold-bg { background: linear-gradient(135deg, #fdfcf8 0%, #f9f5ee 50%, #fdfcf8 100%); border-top: 1px solid rgba(212,168,67,0.15); }
+      .section-delivery-bg { background: linear-gradient(135deg, #fdf5f6 0%, #faf0f1 40%, #fdf5f6 100%); }
+      .btn-request-design { background: #2c2c2c; }
+      .btn-request-design:hover { background: #1a1a1a; }
+
+      @keyframes trustSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      @keyframes trustBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+      @keyframes trustPing { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+      @keyframes trustRock { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(8deg); } 75% { transform: rotate(-8deg); } }
+      @keyframes trustScale { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+      .trust-anim-0 { animation: trustSpin 4s linear infinite; }
+      .trust-anim-1 { animation: trustBounce 2s ease-in-out infinite; }
+      .trust-anim-2 { animation: trustRock 2.5s ease-in-out infinite; }
+      .trust-anim-3 { animation: trustScale 3s ease-in-out infinite; }
+      .trust-anim-4 { animation: trustPing 2s ease-in-out infinite; }
+
+      /* App Banner */
+      .app-banner { background: #fff; border-bottom: 1px solid rgba(0,0,0,0.06); }
+
+      /* Request Design Popup */
+      .rd-overlay { position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center; }
+      @media(min-width:640px){ .rd-overlay{align-items:center} }
+      .rd-modal { background:#fff;width:100%;max-width:440px;border-radius:24px 24px 0 0;padding:28px 24px 32px;animation:lbFadeIn .25s ease; }
+      @media(min-width:640px){ .rd-modal{border-radius:24px} }
+      .rd-input { width:100%;padding:12px 16px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;font-family:inherit;color:#2c2c2c;transition:border-color .2s;outline:none;background:#fff; }
+      .rd-input:focus { border-color:#2c2c2c; }
+      .rd-input::placeholder { color:#b0b0b0; }
+      .rd-input.error { border-color:#d30b39; }
+      .rd-error { font-size:11px;color:#d30b39;margin-top:4px;display:none; }
+      .rd-error.show { display:block; }
+    </style>
+  </head>
+  <body>
+    <div id="pdpToast" class="pdp-toast"></div>
+    <div id="root"></div>
+    <div id="requestDesignPopup"></div>
+
+    <script>
+      const product = {
+        name: 'Cross My Lines Pendant With Chain',
+        shortDescription: 'Breaks rules, keeps the spotlight, with intersecting slim gold bars set with rows of round Laboratory-Grown Diamonds and textures, centred by an oval diamond in half bezel on 18 KT yellow gold Pendant with chain.',
+        designCode: 'SEBVGBZ',
+        grossWeight: '3.135 g',
+        gold: { metal: '18 KT YELLOW', weight: '3.075 g' },
+        diamond: { colour: 'FG', shape: 'Round', count: 7, weight: '0.3 Ct', clarity: 'VS' },
+        sizes: ['16 INCHES', '18 INCHES'],
+        defaultSize: '16 INCHES',
+        images: ['prd 1.webp', 'pd 2.webp', 'pd 3.webp', 'pd 4.webp', 'pd 5.webp'],
+        delivery: { estimate: 'Tomorrow, its yours! 1-day delivery for orders placed before 12pm for selected pincodes*' }
+      };
+
+      const recommendations = [
+        { id: 1, name: 'Lunar Arc Bangle', price: 38200, image: 'prd 1.webp' },
+        { id: 2, name: 'Parallel Lines Ring', price: 22750, image: 'pd 2.webp' },
+        { id: 3, name: 'Diamond Solitaire Stud', price: 31400, image: 'pd 3.webp' },
+        { id: 4, name: 'Gold Hoop Earrings', price: 18900, image: 'pd 4.webp' },
+        { id: 5, name: 'Constellation Pendant', price: 44600, image: 'pd 5.webp' },
+        { id: 6, name: 'Twisted Band Ring', price: 19800, image: 'prd 1.webp' },
+        { id: 7, name: 'Tennis Bracelet', price: 67500, image: 'pd 2.webp' }
+      ];
+
+      const metalColours = [
+        { id: 'yellow', label: 'Yellow', gradient: 'radial-gradient(circle at 35% 30%, #fde98a, #d4a843 48%, #8a5e0a)', ring: '#d4a843' },
+        { id: 'rose', label: 'Rose', gradient: 'radial-gradient(circle at 35% 30%, #fdd5cc, #c47878 48%, #7a3030)', ring: '#c47878' },
+        { id: 'white', label: 'White', gradient: 'radial-gradient(circle at 35% 30%, #ffffff, #c8c8c8 48%, #787878)', ring: '#888' }
+      ];
+
+      const karatOptions = ['9KT', '14KT', '18KT'];
+      const diamondSizes = ['0.33 ct', '0.4 ct', '0.5 ct'];
+      const diamondShapes = [
+        { id: 'round', label: 'Round' },
+        { id: 'oval', label: 'Oval' },
+        { id: 'heart', label: 'Heart' },
+        { id: 'emerald', label: 'Emerald' },
+        { id: 'hexagon', label: 'Hexagon' }
+      ];
+
+      const trustBadges = [
+        { label: 'BIS Hallmarked', color: '#555', bg: 'rgba(0,0,0,0.03)', border: 'rgba(0,0,0,0.06)', iconBg: 'rgba(211,11,57,0.08)', icon: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>' },
+        { label: '7-day Easy Returns', color: '#555', bg: 'rgba(0,0,0,0.03)', border: 'rgba(0,0,0,0.06)', iconBg: 'rgba(211,11,57,0.08)', icon: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>' },
+        { label: 'Lifetime Gold Exchange', color: '#555', bg: 'rgba(0,0,0,0.03)', border: 'rgba(0,0,0,0.06)', iconBg: 'rgba(211,11,57,0.08)', icon: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>' },
+        { label: 'Free Shipping on All Orders', color: '#555', bg: 'rgba(0,0,0,0.03)', border: 'rgba(0,0,0,0.06)', iconBg: 'rgba(211,11,57,0.08)', icon: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>' },
+        { label: 'Secure Payments<br>TATA TRUST', color: '#555', bg: 'rgba(0,0,0,0.03)', border: 'rgba(0,0,0,0.06)', iconBg: 'rgba(211,11,57,0.08)', icon: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' }
+      ];
+
+      const tagVariants = ['selling fast'];
+
+      const state = {
+        selectedSize: product.defaultSize,
+        currentImageIdx: 0,
+        lightboxOpen: false,
+        lightboxIdx: 0,
+        sizeChartOpen: false,
+        shared: false,
+        metalColour: 'yellow',
+        karat: '18KT',
+        diamondShape: 'round',
+        diamondSize: '0.33 ct',
+        pincode: '',
+        pincodeChecked: false,
+        requestPopupOpen: false,
+        appBannerDismissed: false
+      };
+
+      // Utils
+      const formatPrice = n => '\u20B9' + n.toLocaleString('en-IN');
+
+      function getMetalShineClass(metal) {
+        const t = (metal || '').toUpperCase();
+        if (t.includes('ROSE')) return 'metal-text-shine-rose';
+        if (t.includes('WHITE')) return 'metal-text-shine-silver';
+        return 'metal-text-shine-gold';
+      }
+
+      function pillClass(selected) {
+        return selected ? 'pill-selected' : 'pill-default';
+      }
+
+      function diamondShapeSvg(cut, selected) {
+        const c = selected ? '#fff' : '#8a6e3a';
+        const svgs = {
+          round: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="${c}" stroke-width="1.8"/><line x1="12" y1="3.5" x2="12" y2="7" stroke="${c}" stroke-width="1.2" opacity=".6"/><line x1="12" y1="17" x2="12" y2="20.5" stroke="${c}" stroke-width="1.2" opacity=".6"/><line x1="3.5" y1="12" x2="7" y2="12" stroke="${c}" stroke-width="1.2" opacity=".6"/><line x1="17" y1="12" x2="20.5" y2="12" stroke="${c}" stroke-width="1.2" opacity=".6"/></svg>`,
+          oval: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="6.5" ry="9.5" stroke="${c}" stroke-width="1.8"/><line x1="12" y1="2.5" x2="12" y2="5.5" stroke="${c}" stroke-width="1.2" opacity=".6"/><line x1="12" y1="18.5" x2="12" y2="21.5" stroke="${c}" stroke-width="1.2" opacity=".6"/></svg>`,
+          heart: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 20.5C12 20.5 3 14 3 8.5C3 6 5 4 7.5 4C9.5 4 11 5.5 12 7C13 5.5 14.5 4 16.5 4C19 4 21 6 21 8.5C21 14 12 20.5 12 20.5Z" stroke="${c}" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+          emerald: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="8,3 16,3 21,7 21,17 16,21 8,21 3,17 3,7" stroke="${c}" stroke-width="1.8" stroke-linejoin="round"/><line x1="3" y1="8.5" x2="21" y2="8.5" stroke="${c}" stroke-width="1" opacity=".5"/><line x1="3" y1="15.5" x2="21" y2="15.5" stroke="${c}" stroke-width="1" opacity=".5"/></svg>`,
+          hexagon: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="12,2 20,6.5 20,17.5 12,22 4,17.5 4,6.5" stroke="${c}" stroke-width="1.8" stroke-linejoin="round"/><line x1="12" y1="2" x2="12" y2="22" stroke="${c}" stroke-width="1" opacity=".5"/></svg>`
+        };
+        return svgs[cut] || '';
+      }
+
+      function renderTag(variant) {
+        if (!variant) return '';
+        const cls = variant === 'selling fast' ? 'ribbon-red' : variant === 'just dropped' ? 'ribbon-dark' : 'ribbon-gold';
+        return `<span class="ribbon ${cls}">${variant}</span>`;
+      }
+
+      function renderShareBtn() {
+        if (state.shared) {
+          return `<button aria-label="Shared" class="shrink-0 flex items-center justify-center rounded-full transition-all" style="width:32px;height:32px;background:#fff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>`;
+        }
+        return `<button onclick="doShare()" aria-label="Share" class="shrink-0 flex items-center justify-center rounded-full transition-all active:scale-90" style="width:32px;height:32px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></button>`;
+      }
+
+      function renderProductDetailsTab() {
+        const d = product.diamond;
+        return `<div class="pt-2 px-1">
+          <div>
+            <div class="grid py-3.5" style="grid-template-columns:1fr auto 1fr auto">
+              <span class="text-[11px] font-bold ${getMetalShineClass(product.gold.metal)}">18 KT YELLOW GOLD</span>
+              <span class="pr-6"></span>
+              <span class="text-[11px] text-gray-400 pl-2">Weight</span>
+              <span class="text-[11px] font-bold text-[#2a2a2a] text-right">${product.gold.weight}</span>
+            </div>
+          </div>
+          <div style="border-top:1px solid rgba(0,0,0,0.06)">
+            <p class="text-[11px] font-bold tracking-[0.18em] uppercase mt-5 mb-2" style="color:#d30b39">Laboratory-Grown Diamond/s</p>
+            <div style="display:grid;grid-template-columns:1fr auto 1fr auto">
+              ${[['Count', d.count], ['Shape', d.shape], ['Clarity & Colour', d.clarity + ' ' + d.colour], ['Weight', d.weight]].map(([label, val], i) => `
+                <span class="text-[11px] text-gray-400 py-3.5 ${i % 2 ? 'pl-2' : ''}">${label}</span>
+                <span class="text-[11px] font-bold text-[#2a2a2a] py-3.5 ${i % 2 ? 'text-right' : 'pr-6'}">${val}</span>
+              `).join('')}
+            </div>
+          </div>
+          <div style="border-top:1px solid rgba(0,0,0,0.06)">
+            <div class="grid py-2.5" style="grid-template-columns:1fr auto 1fr auto">
+              <span class="text-[11px] text-gray-400">Design Code</span>
+              <span class="text-[11px] font-bold text-[#2a2a2a] pr-6">${product.designCode}</span>
+              <span class="text-[11px] text-gray-400">Gross Weight</span>
+              <span class="text-[11px] font-bold text-[#2a2a2a] text-right">${product.grossWeight}</span>
+            </div>
+          </div>
+          <p class="text-[11px] text-gray-400 leading-relaxed pb-2" style="border-top:1px solid rgba(0,0,0,0.06);padding-top:10px">${product.shortDescription}</p>
+        </div>`;
+      }
+
+      function renderProductHeader() {
+        return `<div class="px-4 pt-3 pb-1">
+          <h1 class="font-semibold text-[#1a1a1a] leading-snug tracking-tight" style="font-size:14px">${product.name}</h1>
+          <div class="flex items-center gap-2 mt-1.5">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold" style="background:rgba(191,14,35,0.06);color:#BF0E23;border:1px solid rgba(191,14,35,0.15)">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Available on Request
+            </span>
+          </div>
+        </div>`;
+      }
+
+      function renderProductInfo() {
+        return `<div class="px-5 pt-4 pb-2">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex-1"><div class="flex p-[3px] rounded-full"><button class="flex-1 py-1.5 px-3 rounded-full text-[10px] font-bold tracking-wide" style="background:#fff;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.08)">Product Details</button></div></div>
+            ${renderShareBtn()}
+          </div>
+          ${renderProductDetailsTab()}
+        </div>`;
+      }
+
+      function renderCustomisation() {
+        return `<div class="px-4 py-4 section-gold-bg">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-0.5 h-3.5 rounded-full shrink-0" style="background:linear-gradient(to bottom, #d4a843, #b8860b)"></div>
+            <span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#8a6e3a">Customise</span>
+            <span class="ml-auto text-[8px] font-semibold tracking-wide px-1.5 py-0.5 rounded-full" style="background:rgba(184,134,11,0.08);color:#b8860b;border:1px solid rgba(184,134,11,0.15)">PERSONALISE YOUR PIECE</span>
+          </div>
+          <div class="mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-[8px] font-bold tracking-[0.14em] uppercase" style="color:#b8a080">Size</p>
+              <button onclick="state.sizeChartOpen=true;render()" class="flex items-center gap-0.5 text-[8px] font-semibold text-[#8a6e3a] underline underline-offset-2 tracking-wide">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#8a6e3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                Size Chart
+              </button>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              ${product.sizes.map(s => `<button onclick="state.selectedSize='${s}';render()" class="px-3.5 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 active:scale-95 ${pillClass(state.selectedSize === s)}">${s}</button>`).join('')}
+            </div>
+          </div>
+          <div class="mb-4">
+            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Gross Weight</p>
+            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-semibold pill-selected">${product.grossWeight}</span>
+          </div>
+          <div class="mb-4">
+            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Metal Colour</p>
+            <div class="flex items-center gap-4">
+              ${metalColours.map(c => {
+                const sel = state.metalColour === c.id;
+                return `<button onclick="state.metalColour='${c.id}';render()" class="flex flex-col items-center gap-1 transition-all duration-200">
+                  <div class="rounded-full" style="width:28px;height:28px;background:${c.gradient};box-shadow:${sel ? `0 0 0 2px #fdfcf8, 0 0 0 3.5px ${c.ring}` : '0 1px 4px rgba(0,0,0,0.15)'};transform:${sel ? 'scale(1.08)' : 'scale(1)'}"></div>
+                  <span class="text-[8px] font-semibold" style="color:${sel ? '#3c3c3c' : '#b8a080'}">${c.label}</span>
+                </button>`;
+              }).join('')}
+            </div>
+          </div>
+          <div class="mb-4">
+            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Gold Finish</p>
+            <div class="flex items-center gap-1.5">
+              ${karatOptions.map(k => `<button onclick="state.karat='${k}';render()" class="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide transition-all duration-200 ${pillClass(state.karat === k)}">${k}</button>`).join('')}
+            </div>
+          </div>
+          <div class="mb-4">
+            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Diamond Shape</p>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              ${diamondShapes.map(s => {
+                const sel = state.diamondShape === s.id;
+                return `<button onclick="state.diamondShape='${s.id}';render()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 ${pillClass(sel)}">${diamondShapeSvg(s.id, sel)} ${s.label}</button>`;
+              }).join('')}
+            </div>
+          </div>
+          <div class="mb-4">
+            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Diamond Size</p>
+            <div class="flex items-center gap-1.5">
+              ${diamondSizes.map(d => `<button onclick="state.diamondSize='${d}';render()" class="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide transition-all duration-200 ${pillClass(state.diamondSize === d)}">${d}</button>`).join('')}
+            </div>
+          </div>
+        </div>`;
+      }
+
+      function renderDelivery() {
+        const canCheck = state.pincode.length === 6;
+        return `<div class="px-5 py-5 section-delivery-bg">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-1 h-4 rounded-full shrink-0" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
+            <div class="delivery-heading-anim">
+              <span class="truck-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
+              <span class="truck-text text-[10px] font-bold tracking-[0.18em] uppercase" style="color:#d30b39">Delivery Details</span>
+            </div>
+          </div>
+          <div class="flex items-center rounded-2xl overflow-hidden mb-3" style="background:rgba(255,255,255,0.85);border:1px solid rgba(211,11,57,0.15);box-shadow:0 2px 12px rgba(211,11,57,0.06);backdrop-filter:blur(8px)">
+            <button class="flex items-center gap-1.5 pl-4 pr-3 py-3.5 shrink-0" style="border-right:1px solid rgba(211,11,57,0.12)">
+              <span class="text-lg leading-none">\uD83C\uDDEE\uD83C\uDDF3</span>
+              <span class="text-sm font-semibold" style="color:#3c3c3c">IN</span>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <input type="tel" maxlength="6" value="${state.pincode}" oninput="state.pincode=this.value.replace(/\\D/g,'');state.pincodeChecked=false;render()" placeholder="Enter pincode" class="flex-1 px-4 py-3.5 text-sm font-medium outline-none bg-transparent placeholder-gray-400" style="color:#3c3c3c" />
+            <div class="pr-2.5 shrink-0">
+              <button onclick="if(state.pincode.length===6){state.pincodeChecked=true;render()}" class="text-[10px] font-bold whitespace-nowrap rounded-lg transition-all duration-200" style="padding:6px 10px;${canCheck ? 'background:#d30b39;color:#fff;border:none' : 'background:transparent;color:#ccc;border:1px solid #e0e0e0'}">CHECK</button>
+            </div>
+          </div>
+          ${state.pincodeChecked ? `<div class="flex items-center gap-2 mb-4 px-3 py-2.5 rounded-xl bg-green-50" style="border:1px solid rgba(46,125,50,0.2)">
+            <svg width="14" height="14" fill="none" stroke="#2E7D32" stroke-width="2.5" stroke-linecap="round"><path d="M3 7l3.5 3.5L13 4"/></svg>
+            <p class="text-[11px] font-semibold text-green-700">Delivery available to ${state.pincode}</p>
+          </div>` : ''}
+          <div class="flex items-start gap-2.5 p-3 rounded-2xl" style="background:rgba(255,255,255,0.6);border:1px solid rgba(211,11,57,0.1)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#d30b39" stroke="none" class="shrink-0 mt-0.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <p class="text-[11px] text-gray-600 leading-relaxed">${product.delivery.estimate}</p>
+          </div>
+          <div class="mt-4 grid grid-cols-5 gap-1.5">
+              ${trustBadges.map((b, i) => `<div class="flex flex-col items-center gap-1.5 py-2.5 rounded-xl text-center" style="background:${b.bg}"><span class="w-6 h-6 rounded-full flex items-center justify-center trust-anim-${i}" style="background:${b.iconBg}">${b.icon}</span><span class="text-[7px] font-bold leading-tight px-0.5" style="color:${b.color}">${b.label}</span></div>`).join('')}
+          </div>
+        </div>`;
+      }
+
+      function renderBrandImage() {
+        return `<div class="relative w-full overflow-hidden" style="aspect-ratio:16/10;max-height:70vh"><img src="prd 1.webp" alt="Beyon brand" class="w-full h-full object-cover block" loading="lazy" /></div>`;
+      }
+
+      function renderRecommendationCard(item) {
+        return `<div class="flex flex-col gap-2">
+          <div class="relative overflow-hidden rounded-2xl" style="aspect-ratio:1/1;background:#fff;border:1px solid #ECEBE8">
+            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" draggable="false" loading="lazy" />
+            <button onclick="toggleWishlist(this)" class="absolute top-2.5 right-2.5 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-transform active:scale-90" aria-label="Wishlist">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+          <div class="px-0.5">
+            <p class="text-[11px] font-medium text-[#1a1a1a] leading-tight truncate">${item.name}</p>
+            <p class="text-[12px] font-bold text-[#3c3c3c] mt-0.5">${formatPrice(item.price)}</p>
+          </div>
+        </div>`;
+      }
+
+      function scrollToStack() {
+        document.querySelector('.stack-it-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function renderStackIt() {
+        return `<div class="stack-it-section w-full py-8 px-4">
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="w-1 h-5 rounded-full" style="background:linear-gradient(to bottom, #f05060, #DE2438)"></div>
+            <h2 class="text-[11px] font-bold tracking-[0.2em] uppercase" style="color:#DE2438">Stack It With Below Products</h2>
+          </div>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-5">${recommendations.map(renderRecommendationCard).join('')}</div>
+        </div>`;
+      }
+
+      function renderFAQ() {
+        const faqs = [
+          { tag: 'IS IT REAL?', q: 'Are laboratory-grown diamonds real?', a: 'Yes. Laboratory‑grown diamonds are pure carbon diamonds with the same brilliance, hardness and structure as mined diamonds—only the origin is different.' },
+          { tag: 'NEXT DAY DELIVERY', q: 'How long does delivery take?', a: 'Orders placed before 12PM from metros are delivered by the next day. Standard delivery for other locations takes 2-7 business days.' },
+          { tag: 'CERTIFICATION', q: 'What is your authenticity certificate?', a: "Authenticity certificate by Titan Company confirms your jewellery's key specs like laboratory-grown diamond details and a unique SKU ID, so you know exactly what you purchased." },
+          { tag: 'BIS/HUID HALLMARK - GOLD', q: 'What does gold hallmark mean?', a: 'Hallmarking verifies gold purity and identification (like BIS/HUID where applicable). It confirms the metal, not the diamond. Laboratory-grown diamond details are covered in the authenticity certificate by Titan Company.' },
+          { tag: 'LGD IS NOT CZ', q: 'Is it the same as CZ?', a: 'No. Cubic zirconia and moissanite are simulants. Laboratory‑grown diamonds are real diamonds made of carbon and test like mined diamonds for hardness and sparkle.' },
+          { tag: 'NO FADING', q: 'Do LGDs fade over time?', a: 'No. Their color and sparkle are intrinsic to the crystal, not a coating. With normal wear and cleaning, they retain brilliance like mined diamonds.' },
+          { tag: 'INCLUSIONS', q: 'Are laboratory-grown diamonds always flawless?', a: 'Not always. Like mined diamonds, laboratory‑grown diamonds can have inclusions from the growth process. Quality details are shared so you know the exact grade.' },
+          { tag: 'GOLD KARAT', q: 'What does 14kt vs 18kt mean?', a: "It's gold purity: 14kt is 58.5% gold, 18kt is 75%. Choose 18kt for richer colour, 14kt for stronger daily wear." },
+          { tag: 'RETURNS & EXCHANGES', q: 'What is the return policy for jewellery?', a: 'Returns are accepted within 7 days for unworn items in their original packaging. Custom and engraved pieces are non-returnable.' }
+        ];
+        return `<div class="w-full py-8 px-4">
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="w-1 h-5 rounded-full" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
+            <h2 class="text-[11px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Frequently Asked Questions</h2>
+          </div>
+          <div class="space-y-2">
+            ${faqs.map((f, i) => `<div class="rounded-2xl overflow-hidden" style="border:1px solid rgba(0,0,0,0.06)">
+              <button onclick="toggleFaq(${i}, this)" class="w-full flex items-center justify-between px-4 py-3.5 text-left transition-colors" style="background:rgba(211,11,57,0.02)">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="text-[8px] font-bold tracking-[0.12em] uppercase px-2 py-0.5 rounded-full shrink-0" style="background:rgba(211,11,57,0.08);color:#d30b39">${f.tag}</span>
+                  <span class="text-[11px] font-semibold text-[#2a2a2a] truncate">${f.q}</span>
+                </div>
+                <svg class="shrink-0 ml-2 transition-transform duration-200" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="faq-body hidden px-4 pb-3.5 pt-1" style="background:rgba(211,11,57,0.02)">
+                <p class="text-[11px] text-gray-500 leading-relaxed">${f.a}</p>
+              </div>
+            </div>`).join('')}
+          </div>
+        </div>`;
+      }
+
+      function renderMobileGallery() {
+        return `<div class="relative w-full select-none">
+          <div class="hidden md:flex flex-col gap-2.5 absolute left-4 top-4 z-10">
+            ${product.images.map((img, i) => `<button onclick="state.currentImageIdx=${i};render()" class="w-16 h-16 rounded-2xl overflow-hidden border-2 transition-all duration-200 ${i === state.currentImageIdx ? 'border-[#3c3c3c] scale-105 shadow-md' : 'border-white/80 opacity-55 hover:opacity-80'}"><img src="${img}" alt="" class="w-full h-full object-cover" /></button>`).join('')}
+          </div>
+          <div class="relative overflow-hidden md:rounded-[2rem] bg-white cursor-zoom-in" style="aspect-ratio:1/1;border:1px solid #ECEBE8" onclick="openLightbox(state.currentImageIdx)" id="mobileGallerySwipe">
+            ${product.images.map((img, i) => `<img src="${img}" alt="Product view ${i+1}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500" style="opacity:${i === state.currentImageIdx ? 1 : 0}" draggable="false" />`).join('')}
+            ${tagVariants[state.currentImageIdx] ? `<div onclick="event.stopPropagation()">${renderTag(tagVariants[state.currentImageIdx])}</div>` : ''}
+            <button onclick="event.stopPropagation();state.currentImageIdx=(state.currentImageIdx-1+product.images.length)%product.images.length;render()" class="hidden md:flex absolute left-24 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full items-center justify-center shadow-lg backdrop-blur-sm active:scale-95" aria-label="Previous"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button onclick="event.stopPropagation();state.currentImageIdx=(state.currentImageIdx+1)%product.images.length;render()" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full items-center justify-center shadow-lg backdrop-blur-sm active:scale-95" aria-label="Next"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+            <button onclick="event.stopPropagation();toggleWishlist(this)" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center active:scale-90" style="background:rgba(255,255,255,0.9);backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.1)" aria-label="Wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+            <button onclick="event.stopPropagation();scrollToStack()" class="md:hidden absolute bottom-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1.5 rounded-full active:scale-95" style="background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.1);border:1px solid #ECEBE8">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              <span class="text-[9px] font-bold tracking-wider uppercase text-[#3c3c3c]">Stack It</span>
+            </button>
+            <div class="md:hidden absolute bottom-3 left-3 z-10 flex items-center gap-[5px]">
+              ${product.images.map((_, i) => `<button onclick="event.stopPropagation();state.currentImageIdx=${i};render()" class="rounded-full transition-all duration-300" style="width:${i === state.currentImageIdx ? '14px' : '5px'};height:5px;background:${i === state.currentImageIdx ? 'rgba(60,60,60,0.7)' : 'rgba(60,60,60,0.2)'}"></button>`).join('')}
+            </div>
+          </div>
+        </div>`;
+      }
+
+      function renderDesktopGrid() {
+        return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          ${product.images.slice(0, 4).map((img, i) => `<div class="relative overflow-hidden rounded-md cursor-zoom-in group" style="aspect-ratio:1/1;background:#fff;border:1px solid #ECEBE8" onclick="openLightbox(${i})">
+            <img src="${img}" alt="Product view ${i+1}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" draggable="false" loading="lazy" />
+            ${tagVariants[i] ? renderTag(tagVariants[i]) : ''}
+            ${i === 1 ? `<button onclick="event.stopPropagation();scrollToStack()" class="absolute bottom-3 left-3 z-10 flex items-center gap-1 px-2.5 py-1.5 rounded-full active:scale-95 hover:scale-105" style="background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.1);border:1px solid #ECEBE8"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><span class="text-[9px] font-bold tracking-wider uppercase text-[#3c3c3c]">Stack It</span></button>` : ''}
+            <div class="absolute bottom-3 right-3 w-8 h-8 bg-white/85 backdrop-blur-sm rounded-full flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+          </div>`).join('')}
+        </div>`;
+      }
+
+      function renderAppBanner() {
+        if (state.appBannerDismissed) return '';
+        return `<div class="lg:hidden app-banner w-full py-1.5 px-3 flex items-center gap-2.5">
+          <button onclick="dismissAppBanner()" class="shrink-0 flex items-center justify-center w-4 h-4 rounded-full" style="background:rgba(0,0,0,0.05)">
+            <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <img src="app icon.png" alt="beYon" class="w-7 h-7 rounded-lg shrink-0 object-contain" style="border:1px solid rgba(0,0,0,0.06)" />
+          <div class="flex flex-col min-w-0">
+            <span class="text-[10px] font-bold text-[#1a1a1a] tracking-tight">Get the beYon App</span>
+            <span class="text-[8px] text-gray-400 tracking-wide">Exclusive Coupons & Early Access</span>
+          </div>
+          <button class="ml-auto shrink-0 px-3 py-1 rounded-full text-[8px] font-bold tracking-wider uppercase" style="background:#d30b39;color:#fff">Install</button>
+        </div>`;
+      }
+
+      function renderMobileBottomBar() {
+        return `<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-4" style="background:linear-gradient(to top, rgba(247,247,247,1) 70%, rgba(247,247,247,0))">
+          <div class="md:max-w-[640px] md:mx-auto">
+            <button onclick="openRequestPopup()" class="w-full flex items-center justify-center gap-2 px-7 py-3 rounded-2xl text-white font-bold text-base active:scale-[0.98] transition-transform btn-request-design" style="box-shadow:0 8px 28px rgba(44,44,44,0.3)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Request Design
+            </button>
+          </div>
+        </div>`;
+      }
+
+      function renderDesktopBottomBar() {
+        return `<div class="hidden lg:block fixed bottom-0 left-0 right-0 z-50" style="background:rgba(255,255,255,0.82);backdrop-filter:blur(20px);border-top:1px solid rgba(0,0,0,0.07);box-shadow:0 -4px 24px rgba(0,0,0,0.08)">
+          <div class="mx-auto flex items-center justify-between py-2.5" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">
+            <div class="flex items-center gap-3 min-w-0 mr-4">
+              <p class="text-sm font-semibold text-[#1a1a1a] truncate">${product.name}</p>
+              <span class="text-[11px] font-semibold px-2.5 py-1 rounded-full shrink-0" style="background:rgba(191,14,35,0.06);color:#BF0E23;border:1px solid rgba(191,14,35,0.15)">Available on Request</span>
+            </div>
+            <button onclick="openRequestPopup()" class="flex items-center justify-center gap-2.5 px-14 xl:px-20 py-2.5 rounded-xl text-white font-bold text-sm active:scale-[0.98] transition-transform whitespace-nowrap flex-shrink-0 btn-request-design" style="box-shadow:0 4px 16px rgba(44,44,44,0.25)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Request Design
+            </button>
+          </div>
+        </div>`;
+      }
+
+      function renderSizeChartModal() {
+        if (!state.sizeChartOpen) return '';
+        const sizes = [
+          ['16 INCHES', '40.6 cm', 'Choker / Collar'],
+          ['18 INCHES', '45.7 cm', 'Princess (most popular)'],
+          ['20 INCHES', '50.8 cm', 'Matinee'],
+          ['22 INCHES', '55.9 cm', 'Opera']
+        ];
+        return `<div class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center" style="background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)" onclick="state.sizeChartOpen=false;render()">
+          <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h3 class="text-sm font-bold text-[#1a1a1a] tracking-wide uppercase">Size Chart</h3>
+              <button onclick="state.sizeChartOpen=false;render()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <div class="px-6 py-4">
+              <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-3">Chain Length Guide</p>
+              <table class="w-full text-sm">
+                <thead><tr class="border-b border-gray-100"><th class="text-left py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Size</th><th class="text-left py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Length</th><th class="text-left py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Fits</th></tr></thead>
+                <tbody>${sizes.map(([size, len, fit]) => `<tr class="border-b border-gray-50"><td class="py-3 font-semibold text-[#3c3c3c] text-[12px]">${size}</td><td class="py-3 text-gray-500 text-[12px]">${len}</td><td class="py-3 text-gray-500 text-[12px]">${fit}</td></tr>`).join('')}</tbody>
+              </table>
+              <div class="mt-4 p-3 rounded-xl bg-gray-50">
+                <p class="text-[11px] text-gray-500 leading-relaxed">For pendants, <strong>18 inches</strong> (Princess length) is the most popular choice. If you prefer a snug fit at the collarbone, go with <strong>16 inches</strong>.</p>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }
+
+      function renderLightbox() {
+        if (!state.lightboxOpen) return '';
+        const idx = state.lightboxIdx;
+        return `<div class="fixed inset-0 z-[300] flex items-center justify-center" style="background:#000" onclick="closeLightbox()">
+          <div class="relative" style="width:min(100svh, 100svw);height:min(100svh, 100svw)" onclick="event.stopPropagation()" id="lightboxContainer">
+            <img src="${product.images[idx]}" alt="Product view ${idx+1}" class="w-full h-full object-cover select-none" style="animation:lbFadeIn 0.2s ease" draggable="false" />
+            <button class="absolute top-3 right-3 z-20 w-9 h-9 rounded-full flex items-center justify-center" style="background:rgba(0,0,0,0.45);backdrop-filter:blur(8px)" onclick="event.stopPropagation();closeLightbox()" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            <div class="absolute top-3 left-1/2 -translate-x-1/2 z-20"><span class="text-white text-[11px] font-semibold tracking-widest px-3 py-1 rounded-full" style="background:rgba(0,0,0,0.4);backdrop-filter:blur(6px)">${idx + 1} / ${product.images.length}</span></div>
+            <button class="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full flex items-center justify-center active:scale-90" style="background:rgba(0,0,0,0.4);backdrop-filter:blur(6px)" onclick="event.stopPropagation();lightboxPrev()" aria-label="Previous"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button class="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full flex items-center justify-center active:scale-90" style="background:rgba(0,0,0,0.4);backdrop-filter:blur(6px)" onclick="event.stopPropagation();lightboxNext()" aria-label="Next"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5">
+              ${product.images.map((_, i) => `<button onclick="event.stopPropagation();state.lightboxIdx=${i};render()" class="rounded-full transition-all duration-300" style="width:${i === idx ? '20px' : '6px'};height:6px;background:${i === idx ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.35)'}"></button>`).join('')}
+            </div>
+          </div>
+        </div>`;
+      }
+
+      function render() {
+        document.getElementById('root').innerHTML = `
+          <div class="min-h-screen" style="background:#f7f7f7">
+            <div class="lg:hidden">
+              ${renderAppBanner()}
+              <div class="md:max-w-[680px] md:mx-auto">
+                ${renderMobileGallery()}
+                <div class="mt-2 mx-3 sm:mx-4">${renderProductHeader()}</div>
+                <div class="mt-1 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm bg-white">${renderProductInfo()}</div>
+                <div class="mt-3 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderCustomisation()}</div>
+                <div class="mt-3 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderDelivery()}</div>
+                <div class="mt-3 overflow-hidden">${renderBrandImage()}</div>
+                ${renderStackIt()}
+                ${renderFAQ()}
+                <div class="h-28"></div>
+              </div>
+            </div>
+            <div class="hidden lg:block">
+              <div class="mx-auto pt-6" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px);display:grid;grid-template-columns:minmax(0, 1fr) clamp(360px, 30%, 440px);gap:clamp(20px, 2.5vw, 40px)">
+                <div class="pb-8 min-w-0">${renderDesktopGrid()}</div>
+                <div class="sticky self-start space-y-4 pb-24" style="top:73px">
+                  <div>${renderProductHeader()}</div>
+                  <div class="bg-white rounded-3xl shadow-sm overflow-hidden">${renderProductInfo()}</div>
+                  <div class="rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderCustomisation()}</div>
+                  <div class="rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderDelivery()}</div>
+                </div>
+              </div>
+              <div class="w-full">${renderBrandImage()}</div>
+              <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderStackIt()}</div>
+              <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderFAQ()}</div>
+              <div class="h-24"></div>
+            </div>
+            ${renderMobileBottomBar()}
+            ${renderDesktopBottomBar()}
+            ${renderLightbox()}
+            ${renderSizeChartModal()}
+          </div>`;
+        initSwipe();
+      }
+
+      // Actions
+      function toggleFaq(idx, btn) {
+        const wrapper = btn.parentElement;
+        const body = wrapper.querySelector('.faq-body');
+        const chevron = btn.querySelector('svg');
+        if (body.classList.contains('hidden')) { body.classList.remove('hidden'); chevron.style.transform = 'rotate(180deg)'; }
+        else { body.classList.add('hidden'); chevron.style.transform = ''; }
+      }
+      function dismissAppBanner() { state.appBannerDismissed = true; render(); }
+      function openLightbox(idx) { state.lightboxOpen = true; state.lightboxIdx = idx; document.body.style.overflow = 'hidden'; render(); }
+      function closeLightbox() { state.lightboxOpen = false; document.body.style.overflow = ''; render(); }
+      function lightboxPrev() { state.lightboxIdx = (state.lightboxIdx - 1 + product.images.length) % product.images.length; render(); }
+      function lightboxNext() { state.lightboxIdx = (state.lightboxIdx + 1) % product.images.length; render(); }
+
+      function toggleWishlist(btn) {
+        const svg = btn.querySelector('svg');
+        const isFilled = svg.getAttribute('fill') !== 'none';
+        svg.setAttribute('fill', isFilled ? 'none' : '#d30b39');
+        svg.setAttribute('stroke', isFilled ? '#3c3c3c' : '#d30b39');
+      }
+
+      async function doShare() {
+        if (navigator.share && window.innerWidth < 1024) {
+          try { await navigator.share({ title: document.title, url: location.href }); } catch {}
+        } else {
+          await navigator.clipboard.writeText(location.href);
+          showPdpToast('Link Copied');
+          state.shared = true; render();
+          setTimeout(() => { state.shared = false; render(); }, 1800);
+        }
+      }
+
+      function showPdpToast(msg) {
+        const t = document.getElementById('pdpToast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2200);
+      }
+
+      // ─── Request Design Popup ───
+      const COUNTRY_CODES = [
+        { code: '+91', flag: '🇮🇳', name: 'India' },
+        { code: '+1', flag: '🇺🇸', name: 'USA' },
+        { code: '+44', flag: '🇬🇧', name: 'UK' },
+        { code: '+971', flag: '🇦🇪', name: 'UAE' },
+        { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
+        { code: '+49', flag: '🇩🇪', name: 'Germany' },
+        { code: '+65', flag: '🇸🇬', name: 'Singapore' },
+        { code: '+61', flag: '🇦🇺', name: 'Australia' },
+        { code: '+60', flag: '🇲🇾', name: 'Malaysia' },
+        { code: '+974', flag: '🇶🇦', name: 'Qatar' },
+        { code: '+968', flag: '🇴🇲', name: 'Oman' },
+        { code: '+965', flag: '🇰🇼', name: 'Kuwait' },
+      ];
+
+      function openRequestPopup() {
+        state.requestPopupOpen = true;
+        document.body.style.overflow = 'hidden';
+        renderRequestPopup();
+      }
+
+      function closeRequestPopup() {
+        state.requestPopupOpen = false;
+        document.body.style.overflow = '';
+        document.getElementById('requestDesignPopup').innerHTML = '';
+      }
+
+      function renderRequestPopup() {
+        document.getElementById('requestDesignPopup').innerHTML = `
+          <div class="rd-overlay" onclick="closeRequestPopup()">
+            <div class="rd-modal" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between mb-6">
+                <div>
+                  <h3 class="text-base font-bold text-[#1a1a1a]">Request This Design</h3>
+                  <p class="text-xs text-gray-400 mt-0.5">Fill in your details and we'll get back to you</p>
+                </div>
+                <button onclick="closeRequestPopup()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+              <form id="requestForm" onsubmit="submitRequestForm(event)" novalidate>
+                <div class="space-y-4">
+                  <div>
+                    <input type="text" id="rdName" class="rd-input" placeholder="Full Name *" autocomplete="name" />
+                    <p class="rd-error" id="errName">Please enter your full name</p>
+                  </div>
+                  <div>
+                    <input type="email" id="rdEmail" class="rd-input" placeholder="Email ID *" autocomplete="email" />
+                    <p class="rd-error" id="errEmail">Please enter a valid email</p>
+                  </div>
+                  <div>
+                    <div class="flex gap-2">
+                      <select id="rdCountryCode" class="rd-input" style="width:110px;flex-shrink:0;padding-right:8px">
+                        ${COUNTRY_CODES.map(c => `<option value="${c.code}">${c.flag} ${c.code}</option>`).join('')}
+                      </select>
+                      <div class="flex-1">
+                        <input type="tel" id="rdPhone" class="rd-input" placeholder="Phone Number *" maxlength="10" autocomplete="tel" />
+                      </div>
+                    </div>
+                    <p class="rd-error" id="errPhone">Please enter a valid phone number</p>
+                  </div>
+                  <div>
+                    <input type="text" id="rdCity" class="rd-input" placeholder="Enter City *" autocomplete="address-level2" />
+                    <p class="rd-error" id="errCity">Please enter your city</p>
+                  </div>
+                </div>
+                <button type="submit" class="w-full mt-6 py-3.5 rounded-xl text-white font-bold text-sm btn-request-design active:scale-[0.98] transition-transform" style="box-shadow:0 4px 16px rgba(44,44,44,0.2)">
+                  Submit Request
+                </button>
+              </form>
+              <p class="text-[10px] text-gray-400 text-center mt-4 leading-relaxed">By submitting, you agree to be contacted regarding this design request.</p>
+            </div>
+          </div>`;
+      }
+
+      function submitRequestForm(e) {
+        e.preventDefault();
+        let valid = true;
+        const name = document.getElementById('rdName').value.trim();
+        const email = document.getElementById('rdEmail').value.trim();
+        const phone = document.getElementById('rdPhone').value.trim();
+        const city = document.getElementById('rdCity').value.trim();
+
+        // Reset
+        document.querySelectorAll('.rd-input').forEach(el => el.classList.remove('error'));
+        document.querySelectorAll('.rd-error').forEach(el => el.classList.remove('show'));
+
+        if (!name) { document.getElementById('rdName').classList.add('error'); document.getElementById('errName').classList.add('show'); valid = false; }
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('rdEmail').classList.add('error'); document.getElementById('errEmail').classList.add('show'); valid = false; }
+        if (!phone || !/^\d{7,10}$/.test(phone)) { document.getElementById('rdPhone').classList.add('error'); document.getElementById('errPhone').classList.add('show'); valid = false; }
+        if (!city) { document.getElementById('rdCity').classList.add('error'); document.getElementById('errCity').classList.add('show'); valid = false; }
+
+        if (!valid) return;
+
+        closeRequestPopup();
+        showPdpToast('Request submitted successfully!');
+      }
+
+      // Swipe handling (gallery + lightbox unified)
+      let swipeStartX = 0, swipeStartY = 0, swipeTarget = null;
+
+      function initSwipe() {
+        const el = document.getElementById('mobileGallerySwipe');
+        if (!el || el._swipe) return;
+        el._swipe = true;
+        el.addEventListener('touchstart', e => { swipeStartX = e.touches[0].clientX; swipeTarget = 'gallery'; }, { passive: true });
+        el.addEventListener('touchend', e => {
+          if (swipeTarget !== 'gallery') return;
+          const dx = e.changedTouches[0].clientX - swipeStartX;
+          if (Math.abs(dx) > 40) {
+            state.currentImageIdx = (state.currentImageIdx + (dx > 0 ? -1 : 1) + product.images.length) % product.images.length;
+            render();
+          }
+        });
+      }
+
+      document.addEventListener('touchstart', e => {
+        if (!state.lightboxOpen) return;
+        swipeStartX = e.touches[0].clientX;
+        swipeStartY = e.touches[0].clientY;
+        swipeTarget = 'lightbox';
+      }, { passive: true });
+
+      document.addEventListener('touchend', e => {
+        if (swipeTarget !== 'lightbox') return;
+        const dx = e.changedTouches[0].clientX - swipeStartX;
+        const dy = e.changedTouches[0].clientY - swipeStartY;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+          dx > 0 ? lightboxPrev() : lightboxNext();
+        }
+        swipeTarget = null;
+      });
+
+      window.addEventListener('keydown', e => {
+        if (!state.lightboxOpen) return;
+        if (e.key === 'ArrowLeft') lightboxPrev();
+        else if (e.key === 'ArrowRight') lightboxNext();
+        else if (e.key === 'Escape') closeLightbox();
+      });
+
+      render();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — Beyon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#BF0E23', 'primary-dark': '#9B0B1C',
+            dark: '#2C2C2C', 'warm-grey': '#B0ABAB',
+            cream: '#EFEAE3', gold: '#C5A575', 'soft-grey': '#F6F6F6',
+          },
+          fontFamily: { sans: ['Outfit', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Outfit',sans-serif;background:#EFEAE3;color:#2C2C2C;-webkit-font-smoothing:antialiased}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#D5D5D5;border-radius:10px}
+
+    .overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+    .overlay.active{opacity:1;pointer-events:auto}
+    .drawer{position:fixed;z-index:50;background:#fff;overflow-y:auto;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .35s}
+    @media(max-width:767px){.drawer{bottom:0;left:0;right:0;border-radius:28px 28px 0 0;transform:translateY(100%);max-height:92vh}.drawer.open{transform:translateY(0)}}
+    @media(min-width:768px){.drawer{top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);border-radius:28px;width:540px;max-height:85vh;opacity:0;pointer-events:none;box-shadow:0 32px 80px rgba(0,0,0,.2)}.drawer.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto}}
+
+    .toast{position:fixed;top:28px;left:50%;transform:translateX(-50%) translateY(-160%);z-index:100;padding:14px 28px;border-radius:16px;font-weight:500;font-size:14px;box-shadow:0 12px 40px rgba(0,0,0,.12);transition:transform .45s cubic-bezier(.4,0,.2,1);white-space:nowrap;backdrop-filter:blur(8px)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.success{background:rgba(232,245,233,.95);color:#2E7D32}.toast.error{background:rgba(255,240,240,.95);color:#BF0E23}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+    @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes badgeTicker{0%{transform:translate(0)}to{transform:translate(-50%)}}
+    .badge-ticker-track{align-items:center;width:max-content;animation:27s linear infinite badgeTicker;display:flex}
+    .badge-ticker-track:hover{animation-play-state:paused}
+    .anim{animation:fadeUp .5s ease forwards;opacity:0}
+    .anim-scale{animation:scaleIn .4s ease forwards;opacity:0}
+
+    .header-bar{background:#ffffff;border-bottom:1px solid rgba(197,165,117,.15);position:sticky;top:0;z-index:30}
+    .header-bar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(197,165,117,.3),transparent)}
+    .brand-text{background:linear-gradient(135deg,#2C2C2C,#555,#2C2C2C);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradient-shift 4s ease infinite}
+    .header-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1.5px solid rgba(197,165,117,.2);transition:all .3s;cursor:pointer}
+    .header-icon:hover{border-color:#BF0E23;background:rgba(191,14,35,.04);transform:scale(1.05)}
+    .header-icon:hover svg{stroke:#BF0E23}
+
+    .card{background:#fff;border:1px solid #E5DDD3;border-radius:16px;transition:all .3s;box-shadow:0 2px 8px rgba(197,165,117,.06)}
+    .card:hover{box-shadow:0 8px 32px rgba(197,165,117,.12);transform:translateY(-1px)}
+
+    .btn-cta{background:linear-gradient(135deg,#BF0E23 0%,#D4162E 40%,#E8334A 60%,#BF0E23 100%);background-size:200% 200%;animation:gradient-shift 3s ease infinite;color:#fff;font-weight:700;border:none;cursor:pointer;border-radius:16px;transition:all .3s;letter-spacing:1px;box-shadow:0 4px 20px rgba(191,14,35,.3),inset 0 1px 0 rgba(255,255,255,.2),0 0 0 1px rgba(191,14,35,.1);position:relative;overflow:hidden}
+    .btn-cta::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .6s}
+    .btn-cta:hover::before{left:100%}
+    .btn-cta:hover{box-shadow:0 8px 32px rgba(191,14,35,.4);transform:translateY(-2px)}
+    .btn-cta:active{transform:scale(.97)}
+
+    .btn-grey{background:linear-gradient(135deg,#6B6B6B 0%,#888 40%,#999 60%,#6B6B6B 100%);background-size:200% 200%;animation:gradient-shift 4s ease infinite;color:#fff;font-weight:600;border:none;cursor:pointer;border-radius:14px;transition:all .3s;letter-spacing:.5px;box-shadow:0 4px 16px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.2);position:relative;overflow:hidden}
+    .btn-grey::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);transition:left .5s}
+    .btn-grey:hover::before{left:100%}
+    .btn-grey:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+
+    .btn-outline-metal{border:2px solid transparent;border-radius:14px;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#C5A575,#E8D8BE,#C5A575) border-box;color:#2C2C2C;font-weight:600;cursor:pointer;transition:all .3s}
+    .btn-outline-metal:hover{background:linear-gradient(#FFFBF5,#FFFBF5) padding-box,linear-gradient(135deg,#BF0E23,#E8334A,#BF0E23) border-box;transform:translateY(-1px)}
+
+    input:focus,select:focus,textarea:focus{outline:none;border-color:#C5A575 !important;box-shadow:0 0 0 3px rgba(197,165,117,.12)}
+    .input-field{width:100%;padding:12px 16px;border:1.5px solid #E0D8CE;border-radius:14px;font-size:14px;font-family:inherit;color:#2C2C2C;transition:all .3s;background:#fff}
+    .input-field::placeholder{color:#B0ABAB}
+    .input-error{border-color:#BF0E23 !important}
+    .error-text{color:#BF0E23;font-size:12px;margin-top:4px;font-weight:500}
+
+    .sticky-cta{box-shadow:0 -6px 32px rgba(197,165,117,.12)}
+
+    .toggle{position:relative;width:48px;height:26px;border-radius:13px;background:#E0E0E0;cursor:pointer;transition:background .3s}
+    .toggle.on{background:#BF0E23}
+    .toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .3s;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+    .toggle.on::after{transform:translateX(22px)}
+
+    .addr-tab{padding:8px 20px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E0D8CE;transition:all .2s;letter-spacing:.5px}
+    .addr-tab.active{background:#BF0E23;color:#fff;border-color:#BF0E23}
+    .addr-tab:not(.active):hover{border-color:#C5A575;background:#FFFBF5}
+
+    .pay-option{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1.5px solid #E5DDD3;border-radius:16px;cursor:pointer;transition:all .2s}
+    .pay-option:hover{border-color:#C5A575;background:#FFFBF5}
+    .pay-option.selected{border-color:#BF0E23;background:#FFF5F5}
+    .pay-radio{width:20px;height:20px;border-radius:50%;border:2px solid #D0D0D0;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+    .pay-option.selected .pay-radio{border-color:#BF0E23}
+    .pay-option.selected .pay-radio::after{content:'';width:10px;height:10px;border-radius:50%;background:#BF0E23}
+
+    /* UPI horizontal */
+    .upi-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border:1.5px solid #E5DDD3;border-radius:16px;cursor:pointer;transition:all .2s;min-width:72px;flex:1}
+    .upi-item:hover{border-color:#C5A575;background:#FFFBF5;transform:translateY(-2px)}
+    .upi-item.selected{border-color:#BF0E23;background:#FFF5F5}
+    .upi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+
+    .section-title{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+
+    /* progress steps */
+    .step-done{background:#E8F5E9;color:#2E7D32;border:2px solid #A5D6A7}
+    .step-active{background:linear-gradient(135deg,#BF0E23,#D4162E);color:#fff;border:2px solid #BF0E23;box-shadow:0 0 0 4px rgba(191,14,35,.15)}
+    .step-pending{background:#F0F0F0;color:#B0ABAB;border:2px solid #E0E0E0}
+    .step-line-done{background:#A5D6A7}
+    .step-line-pending{background:#E0E0E0}
+
+    /* ── MOBILE: reduce all fonts by 2px ── */
+    @media(max-width:767px){
+      body{font-size:12px}
+      h1,h2,h3,.text-lg{font-size:14px !important}
+      .text-base{font-size:13px !important}
+      .text-sm{font-size:11px !important}
+      .text-xs{font-size:10px !important}
+      .text-\[11px\]{font-size:9px !important}
+      .text-\[10px\]{font-size:8px !important}
+      .text-\[9px\]{font-size:8px !important}
+      .section-title{font-size:14px}
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-24 lg:pb-0">
+
+  <div id="toast" class="toast" style="display:none"></div>
+
+  <!-- ═══ HEADER ═══ -->
+  <nav class="header-bar backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="header-icon" onclick="window.location.href='cart.html'" title="Back to Bag">
+        <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9H4M8 5l-4 4 4 4"/></svg>
+      </div>
+      <div class="flex items-center gap-3">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="3"/><path d="M1 10h22"/><path d="M6 15h4"/>
+        </svg>
+        <h1 class="text-lg font-bold tracking-[.2em] brand-text">CHECKOUT</h1>
+      </div>
+      <div class="header-icon" title="Wishlist">
+        <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+
+    <!-- Progress: Bag → Checkout → Pay -->
+    <div class="flex items-center justify-center gap-0 mb-8 anim">
+      <div class="flex items-center gap-2">
+        <span class="w-7 h-7 rounded-full step-done flex items-center justify-center"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 7l2.5 2.5L11 4"/></svg></span>
+        <span class="text-xs font-semibold text-green-600">Bag</span>
+      </div>
+      <div class="w-10 sm:w-16 h-0.5 step-line-done mx-1"></div>
+      <div class="flex items-center gap-2">
+        <span class="w-7 h-7 rounded-full step-active flex items-center justify-center text-[11px] font-bold">2</span>
+        <span class="text-xs font-semibold text-primary">Checkout</span>
+      </div>
+      <div class="w-10 sm:w-16 h-0.5 step-line-pending mx-1"></div>
+      <div class="flex items-center gap-2">
+        <span class="w-7 h-7 rounded-full step-pending flex items-center justify-center text-[11px] font-bold">3</span>
+        <span class="text-xs font-semibold text-warm-grey">Pay</span>
+      </div>
+    </div>
+
+    <div class="lg:grid lg:grid-cols-5 lg:gap-8">
+      <!-- LEFT -->
+      <div class="lg:col-span-3 space-y-5">
+
+        <!-- ═══ ADDRESS (show only selected) ═══ -->
+        <div class="card p-5 sm:p-6 anim">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="section-title mb-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Deliver To
+            </h2>
+            <button onclick="openAddressDrawer()" class="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
+              <svg width="14" height="14" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg>
+              Add New
+            </button>
+          </div>
+          <div id="selectedAddress"></div>
+          <button onclick="openAllAddresses()" class="w-full mt-3 py-2.5 text-xs font-semibold text-warm-grey hover:text-primary transition-colors flex items-center justify-center gap-1.5 tracking-wide">
+            VIEW ALL SAVED ADDRESSES
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 3l5 5-5 5"/></svg>
+          </button>
+        </div>
+
+        <!-- ═══ PAN CARD VERIFICATION ═══ -->
+        <div class="card p-5 sm:p-6 anim" style="animation-delay:50ms" id="panSection">
+          <h2 class="section-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h4v4H6z"/><path d="M14 8h4"/><path d="M14 12h4"/><path d="M6 16h12"/></svg>
+            Verify Your Pancard
+          </h2>
+          <p class="text-xs text-warm-grey mb-5">Enter the PAN details of BEYON account to proceed to next stage.</p>
+
+          <!-- PAN State Display -->
+          <div id="panFormArea">
+            <div class="space-y-4">
+              <!-- Account Holder Name (OCR prefilled) -->
+              <div>
+                <label class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase mb-1.5 block">Account Holder Name</label>
+                <div class="relative">
+                  <input type="text" id="panName" value="RAHUL SHRAMA" placeholder="Enter name as per PAN" class="input-field pr-20" oninput="validatePanName()" />
+                  <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-bold tracking-wider px-2 py-0.5 rounded-md bg-amber-50 text-amber-600 border border-amber-200">OCR</span>
+                </div>
+
+                <p class="error-text hidden" id="errPanName"></p>
+              </div>
+
+              <!-- PAN Card Number -->
+              <div>
+                <label class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase mb-1.5 block">PAN Card Number</label>
+                <input type="text" id="panNumber" maxlength="10" placeholder="e.g. ABCDE1234F" class="input-field uppercase tracking-widest font-mono" oninput="handlePanInput(this)" />
+                <p class="error-text hidden" id="errPanNumber"></p>
+                <p class="text-[10px] text-warm-grey mt-1" id="panFormatHint">Format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)</p>
+              </div>
+            </div>
+
+            <!-- Verify Button -->
+            <button onclick="verifyPan()" id="panVerifyBtn" class="w-full mt-5 py-3.5 btn-grey text-sm tracking-wide" disabled>
+              VERIFY PAN
+            </button>
+          </div>
+
+          <!-- Loading State -->
+          <div id="panLoading" class="hidden">
+            <div class="flex flex-col items-center justify-center py-8">
+              <div class="w-12 h-12 rounded-full border-3 border-gray-200 border-t-primary animate-spin mb-4" style="border-width:3px"></div>
+              <p class="text-sm font-medium text-dark">Verifying PAN details...</p>
+              <p class="text-xs text-warm-grey mt-1">Please do not refresh the page</p>
+            </div>
+          </div>
+
+          <!-- Success State -->
+          <div id="panSuccess" class="hidden">
+            <div class="text-center py-4">
+              <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-50 flex items-center justify-center">
+                <svg width="32" height="32" fill="none" stroke="#2E7D32" stroke-width="2.5" stroke-linecap="round"><path d="M8 16l6 6L24 10"/></svg>
+              </div>
+              <p class="text-sm font-bold text-green-700 mb-1">Your Pancard Details Captured SUCCESSFULLY</p>
+              <p class="text-xs text-warm-grey">PAN verification complete. You can now proceed to payment.</p>
+            </div>
+            <div class="mt-3 p-3 rounded-xl bg-green-50 border border-green-100">
+              <div class="flex justify-between text-xs mb-1.5"><span class="text-warm-grey">Name</span><span class="font-semibold" id="panSuccessName">—</span></div>
+              <div class="flex justify-between text-xs"><span class="text-warm-grey">PAN</span><span class="font-semibold font-mono tracking-wider" id="panSuccessPan">—</span></div>
+            </div>
+          </div>
+
+          <!-- Error State -->
+          <div id="panError" class="hidden">
+            <div class="mt-4 p-4 rounded-xl bg-red-50 border border-red-100">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg width="16" height="16" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><line x1="6" y1="6" x2="10" y2="10"/><line x1="10" y1="6" x2="6" y2="10"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-primary" id="panErrorTitle">Verification Failed</p>
+                  <p class="text-xs text-warm-grey mt-0.5" id="panErrorMsg">—</p>
+                  <button onclick="retryPan()" class="mt-2 text-xs font-semibold text-primary hover:underline flex items-center gap-1" id="panRetryBtn">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 3 1 7 5 7"/><path d="M3.5 9A5 5 0 1011 3.5"/></svg>
+                    Try Again
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Name Mismatch State -->
+          <div id="panMismatch" class="hidden">
+            <div class="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg width="16" height="16" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M8 5v3"/><circle cx="8" cy="10.5" r="0.5" fill="#D97706"/></svg>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-amber-800">Name Mismatch Detected</p>
+                  <p class="text-xs text-amber-700 mt-1" id="panMismatchMsg">—</p>
+                  <div class="mt-3 p-2.5 rounded-lg bg-white/80 border border-amber-100">
+                    <div class="flex justify-between text-[11px] mb-1"><span class="text-warm-grey">Entered:</span><span class="font-medium" id="mismatchEntered">—</span></div>
+                    <div class="flex justify-between text-[11px]"><span class="text-warm-grey">PAN Record:</span><span class="font-medium" id="mismatchActual">—</span></div>
+                  </div>
+                  <div class="flex gap-2 mt-3">
+                    <button onclick="acceptMismatchName()" class="flex-1 py-2 text-[11px] font-semibold bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors">USE PAN NAME</button>
+                    <button onclick="retryPan()" class="flex-1 py-2 text-[11px] font-semibold border border-amber-300 text-amber-700 rounded-lg hover:bg-amber-50 transition-colors">EDIT & RETRY</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ NEUCOINS ═══ -->
+        <div class="card p-5 sm:p-6 anim" style="animation-delay:100ms">
+          <h2 class="section-title">
+            <img src="tata neu logo.webp" alt="NeuCoins" class="w-8 h-8 rounded-lg object-contain" />
+            Redeem NeuCoins
+          </h2>
+          <div class="bg-soft-grey rounded-2xl p-4 mb-4">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-warm-grey">Available Balance</span>
+              <span class="font-bold text-gold" id="neuBalance">500 NeuCoins</span>
+            </div>
+            <p class="text-[11px] text-warm-grey mt-1">1 NeuCoin = ₹1</p>
+          </div>
+          <div class="flex gap-2 mb-3">
+            <input type="number" id="neuInput" min="0" max="500" placeholder="Enter coins to redeem" class="input-field flex-1" oninput="validateNeuInput()" />
+            <button onclick="useMaxNeu()" class="px-5 py-3 btn-outline-metal text-xs tracking-wide">USE MAX</button>
+          </div>
+          <div id="neuMessage" class="hidden text-sm"></div>
+          <div id="neuApplied" class="hidden mt-3 p-3 bg-green-50 rounded-xl text-sm text-green-700 font-medium flex items-center justify-between">
+            <span id="neuAppliedText"></span>
+            <button onclick="removeNeu()" class="text-xs text-primary font-semibold hover:underline">Remove</button>
+          </div>
+          <button onclick="applyNeu()" id="neuApplyBtn" class="mt-3 w-full py-3 btn-grey text-sm">APPLY NEUCOINS</button>
+        </div>
+
+        <!-- ═══ PAYMENT ═══ -->
+        <div class="card p-5 sm:p-6 anim" style="animation-delay:200ms">
+          <h2 class="section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="3"/><path d="M1 10h22"/><path d="M6 15h4"/></svg>
+            Payment Methods
+          </h2>
+
+          <!-- Cards -->
+          <p class="text-xs text-warm-grey font-semibold tracking-widest uppercase mb-3">Credit / Debit Cards</p>
+          <div class="space-y-2 mb-6">
+            <div class="pay-option selected" onclick="selectPay(this,'card')">
+              <div class="pay-radio"></div>
+              <div class="flex items-center gap-3 flex-1">
+                <div class="w-10 h-7 rounded-md bg-gradient-to-r from-blue-600 to-blue-800 flex items-center justify-center"><span class="text-white text-[9px] font-bold">VISA</span></div>
+                <div><p class="text-sm font-medium">Credit / Debit Card</p><p class="text-[11px] text-warm-grey">Visa, Mastercard, Rupay, Amex</p></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- UPI horizontal -->
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-xs text-warm-grey font-semibold tracking-widest uppercase">UPI</p>
+            <p class="text-[10px] text-warm-grey flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/></svg>
+              Use UPI for secure and instant payments
+            </p>
+          </div>
+          <div class="flex gap-2 mb-6 overflow-x-auto pb-1" id="upiRow">
+            <div class="upi-item" onclick="selectUPI(this,'phonepe')">
+              <div class="upi-icon bg-purple-100 text-purple-700">Pe</div>
+              <span class="text-[11px] font-medium">PhonePe</span>
+            </div>
+            <div class="upi-item" onclick="selectUPI(this,'gpay')">
+              <div class="upi-icon bg-white border border-gray-200"><span style="background:linear-gradient(90deg,#4285F4,#EA4335,#FBBC05,#34A853);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:14px;font-weight:800">G</span></div>
+              <span class="text-[11px] font-medium">GPay</span>
+            </div>
+            <div class="upi-item" onclick="selectUPI(this,'airtel')">
+              <div class="upi-icon bg-red-50 text-red-600" style="font-size:10px">Airtel</div>
+              <span class="text-[11px] font-medium">Airtel</span>
+            </div>
+            <div class="upi-item" onclick="selectUPI(this,'amazon')">
+              <div class="upi-icon bg-gray-900 text-amber-400" style="font-size:9px">amz</div>
+              <span class="text-[11px] font-medium">Amazon</span>
+            </div>
+            <div class="upi-item" onclick="selectUPI(this,'other')">
+              <div class="upi-icon bg-green-50 text-green-700" style="font-size:9px">UPI</div>
+              <span class="text-[11px] font-medium">Other</span>
+            </div>
+          </div>
+
+          <!-- Net Banking -->
+          <p class="text-xs text-warm-grey font-semibold tracking-widest uppercase mb-3">Net Banking</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+            <div class="pay-option flex-col !gap-2 !p-3 text-center" onclick="selectPay(this,'sbi')">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center"><span class="text-blue-700 text-xs font-bold">SBI</span></div>
+              <span class="text-xs font-medium">SBI</span>
+            </div>
+            <div class="pay-option flex-col !gap-2 !p-3 text-center" onclick="selectPay(this,'hdfc')">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center"><span class="text-blue-800 text-xs font-bold">HDFC</span></div>
+              <span class="text-xs font-medium">HDFC</span>
+            </div>
+            <div class="pay-option flex-col !gap-2 !p-3 text-center" onclick="selectPay(this,'icici')">
+              <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center"><span class="text-orange-700 text-xs font-bold">ICICI</span></div>
+              <span class="text-xs font-medium">ICICI</span>
+            </div>
+            <div class="pay-option flex-col !gap-2 !p-3 text-center" onclick="selectPay(this,'axis')">
+              <div class="w-10 h-10 rounded-xl bg-pink-50 flex items-center justify-center"><span class="text-pink-700 text-xs font-bold">Axis</span></div>
+              <span class="text-xs font-medium">Axis</span>
+            </div>
+          </div>
+          <button class="w-full py-2.5 text-xs font-semibold text-primary hover:underline">View All Banks →</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Sidebar -->
+      <div class="lg:col-span-2 mt-5 lg:mt-0">
+        <div class="lg:sticky lg:top-20 space-y-4">
+          <!-- Order items -->
+          <div class="card p-5 sm:p-6">
+            <h2 class="section-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Order Items
+            </h2>
+            <div id="checkoutItems" class="space-y-3 max-h-48 overflow-y-auto"></div>
+          </div>
+
+          <!-- Price -->
+          <div class="card p-5 sm:p-6">
+            <h2 class="section-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h14a2 2 0 012 2v16l-3.5-2-3.5 2-3.5-2L8 20l-3.5-2L1 22V4a2 2 0 012-2z"/><path d="M8 8h8"/><path d="M8 12h6"/></svg>
+              Price Details
+            </h2>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between"><span class="text-warm-grey">Subtotal</span><span class="font-medium" id="ckSubtotal">₹0</span></div>
+              <div class="flex justify-between" id="ckCouponRow" style="display:none"><span class="text-green-600">Coupon Discount</span><span class="font-semibold text-green-600" id="ckCouponDisc">-₹0</span></div>
+              <div class="flex justify-between" id="ckNeuRow" style="display:none"><span class="text-amber-600">NeuCoins Discount</span><span class="font-semibold text-amber-600" id="ckNeuDisc">-₹0</span></div>
+              <div class="flex justify-between"><span class="text-warm-grey">Delivery</span><span class="font-medium text-green-600">FREE</span></div>
+              <div class="border-t border-dashed border-gray-200 pt-4 mt-4 flex justify-between items-center">
+                <span class="font-semibold text-base">Amount to Pay</span>
+                <span class="font-bold text-lg text-primary" id="ckTotal">₹0</span>
+              </div>
+            </div>
+            <button onclick="placeOrder()" class="hidden lg:flex w-full mt-6 btn-cta py-4 text-sm items-center justify-center gap-2">
+              PAY & PLACE ORDER
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/></svg>
+            </button>
+          </div>
+
+          <!-- Trust Promises -->
+          <div class="py-3 overflow-hidden border-t border-[#E5DDD3]">
+            <div class="badge-ticker-track" style="gap:16px">
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">30 Days Free Returns</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">Free Shipping in India</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">From HOUSE OF TITAN</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">Lifetime Gold Exchange*</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">100% Secure Payments<span class="font-normal text-[#9a8a6a]"> · TATA Trust</span></span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">30 Days Free Returns</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">Free Shipping in India</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">From HOUSE OF TITAN</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">Lifetime Gold Exchange*</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">100% Secure Payments<span class="font-normal text-[#9a8a6a]"> · TATA Trust</span></span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MOBILE STICKY CTA -->
+  <div class="fixed bottom-0 left-0 right-0 bg-[#FAF7F2]/95 backdrop-blur-md sticky-cta z-30 lg:hidden">
+    <div class="px-4 py-3 flex items-center gap-4">
+      <div class="flex-shrink-0">
+        <p class="text-[11px] text-warm-grey uppercase tracking-wide">Pay</p>
+        <p class="text-lg font-bold" id="ctaTotal">₹0</p>
+      </div>
+      <button onclick="placeOrder()" class="flex-1 btn-cta py-3.5 text-sm flex items-center justify-center gap-2">
+        PAY & PLACE ORDER
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ ALL ADDRESSES POPUP ═══ -->
+  <div id="allAddrOverlay" class="overlay" onclick="closeAllAddresses()"></div>
+  <div id="allAddrDrawer" class="drawer">
+    <div class="p-5 sm:p-6">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden"></div>
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="text-lg font-semibold flex items-center gap-2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Select Address
+        </h3>
+        <button onclick="closeAllAddresses()" class="p-2 rounded-full hover:bg-soft-grey transition-colors">
+          <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/></svg>
+        </button>
+      </div>
+      <div id="allAddressList" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- ═══ ADD/EDIT ADDRESS DRAWER ═══ -->
+  <div id="addrOverlay" class="overlay" onclick="closeAddressDrawer()"></div>
+  <div id="addrDrawer" class="drawer">
+    <div class="p-5 sm:p-6">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden"></div>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold" id="addrDrawerTitle">Add Address</h3>
+        <button onclick="closeAddressDrawer()" class="p-2 rounded-full hover:bg-soft-grey transition-colors">
+          <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/></svg>
+        </button>
+      </div>
+      <div class="flex gap-2 mb-5">
+        <button class="addr-tab active" onclick="setAddrType(this,'HOME')">HOME</button>
+        <button class="addr-tab" onclick="setAddrType(this,'WORK')">WORK</button>
+        <button class="addr-tab" onclick="setAddrType(this,'OTHER')">OTHER</button>
+      </div>
+      <form id="addrForm" onsubmit="saveAddress(event)" novalidate>
+        <input type="hidden" id="addrEditId" value="" /><input type="hidden" id="addrType" value="HOME" />
+        <p class="text-xs text-warm-grey font-semibold tracking-widest uppercase mb-3">Personal Information</p>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div><input type="text" id="addrFirst" placeholder="First Name *" class="input-field" required /><p class="error-text hidden" id="errFirst">Required</p></div>
+          <div><input type="text" id="addrLast" placeholder="Last Name *" class="input-field" required /><p class="error-text hidden" id="errLast">Required</p></div>
+        </div>
+        <div class="flex gap-2 mb-5">
+          <select class="input-field !w-24 flex-shrink-0"><option>+91</option><option>+1</option><option>+44</option><option>+971</option></select>
+          <div class="flex-1"><input type="tel" id="addrPhone" placeholder="Phone *" maxlength="10" class="input-field" required /><p class="error-text hidden" id="errPhone">Enter valid phone</p></div>
+        </div>
+        <p class="text-xs text-warm-grey font-semibold tracking-widest uppercase mb-3">Location</p>
+        <div class="mb-3"><select id="addrCountry" class="input-field"><option>India</option><option>UAE</option><option>USA</option><option>UK</option></select></div>
+        <div class="grid grid-cols-3 gap-3 mb-5">
+          <div><input type="text" id="addrPin" placeholder="Pincode *" maxlength="6" class="input-field" required oninput="autoFillLocation()" /><p class="error-text hidden" id="errPin">Required</p></div>
+          <div><input type="text" id="addrState" placeholder="State *" class="input-field" required /><p class="error-text hidden" id="errState">Required</p></div>
+          <div><input type="text" id="addrCity" placeholder="City *" class="input-field" required /><p class="error-text hidden" id="errCity">Required</p></div>
+        </div>
+        <p class="text-xs text-warm-grey font-semibold tracking-widest uppercase mb-3">Delivery Address</p>
+        <div class="space-y-3 mb-5">
+          <div><input type="text" id="addrBuilding" placeholder="Building / Flat No *" class="input-field" required /><p class="error-text hidden" id="errBuilding">Required</p></div>
+          <div><input type="text" id="addrStreet" placeholder="Colony / Street *" class="input-field" required /><p class="error-text hidden" id="errStreet">Required</p></div>
+          <input type="text" id="addrLandmark" placeholder="Landmark (Optional)" class="input-field" />
+        </div>
+        <div class="flex items-center justify-between p-4 bg-soft-grey rounded-2xl mb-6">
+          <div><p class="text-sm font-semibold">Set As Default</p><p class="text-xs text-warm-grey">Use this address for all deliveries</p></div>
+          <div class="toggle" id="defaultToggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <button type="submit" class="w-full py-4 btn-cta text-sm">SAVE ADDRESS</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let cart=null;try{cart=JSON.parse(localStorage.getItem('beyon_cart'))}catch(e){}
+    if(!cart||!cart.items||!cart.items.length){cart={items:[{id:'p1',name:'Cross My Lines Pendant With Chain',price:28450,size:'18 inches',weight:'3.52 gm',quantity:1,metal:'18Kt Rose Gold',img:'product 1.webp'},{id:'p2',name:'Split Love Diamond Ring',price:40771,size:'16.40 MM',weight:'2.215 gm',quantity:1,metal:'14Kt White Gold',img:'product 2.webp'}],coupon:null,discount:0}}
+
+    let addresses=[
+      {id:'a1',type:'HOME',firstName:'Rahul',lastName:'Sharma',phone:'9876543210',country:'India',pincode:'110001',state:'Delhi',city:'New Delhi',building:'B-204, Sunrise Apartments',street:'MG Road, Connaught Place',landmark:'Near Metro Station',isDefault:true},
+      {id:'a2',type:'WORK',firstName:'Rahul',lastName:'Sharma',phone:'9876543210',country:'India',pincode:'400001',state:'Maharashtra',city:'Mumbai',building:'Office 1502, Tower A',street:'BKC, Bandra East',landmark:'',isDefault:false},
+    ];
+    let selectedAddrId='a1';
+    let neuState={balance:500,redeemed:0,applied:false};
+    let selectedPayment='card';
+
+    const fmt=n=>'₹'+n.toLocaleString('en-IN');
+    function showToast(m,t='success'){const e=document.getElementById('toast');e.style.display='';e.textContent=m;e.className='toast '+t;requestAnimationFrame(()=>e.classList.add('show'));setTimeout(()=>{e.classList.remove('show');setTimeout(()=>e.style.display='none',500)},2800)}
+    const cartSubtotal=()=>cart.items.reduce((s,i)=>s+i.price*i.quantity,0);
+    const finalTotal=()=>Math.max(0,cartSubtotal()-(cart.discount||0)-neuState.redeemed);
+
+    function render(){renderSelectedAddress();renderItems();renderSummary()}
+
+    // Show only selected address
+    function renderSelectedAddress(){
+      const a=addresses.find(x=>x.id===selectedAddrId)||addresses[0];
+      if(!a){document.getElementById('selectedAddress').innerHTML='<p class="text-sm text-warm-grey">No address saved. Add one to continue.</p>';return}
+      document.getElementById('selectedAddress').innerHTML=`
+        <div class="p-4 rounded-2xl bg-soft-grey border border-gray-100 transition-all">
+          <div class="flex items-start justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold tracking-wider px-2.5 py-1 rounded-lg ${a.type==='HOME'?'bg-blue-50 text-blue-700':a.type==='WORK'?'bg-purple-50 text-purple-700':'bg-gray-100 text-gray-600'}">${a.type}</span>
+              ${a.isDefault?'<span class="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md bg-gold/10 text-gold">DEFAULT</span>':''}
+            </div>
+            <button onclick="editAddress('${a.id}')" class="p-1.5 rounded-lg hover:bg-soft-grey transition-colors"><svg width="14" height="14" fill="none" stroke="#BF0E23" stroke-width="1.8" stroke-linecap="round"><path d="M10 2l2 2-7 7H3v-2z"/></svg></button>
+          </div>
+          <p class="text-sm font-semibold">${a.firstName} ${a.lastName}</p>
+          <p class="text-sm text-warm-grey mt-1">${a.building}, ${a.street}${a.landmark?', '+a.landmark:''}</p>
+          <p class="text-sm text-warm-grey">${a.city}, ${a.state} — ${a.pincode}</p>
+          <p class="text-sm text-warm-grey">${a.phone}</p>
+          <p class="mt-2 text-xs text-primary font-semibold flex items-center gap-1"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M2 7l3.5 3.5L12 4"/></svg>Delivering here</p>
+        </div>`;
+    }
+
+    // All addresses popup
+    function renderAllAddresses(){
+      document.getElementById('allAddressList').innerHTML=addresses.map(a=>{
+        const sel=a.id===selectedAddrId;
+        return `<div class="p-4 rounded-2xl ${sel?'bg-soft-grey border border-gray-100':'border-2 border-gray-100'} transition-all">
+          <div class="flex items-start justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold tracking-wider px-2.5 py-1 rounded-lg ${a.type==='HOME'?'bg-blue-50 text-blue-700':a.type==='WORK'?'bg-purple-50 text-purple-700':'bg-gray-100 text-gray-600'}">${a.type}</span>
+              ${a.isDefault?'<span class="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md bg-gold/10 text-gold">DEFAULT</span>':''}
+            </div>
+            <div class="flex gap-1">
+              <button onclick="editAddress('${a.id}')" class="p-1.5 rounded-lg hover:bg-soft-grey transition-colors"><svg width="14" height="14" fill="none" stroke="#BF0E23" stroke-width="1.8" stroke-linecap="round"><path d="M10 2l2 2-7 7H3v-2z"/></svg></button>
+              ${!a.isDefault?`<button onclick="deleteAddress('${a.id}')" class="p-1.5 rounded-lg hover:bg-red-50 transition-colors"><svg width="14" height="14" fill="none" stroke="#BF0E23" stroke-width="1.8" stroke-linecap="round"><polyline points="3 4 4 4 11 4"/><path d="M9 4V3a1 1 0 00-1-1H6a1 1 0 00-1 1v1"/><path d="M4 4l.7 8a1 1 0 001 1h2.6a1 1 0 001-1L10 4"/></svg></button>`:''}
+            </div>
+          </div>
+          <p class="text-sm font-semibold">${a.firstName} ${a.lastName}</p>
+          <p class="text-sm text-warm-grey mt-1">${a.building}, ${a.street}</p>
+          <p class="text-sm text-warm-grey">${a.city}, ${a.state} — ${a.pincode}</p>
+          ${sel?'<p class="mt-2 text-xs text-primary font-semibold flex items-center gap-1"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M2 7l3.5 3.5L12 4"/></svg>Selected</p>'
+              :`<button onclick="useThisAddress('${a.id}')" class="mt-3 w-full py-2.5 btn-cta text-xs">USE THIS ADDRESS</button>`}
+        </div>`;
+      }).join('');
+    }
+
+    function openAllAddresses(){renderAllAddresses();document.getElementById('allAddrOverlay').classList.add('active');document.getElementById('allAddrDrawer').classList.add('open')}
+    function closeAllAddresses(){document.getElementById('allAddrOverlay').classList.remove('active');document.getElementById('allAddrDrawer').classList.remove('open')}
+    function useThisAddress(id){selectedAddrId=id;closeAllAddresses();render();showToast('Address updated')}
+
+    function renderItems(){
+      document.getElementById('checkoutItems').innerHTML=cart.items.map(it=>`
+        <div class="flex items-center gap-3 py-2">
+          <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-cream">
+            ${it.img?`<img src="${it.img}" class="w-full h-full object-cover" />`:`<span class="flex items-center justify-center h-full text-sm font-bold text-gold/50">${it.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</span>`}
+          </div>
+          <div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">${it.name}</p><p class="text-xs text-warm-grey">Qty: ${it.quantity}</p></div>
+          <span class="text-sm font-semibold">${fmt(it.price*it.quantity)}</span>
+        </div>`).join('');
+    }
+
+    function renderSummary(){
+      const sub=cartSubtotal(),tot=finalTotal();
+      document.getElementById('ckSubtotal').textContent=fmt(sub);document.getElementById('ckTotal').textContent=fmt(tot);document.getElementById('ctaTotal').textContent=fmt(tot);
+      const cRow=document.getElementById('ckCouponRow');if(cart.discount>0){cRow.style.display='flex';document.getElementById('ckCouponDisc').textContent='-'+fmt(cart.discount)}else cRow.style.display='none';
+      const nRow=document.getElementById('ckNeuRow');if(neuState.redeemed>0){nRow.style.display='flex';document.getElementById('ckNeuDisc').textContent='-'+fmt(neuState.redeemed)}else nRow.style.display='none';
+    }
+
+    function openAddressDrawer(editId){
+      const form=document.getElementById('addrForm');form.reset();
+      document.querySelectorAll('.error-text').forEach(e=>e.classList.add('hidden'));document.querySelectorAll('.input-error').forEach(e=>e.classList.remove('input-error'));
+      if(editId){const a=addresses.find(x=>x.id===editId);if(!a)return;document.getElementById('addrDrawerTitle').textContent='Edit Address';document.getElementById('addrEditId').value=a.id;document.getElementById('addrFirst').value=a.firstName;document.getElementById('addrLast').value=a.lastName;document.getElementById('addrPhone').value=a.phone;document.getElementById('addrPin').value=a.pincode;document.getElementById('addrState').value=a.state;document.getElementById('addrCity').value=a.city;document.getElementById('addrBuilding').value=a.building;document.getElementById('addrStreet').value=a.street;document.getElementById('addrLandmark').value=a.landmark||'';document.getElementById('addrType').value=a.type;document.getElementById('addrCountry').value=a.country;document.querySelectorAll('.addr-tab').forEach(t=>{t.classList.toggle('active',t.textContent===a.type)});document.getElementById('defaultToggle').classList.toggle('on',a.isDefault)}
+      else{document.getElementById('addrDrawerTitle').textContent='Add Address';document.getElementById('addrEditId').value='';document.getElementById('addrType').value='HOME';document.querySelectorAll('.addr-tab').forEach((t,i)=>t.classList.toggle('active',i===0));document.getElementById('defaultToggle').classList.remove('on')}
+      document.getElementById('addrOverlay').classList.add('active');document.getElementById('addrDrawer').classList.add('open');
+    }
+    function editAddress(id){openAddressDrawer(id)}
+    function closeAddressDrawer(){document.getElementById('addrOverlay').classList.remove('active');document.getElementById('addrDrawer').classList.remove('open')}
+    function setAddrType(btn,type){document.querySelectorAll('.addr-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.getElementById('addrType').value=type}
+    function autoFillLocation(){const pin=document.getElementById('addrPin').value.trim();if(pin.length!==6)return;const map={'110001':['Delhi','New Delhi'],'400001':['Maharashtra','Mumbai'],'560001':['Karnataka','Bengaluru'],'700001':['West Bengal','Kolkata'],'600001':['Tamil Nadu','Chennai']};const r=map[pin];if(r){document.getElementById('addrState').value=r[0];document.getElementById('addrCity').value=r[1]}}
+
+    function saveAddress(e){
+      e.preventDefault();let valid=true;
+      [{id:'addrFirst',err:'errFirst'},{id:'addrLast',err:'errLast'},{id:'addrPhone',err:'errPhone'},{id:'addrPin',err:'errPin'},{id:'addrState',err:'errState'},{id:'addrCity',err:'errCity'},{id:'addrBuilding',err:'errBuilding'},{id:'addrStreet',err:'errStreet'}].forEach(f=>{const el=document.getElementById(f.id),errEl=document.getElementById(f.err);if(!el.value.trim()){el.classList.add('input-error');errEl.classList.remove('hidden');valid=false}else{el.classList.remove('input-error');errEl.classList.add('hidden')}});
+      const phone=document.getElementById('addrPhone').value.trim();if(phone&&!/^\d{10}$/.test(phone)){document.getElementById('addrPhone').classList.add('input-error');document.getElementById('errPhone').classList.remove('hidden');valid=false}
+      if(!valid)return;
+      const isDefault=document.getElementById('defaultToggle').classList.contains('on'),editId=document.getElementById('addrEditId').value;
+      const addr={id:editId||'a'+Date.now(),type:document.getElementById('addrType').value,firstName:document.getElementById('addrFirst').value.trim(),lastName:document.getElementById('addrLast').value.trim(),phone:phone,country:document.getElementById('addrCountry').value,pincode:document.getElementById('addrPin').value.trim(),state:document.getElementById('addrState').value.trim(),city:document.getElementById('addrCity').value.trim(),building:document.getElementById('addrBuilding').value.trim(),street:document.getElementById('addrStreet').value.trim(),landmark:document.getElementById('addrLandmark').value.trim(),isDefault};
+      if(isDefault)addresses.forEach(a=>a.isDefault=false);
+      if(editId){const idx=addresses.findIndex(a=>a.id===editId);if(idx>=0)addresses[idx]=addr;showToast('Address updated')}else{addresses.push(addr);selectedAddrId=addr.id;showToast('Address added')}
+      closeAddressDrawer();closeAllAddresses();render();
+    }
+    function deleteAddress(id){addresses=addresses.filter(a=>a.id!==id);if(selectedAddrId===id&&addresses.length)selectedAddrId=addresses[0].id;renderAllAddresses();render();showToast('Address deleted')}
+
+    // NeuCoins
+    function validateNeuInput(){const v=parseInt(document.getElementById('neuInput').value)||0;const msg=document.getElementById('neuMessage');if(v>neuState.balance){msg.classList.remove('hidden');msg.innerHTML='<p class="text-primary text-xs font-medium">Cannot exceed available balance</p>'}else if(v>finalTotal()+neuState.redeemed){msg.classList.remove('hidden');msg.innerHTML='<p class="text-primary text-xs font-medium">Cannot exceed order total</p>'}else{msg.classList.add('hidden')}}
+    function applyNeu(){const v=parseInt(document.getElementById('neuInput').value)||0;if(v<=0){showToast('Enter coins to redeem','error');return}if(v>neuState.balance){showToast('Exceeds available balance','error');return}const maxAllowed=cartSubtotal()-(cart.discount||0);const coins=Math.min(v,maxAllowed);neuState.redeemed=coins;neuState.applied=true;document.getElementById('neuApplied').classList.remove('hidden');document.getElementById('neuAppliedText').textContent=`${coins} NeuCoins redeemed (${fmt(coins)} off)`;document.getElementById('neuBalance').textContent=(neuState.balance-coins)+' NeuCoins';document.getElementById('neuApplyBtn').classList.add('hidden');renderSummary();showToast(`${coins} NeuCoins applied!`)}
+    function useMaxNeu(){const maxAllowed=cartSubtotal()-(cart.discount||0);document.getElementById('neuInput').value=Math.min(neuState.balance,maxAllowed);validateNeuInput()}
+    function removeNeu(){neuState.redeemed=0;neuState.applied=false;document.getElementById('neuApplied').classList.add('hidden');document.getElementById('neuApplyBtn').classList.remove('hidden');document.getElementById('neuInput').value='';document.getElementById('neuBalance').textContent=neuState.balance+' NeuCoins';document.getElementById('neuMessage').classList.add('hidden');renderSummary();showToast('NeuCoins removed')}
+
+    // Payment
+    function selectPay(el,method){document.querySelectorAll('.pay-option,.upi-item').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');selectedPayment=method}
+    const selectUPI=selectPay;
+
+    function placeOrder(){
+      if(!selectedAddrId||!addresses.length){showToast('Please add a delivery address','error');return}
+      if(!selectedPayment){showToast('Please select a payment method','error');return}
+      const btns=document.querySelectorAll('[onclick="placeOrder()"]');btns.forEach(b=>{b.disabled=true;b.innerHTML='<span class="flex items-center gap-2">PROCESSING... <svg class="animate-spin" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6" stroke-dasharray="30" stroke-dashoffset="10"/></svg></span>'});
+      setTimeout(()=>{
+        localStorage.removeItem('beyon_cart');showToast('Order placed successfully! 🎉');
+        setTimeout(()=>{
+          const addr=addresses.find(a=>a.id===selectedAddrId);
+          document.querySelector('main').innerHTML=`<div class="text-center py-20 anim max-w-md mx-auto">
+            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-green-50 flex items-center justify-center"><svg width="48" height="48" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"><path d="M12 24l8 8L36 16"/><circle cx="24" cy="24" r="20"/></svg></div>
+            <h2 class="text-2xl font-bold mb-2">Order Confirmed!</h2>
+            <p class="text-warm-grey mb-2">Order #BYN${Date.now().toString().slice(-6)}</p>
+            <p class="text-sm text-warm-grey mb-8">Your jewellery is on its way. We'll send you tracking details.</p>
+            <div class="card p-5 mb-6 text-left"><p class="text-sm font-semibold mb-2">Delivery Details</p><p class="text-sm text-warm-grey">${addr?.building}, ${addr?.street}</p><p class="text-sm text-warm-grey">${addr?.city}, ${addr?.state}</p><p class="text-sm font-semibold text-primary mt-2">Amount Paid: ${fmt(finalTotal())}</p></div>
+            <a href="cart.html" class="inline-block px-10 py-3.5 btn-cta text-sm">CONTINUE SHOPPING</a></div>`;
+          document.querySelectorAll('.fixed.bottom-0').forEach(el=>el.style.display='none');
+        },800);
+      },1500);
+    }
+
+    // ═══ PAN VERIFICATION LOGIC ═══
+    const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+    let panVerifying = false;
+    let panRetryCount = 0;
+    const MAX_PAN_RETRIES = 3;
+
+    // Simulated PAN database
+    const PAN_DB = {
+      'ABCDE1234F': { ok: true, name: 'RAHUL SHARMA' },
+      'BXYPD5678G': { ok: true, name: 'RAHUL KUMAR SHARMA' },
+      'CZPQA9012H': { ok: false, reason: 'inactive', msg: 'This PAN is marked as inactive by the Income Tax Department.' },
+      'DXYEF3456J': { ok: false, reason: 'not_found', msg: 'PAN does not exist in the Income Tax database.' },
+      'EABCD7890K': { ok: true, name: 'PRIYA SHARMA' },
+      'FGHIJ1234L': { ok: false, reason: 'invalid', msg: 'This PAN has been flagged as invalid.' },
+    };
+
+    function handlePanInput(el) {
+      el.value = el.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      const val = el.value;
+      const errEl = document.getElementById('errPanNumber');
+      const hintEl = document.getElementById('panFormatHint');
+
+      // Clear previous errors
+      errEl.classList.add('hidden');
+      el.classList.remove('input-error');
+
+      if (val.length === 10 && !PAN_REGEX.test(val)) {
+        errEl.textContent = 'Invalid PAN format. Must be 5 letters + 4 digits + 1 letter.';
+        errEl.classList.remove('hidden');
+        el.classList.add('input-error');
+        hintEl.classList.add('hidden');
+      } else if (val.length === 10) {
+        hintEl.classList.add('hidden');
+      } else {
+        hintEl.classList.remove('hidden');
+      }
+
+      updateVerifyBtn();
+    }
+
+    function validatePanName() {
+      const name = document.getElementById('panName').value.trim();
+      const errEl = document.getElementById('errPanName');
+      errEl.classList.add('hidden');
+      document.getElementById('panName').classList.remove('input-error');
+
+      if (name && /[0-9]/.test(name)) {
+        errEl.textContent = 'Name should not contain numbers.';
+        errEl.classList.remove('hidden');
+        document.getElementById('panName').classList.add('input-error');
+      } else if (name && /[^A-Za-z\s.]/.test(name)) {
+        errEl.textContent = 'Name contains unsupported characters.';
+        errEl.classList.remove('hidden');
+        document.getElementById('panName').classList.add('input-error');
+      } else if (name.length > 0 && name.length < 2) {
+        errEl.textContent = 'Please enter a valid name.';
+        errEl.classList.remove('hidden');
+        document.getElementById('panName').classList.add('input-error');
+      }
+
+      updateVerifyBtn();
+    }
+
+    function updateVerifyBtn() {
+      const name = document.getElementById('panName').value.trim();
+      const pan = document.getElementById('panNumber').value.trim();
+      const btn = document.getElementById('panVerifyBtn');
+      const valid = name.length >= 2 && pan.length === 10 && PAN_REGEX.test(pan) && !/[0-9]/.test(name) && !/[^A-Za-z\s.]/.test(name);
+      btn.disabled = !valid;
+      btn.style.opacity = valid ? '1' : '0.5';
+      btn.style.cursor = valid ? 'pointer' : 'not-allowed';
+    }
+
+    function verifyPan() {
+      if (panVerifying) return;
+      const name = document.getElementById('panName').value.trim().toUpperCase();
+      const pan = document.getElementById('panNumber').value.trim().toUpperCase();
+
+      if (!name || !pan || !PAN_REGEX.test(pan)) return;
+
+      panVerifying = true;
+      panRetryCount++;
+
+      // Show loading
+      document.getElementById('panFormArea').classList.add('hidden');
+      document.getElementById('panLoading').classList.remove('hidden');
+      document.getElementById('panSuccess').classList.add('hidden');
+      document.getElementById('panError').classList.add('hidden');
+      document.getElementById('panMismatch').classList.add('hidden');
+
+      // Simulate API call
+      setTimeout(() => {
+        document.getElementById('panLoading').classList.add('hidden');
+        panVerifying = false;
+
+        const entry = PAN_DB[pan];
+
+        if (!entry) {
+          // Random behavior for unknown PANs
+          if (panRetryCount > MAX_PAN_RETRIES) {
+            showPanError('Too Many Attempts', 'You have exceeded the maximum number of verification attempts. Please try again later.', false);
+          } else {
+            showPanError('PAN Not Found', 'This PAN number does not exist in the Income Tax database. Please check and re-enter.', true);
+          }
+          return;
+        }
+
+        if (!entry.ok) {
+          const titles = { inactive: 'PAN Inactive', not_found: 'PAN Not Found', invalid: 'PAN Invalid' };
+          showPanError(titles[entry.reason] || 'Verification Failed', entry.msg, entry.reason !== 'invalid');
+          return;
+        }
+
+        // PAN is valid — check name match
+        const dbName = entry.name;
+        if (name === dbName) {
+          showPanSuccess(name, pan);
+        } else {
+          // Check if minor or major mismatch
+          const nameWords = name.split(/\s+/);
+          const dbWords = dbName.split(/\s+/);
+          const firstMatch = nameWords[0] === dbWords[0];
+          const lastMatch = nameWords[nameWords.length - 1] === dbWords[dbWords.length - 1];
+
+          if (firstMatch || lastMatch) {
+            showPanMismatch(name, dbName, 'minor');
+          } else {
+            showPanMismatch(name, dbName, 'major');
+          }
+        }
+      }, 2000);
+    }
+
+    function showPanSuccess(name, pan) {
+      panRetryCount = 0;
+      document.getElementById('panSuccess').classList.remove('hidden');
+      document.getElementById('panSuccessName').textContent = name;
+      document.getElementById('panSuccessPan').textContent = pan.slice(0, 2) + '****' + pan.slice(6);
+      document.getElementById('panFormArea').classList.add('hidden');
+    }
+
+    function showPanError(title, msg, allowRetry) {
+      document.getElementById('panError').classList.remove('hidden');
+      document.getElementById('panFormArea').classList.remove('hidden');
+      document.getElementById('panErrorTitle').textContent = title;
+      document.getElementById('panErrorMsg').textContent = msg;
+      document.getElementById('panRetryBtn').style.display = allowRetry ? 'flex' : 'none';
+    }
+
+    function showPanMismatch(entered, actual, severity) {
+      document.getElementById('panMismatch').classList.remove('hidden');
+      document.getElementById('panFormArea').classList.add('hidden');
+      document.getElementById('mismatchEntered').textContent = entered;
+      document.getElementById('mismatchActual').textContent = actual;
+      if (severity === 'minor') {
+        document.getElementById('panMismatchMsg').textContent = 'The name on your PAN record differs slightly from what you entered. This may be due to middle name, initials, or spelling differences.';
+      } else {
+        document.getElementById('panMismatchMsg').textContent = 'The name on your PAN record is significantly different from what you entered. Please verify you are using the correct PAN.';
+      }
+    }
+
+    function acceptMismatchName() {
+      const actual = document.getElementById('mismatchActual').textContent;
+      const pan = document.getElementById('panNumber').value.trim().toUpperCase();
+      document.getElementById('panMismatch').classList.add('hidden');
+      showPanSuccess(actual, pan);
+      showToast('PAN verified with updated name');
+    }
+
+    function retryPan() {
+      document.getElementById('panError').classList.add('hidden');
+      document.getElementById('panMismatch').classList.add('hidden');
+      document.getElementById('panFormArea').classList.remove('hidden');
+      document.getElementById('panNumber').focus();
+    }
+
+    render();
+  </script>
+</body>
+</html>

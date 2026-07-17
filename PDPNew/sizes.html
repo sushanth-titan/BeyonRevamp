@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Size Guide — Beyon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#BF0E23', 'primary-dark': '#9B0B1C',
+            dark: '#2C2C2C', 'warm-grey': '#B0ABAB',
+            cream: '#EFEAE3', gold: '#C5A575', 'soft-grey': '#F6F6F6',
+          },
+          fontFamily: { sans: ['Outfit', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Outfit',sans-serif;background:#EFEAE3;color:#2C2C2C;-webkit-font-smoothing:antialiased}
+
+    .overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+    .overlay.active{opacity:1;pointer-events:auto}
+
+    .popup{position:fixed;z-index:50;background:#fff;overflow-y:auto;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .35s}
+    @media(max-width:767px){.popup{bottom:0;left:0;right:0;border-radius:28px 28px 0 0;transform:translateY(100%);max-height:92vh}.popup.open{transform:translateY(0)}}
+    @media(min-width:768px){.popup{top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);border-radius:28px;width:580px;max-height:88vh;opacity:0;pointer-events:none;box-shadow:0 32px 80px rgba(0,0,0,.2)}.popup.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto}}
+
+    .toast{position:fixed;top:28px;left:50%;transform:translateX(-50%) translateY(-160%);z-index:100;padding:14px 28px;border-radius:16px;font-weight:500;font-size:14px;box-shadow:0 12px 40px rgba(0,0,0,.12);transition:transform .45s cubic-bezier(.4,0,.2,1);white-space:nowrap;backdrop-filter:blur(8px)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.success{background:rgba(232,245,233,.95);color:#2E7D32}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .anim{animation:fadeUp .5s ease forwards;opacity:0}
+
+    .brand-text{background:linear-gradient(135deg,#2C2C2C,#555,#2C2C2C);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradient-shift 4s ease infinite}
+
+    .header-bar{
+      background:linear-gradient(135deg,#FDFAF5 0%,#F8F3EC 50%,#FDFAF5 100%);
+      border-bottom:1px solid rgba(197,165,117,.15);
+      position:sticky;top:0;z-index:30;
+    }
+    .header-bar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(197,165,117,.3),transparent)}
+
+    .trigger-btn{
+      background:#fff;border:1.5px solid #E5DDD3;border-radius:16px;padding:16px 20px;
+      cursor:pointer;transition:all .3s;width:100%;text-align:left;
+      box-shadow:0 2px 8px rgba(197,165,117,.06);
+    }
+    .trigger-btn:hover{border-color:#C5A575;box-shadow:0 8px 32px rgba(197,165,117,.12);transform:translateY(-2px)}
+
+    .step-card{background:#F8F5F0;border-radius:16px;padding:20px;border:1px solid #E5DDD3}
+    .step-number{width:28px;height:28px;border-radius:50%;background:#BF0E23;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .step-illustration{background:#fff;border-radius:12px;padding:16px;border:1px solid #F0EBE4;display:flex;align-items:center;justify-content:center;min-height:80px}
+
+    .size-table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px;border-radius:12px;overflow:hidden;border:1px solid #E5DDD3}
+    .size-table thead{background:linear-gradient(135deg,#2C2C2C,#3a3a3a);color:#fff}
+    .size-table th{padding:10px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;text-align:center}
+    .size-table td{padding:9px 12px;text-align:center;border-top:1px solid #F0EBE4}
+    .size-table tbody tr:nth-child(even){background:#FDFAF5}
+    .size-table tbody tr:hover{background:#F5F0E8}
+
+    .section-divider{display:flex;align-items:center;gap:12px;margin:28px 0 20px}
+    .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,#E5DDD3,transparent)}
+    .section-divider span{font-size:12px;font-weight:600;color:#B0ABAB;white-space:nowrap}
+
+    .scale-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600;background:rgba(191,14,35,.05);color:#BF0E23;border:1px solid rgba(191,14,35,.1)}
+
+    .section-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#C5A575;margin-bottom:8px}
+
+    .category-badge{display:inline-flex;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+    .badge-ladies{background:rgba(191,14,35,.06);color:#BF0E23;border:1px solid rgba(191,14,35,.12)}
+    .badge-gents{background:rgba(44,44,44,.06);color:#2C2C2C;border:1px solid rgba(44,44,44,.12)}
+    .badge-kids{background:rgba(197,165,117,.1);color:#8B6914;border:1px solid rgba(197,165,117,.2)}
+    .badge-unisex{background:rgba(46,125,50,.06);color:#2E7D32;border:1px solid rgba(46,125,50,.12)}
+    .badge-adj{background:rgba(46,125,50,.08);color:#2E7D32;border:1px solid rgba(46,125,50,.15)}
+    .badge-wedding{background:rgba(139,69,19,.06);color:#8B4513;border:1px solid rgba(139,69,19,.12)}
+
+    @media(max-width:767px){
+      body{font-size:13px}
+      .size-table{font-size:11px}
+      .size-table th{padding:8px 6px;font-size:10px}
+      .size-table td{padding:7px 6px}
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <div id="toast" class="toast"></div>
+
+  <!-- HEADER -->
+  <nav class="header-bar">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-center">
+      <h1 class="text-lg font-bold tracking-[.2em] brand-text">SIZE GUIDE</h1>
+    </div>
+  </nav>
+
+  <!-- TRIGGER BUTTONS -->
+  <main class="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-4">
+
+    <!-- 1. Ring Size -->
+    <button class="trigger-btn anim" style="animation-delay:0ms" onclick="openPopup('popup1')">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 3v-1M12 7l2-4"/></svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold">Ring Size</p>
+            <p class="text-xs text-warm-grey mt-0.5">Inner diameter by ring stick — India / GCC / Singapore</p>
+          </div>
+        </div>
+        <svg width="18" height="18" fill="none" stroke="#C5A575" stroke-width="2" stroke-linecap="round"><path d="M7 4l5 5-5 5"/></svg>
+      </div>
+    </button>
+
+    <!-- 2. Bangle Size -->
+    <button class="trigger-btn anim" style="animation-delay:80ms" onclick="openPopup('popup2')">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="6"/></svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold">Bangle Size</p>
+            <p class="text-xs text-warm-grey mt-0.5">Round bangle size chart with Titan size codes</p>
+          </div>
+        </div>
+        <svg width="18" height="18" fill="none" stroke="#C5A575" stroke-width="2" stroke-linecap="round"><path d="M7 4l5 5-5 5"/></svg>
+      </div>
+    </button>
+
+    <!-- 3. Bracelet Size -->
+    <button class="trigger-btn anim" style="animation-delay:160ms" onclick="openPopup('popup3')">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8"><ellipse cx="12" cy="12" rx="9" ry="5"/></svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold">Bracelet Size</p>
+            <p class="text-xs text-warm-grey mt-0.5">Bracelet length in CM — Ladies, Gents &amp; Kids</p>
+          </div>
+        </div>
+        <svg width="18" height="18" fill="none" stroke="#C5A575" stroke-width="2" stroke-linecap="round"><path d="M7 4l5 5-5 5"/></svg>
+      </div>
+    </button>
+
+    <!-- 4. Chain Size -->
+    <button class="trigger-btn anim" style="animation-delay:240ms" onclick="openPopup('popup4')">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8"><path d="M12 2v20M8 6h8M6 10h12M7 14h10M9 18h6"/></svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold">Chain Size</p>
+            <p class="text-xs text-warm-grey mt-0.5">Chain length in inches &amp; CM</p>
+          </div>
+        </div>
+        <svg width="18" height="18" fill="none" stroke="#C5A575" stroke-width="2" stroke-linecap="round"><path d="M7 4l5 5-5 5"/></svg>
+      </div>
+    </button>
+
+  </main>
+
+  <!-- SECTION 1: RING SIZE -->
+  <div id="overlay1" class="overlay" onclick="closePopup('popup1')"></div>
+  <div id="popup1" class="popup">
+    <div class="p-5 sm:p-7 relative">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden"></div>
+
+      <button onclick="closePopup('popup1')" class="absolute right-5 top-5 p-2 rounded-full hover:bg-soft-grey transition-colors">
+        <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/></svg>
+      </button>
+
+      <div class="text-center mb-2 pr-8">
+        <p class="text-xs font-medium text-warm-grey tracking-wider uppercase mb-1">Inner Diameter by Ring Stick</p>
+        <h3 class="text-xl font-bold text-primary">Ring Size</h3>
+        <p class="text-xs text-warm-grey mt-1">Finger Rings (in mm)</p>
+      </div>
+
+
+      <div class="overflow-x-auto rounded-xl mb-2">
+        <table class="size-table">
+          <thead>
+            <tr>
+              <th>Inner Dia</th>
+              <th>Circumference</th>
+              <th>Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="font-semibold">12.4</td><td>39</td><td><span class="category-badge badge-kids">Kids</span></td></tr>
+            <tr><td class="font-semibold">12.8</td><td>40</td><td><span class="category-badge badge-kids">Kids</span></td></tr>
+            <tr><td class="font-semibold">13.2</td><td>41</td><td><span class="category-badge badge-kids">Kids</span></td></tr>
+            <tr><td class="font-semibold">13.6</td><td>43</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">14</td><td>44</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">14.4</td><td>45</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">14.8</td><td>47</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">15.2</td><td>48</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">15.6</td><td>49</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">16</td><td>50</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">16.4</td><td>52</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">16.8</td><td>53</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">17.2</td><td>54</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">17.6</td><td>55</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">18</td><td>57</td><td><span class="category-badge badge-unisex">Unisex</span></td></tr>
+            <tr><td class="font-semibold">18.4</td><td>58</td><td><span class="category-badge badge-unisex">Unisex</span></td></tr>
+            <tr><td class="font-semibold">18.8</td><td>59</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">19.1</td><td>60</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">19.5</td><td>61</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">19.9</td><td>63</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">20.3</td><td>64</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">20.7</td><td>65</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">21.1</td><td>66</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">21.5</td><td>68</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">21.9</td><td>69</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+
+      <p class="text-[10px] text-warm-grey text-center mt-2">Tolerance: ±0.15</p>
+    </div>
+  </div>
+
+  <!-- SECTION 2: BANGLE SIZE -->
+  <div id="overlay2" class="overlay" onclick="closePopup('popup2')"></div>
+  <div id="popup2" class="popup">
+    <div class="p-5 sm:p-7 relative">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden"></div>
+
+      <button onclick="closePopup('popup2')" class="absolute right-5 top-5 p-2 rounded-full hover:bg-soft-grey transition-colors">
+        <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/></svg>
+      </button>
+
+      <div class="text-center mb-2 pr-8">
+        <h3 class="text-xl font-bold text-dark">Round Bangle Size Chart</h3>
+        <div class="w-10 h-[3px] bg-primary rounded-full mx-auto mt-2"></div>
+      </div>
+
+      <p class="text-xs text-warm-grey text-center mt-4 mb-5">Measure the inner diameter of a bangle you own. Use the following chart to determine your bangle size.</p>
+
+      <div class="overflow-x-auto rounded-xl mb-2">
+        <table class="size-table">
+          <thead>
+            <tr>
+              <th>Bangle Size (Anna)</th>
+              <th>Circumference (mm)</th>
+              <th>Diameter (mm)</th>
+              <th>Titan Size Code</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="font-semibold">2-0</td><td>159.59</td><td>50.80</td><td class="font-semibold">N</td></tr>
+            <tr><td class="font-semibold">2-1</td><td>164.62</td><td>52.40</td><td class="font-semibold">O</td></tr>
+            <tr><td class="font-semibold">2-2</td><td>169.40</td><td>54.00</td><td class="font-semibold">P</td></tr>
+            <tr><td class="font-semibold">2-3</td><td>174.67</td><td>55.60</td><td class="font-semibold">P</td></tr>
+            <tr><td class="font-semibold">2-4</td><td>179.60</td><td>57.20</td><td class="font-semibold">Q</td></tr>
+            <tr><td class="font-semibold">2-5</td><td>184.41</td><td>58.70</td><td class="font-semibold">Q</td></tr>
+            <tr><td class="font-semibold">2-6</td><td>189.50</td><td>60.30</td><td class="font-semibold">R</td></tr>
+            <tr><td class="font-semibold">2-7</td><td>194.46</td><td>61.90</td><td class="font-semibold">S</td></tr>
+            <tr><td class="font-semibold">2-8</td><td>199.40</td><td>63.50</td><td class="font-semibold">S</td></tr>
+            <tr><td class="font-semibold">2-9</td><td>204.52</td><td>65.10</td><td class="font-semibold">T</td></tr>
+            <tr><td class="font-semibold">2-10</td><td>209.30</td><td>66.70</td><td class="font-semibold">U</td></tr>
+            <tr><td class="font-semibold">2-11</td><td>214.57</td><td>68.30</td><td class="font-semibold">U</td></tr>
+            <tr><td class="font-semibold">2-12</td><td>219.50</td><td>69.87</td><td class="font-semibold">V</td></tr>
+            <tr><td class="font-semibold">3</td><td>239.30</td><td>76.17</td><td class="font-semibold">X</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: BRACELET SIZE -->
+  <div id="overlay3" class="overlay" onclick="closePopup('popup3')"></div>
+  <div id="popup3" class="popup">
+    <div class="p-5 sm:p-7 relative">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden"></div>
+
+      <button onclick="closePopup('popup3')" class="absolute right-5 top-5 p-2 rounded-full hover:bg-soft-grey transition-colors">
+        <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/></svg>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4 pr-8">
+        <div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center flex-shrink-0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8"><ellipse cx="12" cy="12" rx="9" ry="5"/></svg>
+        </div>
+        <div>
+          <h3 class="text-base font-bold">Bracelet Length</h3>
+          <p class="text-xs text-warm-grey">In CM</p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl">
+        <table class="size-table">
+          <thead>
+            <tr>
+              <th>Length (CM)</th>
+              <th>Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="font-semibold">12</td><td><span class="category-badge badge-kids">Kids</span></td></tr>
+            <tr><td class="font-semibold">12.5</td><td><span class="category-badge badge-kids">Kids</span></td></tr>
+            <tr><td class="font-semibold">13</td><td><span class="category-badge badge-kids">Kids</span></td></tr>
+            <tr><td class="font-semibold">13.5</td><td><span class="category-badge badge-kids">Kids</span></td></tr>
+            <tr><td class="font-semibold">14</td><td><span class="category-badge badge-kids">Kids</span></td></tr>
+            <tr><td class="font-semibold">14.5</td><td><span class="category-badge badge-kids">Kids</span></td></tr>
+            <tr><td class="font-semibold">15</td><td><span class="category-badge badge-kids">Kids</span></td></tr>
+            <tr><td class="font-semibold">15.5</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">16</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">16.5</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">17</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">17.5</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">18</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">18.5</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">19</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">19.5</td><td><span class="category-badge badge-ladies">Ladies</span></td></tr>
+            <tr><td class="font-semibold">20</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">20.5</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">21</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">21.5</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">22</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">22.5</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">23</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">23.5</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+            <tr><td class="font-semibold">24</td><td><span class="category-badge badge-gents">Gents</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: CHAIN SIZE -->
+  <div id="overlay4" class="overlay" onclick="closePopup('popup4')"></div>
+  <div id="popup4" class="popup">
+    <div class="p-5 sm:p-7 relative">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden"></div>
+
+      <button onclick="closePopup('popup4')" class="absolute right-5 top-5 p-2 rounded-full hover:bg-soft-grey transition-colors">
+        <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/></svg>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4 pr-8">
+        <div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center flex-shrink-0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8"><path d="M12 2v20M8 6h8M6 10h12M7 14h10M9 18h6"/></svg>
+        </div>
+        <div>
+          <h3 class="text-base font-bold">Chain Size</h3>
+          <p class="text-xs text-warm-grey">Length in Inches &amp; CM</p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto rounded-xl">
+        <table class="size-table">
+          <thead>
+            <tr>
+              <th>In Inches</th>
+              <th>In CM</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="font-semibold">15</td><td>38</td></tr>
+            <tr><td class="font-semibold">16</td><td>41</td></tr>
+            <tr><td class="font-semibold">17</td><td>44</td></tr>
+            <tr><td class="font-semibold">18</td><td>46</td></tr>
+            <tr><td class="font-semibold">19</td><td>49</td></tr>
+            <tr><td class="font-semibold">20</td><td>51</td></tr>
+            <tr><td class="font-semibold">21</td><td>54</td></tr>
+            <tr><td class="font-semibold">22</td><td>56</td></tr>
+            <tr><td class="font-semibold">23</td><td>59</td></tr>
+            <tr><td class="font-semibold">24</td><td>61</td></tr>
+            <tr><td class="font-semibold">25</td><td>64</td></tr>
+            <tr><td class="font-semibold">26</td><td>66</td></tr>
+            <tr><td class="font-semibold">27</td><td>69</td></tr>
+            <tr><td class="font-semibold">28</td><td>72</td></tr>
+            <tr><td class="font-semibold">29</td><td>74</td></tr>
+            <tr><td class="font-semibold">30</td><td>77</td></tr>
+            <tr><td class="font-semibold">31</td><td>80</td></tr>
+            <tr><td class="font-semibold">32</td><td>82</td></tr>
+            <tr><td class="font-semibold">33</td><td>84</td></tr>
+            <tr><td class="font-semibold">34</td><td>87</td></tr>
+            <tr><td class="font-semibold">35</td><td>90</td></tr>
+            <tr><td class="font-semibold">36</td><td>92</td></tr>
+            <tr><td class="font-semibold">37</td><td>95</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+    function openPopup(id) {
+      const num = id.replace('popup', '');
+      document.getElementById('overlay' + num).classList.add('active');
+      document.getElementById(id).classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePopup(id) {
+      const num = id.replace('popup', '');
+      document.getElementById('overlay' + num).classList.remove('active');
+      document.getElementById(id).classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = 'toast success';
+      requestAnimationFrame(() => el.classList.add('show'));
+      setTimeout(() => el.classList.remove('show'), 2800);
+    }
+  </script>
+</body>
+</html>
