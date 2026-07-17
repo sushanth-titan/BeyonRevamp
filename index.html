@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beyon Revamp — All Pages</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Outfit',sans-serif;background:#EFEAE3;color:#2C2C2C;min-height:100vh;padding:40px 20px}
+    .container{max-width:720px;margin:0 auto}
+    h1{text-align:center;font-size:28px;font-weight:700;letter-spacing:.15em;margin-bottom:8px;color:#2C2C2C}
+    .subtitle{text-align:center;font-size:14px;color:#B0ABAB;margin-bottom:40px}
+    .section{margin-bottom:32px}
+    .section-title{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#C5A575;margin-bottom:12px;padding-left:4px}
+    .card-grid{display:grid;gap:12px}
+    a.card{display:flex;align-items:center;gap:14px;background:#fff;border:1.5px solid #E5DDD3;border-radius:16px;padding:16px 20px;text-decoration:none;color:#2C2C2C;transition:all .3s;box-shadow:0 2px 8px rgba(197,165,117,.06)}
+    a.card:hover{border-color:#C5A575;box-shadow:0 8px 32px rgba(197,165,117,.12);transform:translateY(-2px)}
+    .card-icon{width:40px;height:40px;border-radius:12px;background:rgba(191,14,35,.05);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .card-icon svg{width:20px;height:20px;stroke:#BF0E23;fill:none;stroke-width:1.8}
+    .card-text p{font-size:14px;font-weight:600}
+    .card-text span{font-size:11px;color:#B0ABAB}
+    .arrow{margin-left:auto;color:#C5A575}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>BEYON REVAMP</h1>
+    <p class="subtitle">All prototype pages</p>
+
+    <!-- PDP Section -->
+    <div class="section">
+      <p class="section-title">Product Detail Pages</p>
+      <div class="card-grid">
+        <a class="card" href="PDPNew/PDPnew.HTML">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="10" r="3"/><path d="M7 20c0-3 2-5 5-5s5 2 5 5"/></svg></div>
+          <div class="card-text"><p>PDP — Main</p><span>Product detail page with all features</span></div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="card" href="PDPNew/PDPoos.html">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="7" y1="7" x2="17" y2="17"/><line x1="17" y1="7" x2="7" y2="17"/></svg></div>
+          <div class="card-text"><p>PDP — Out of Stock</p><span>Out of stock state</span></div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="card" href="PDPNew/sizes.html">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></svg></div>
+          <div class="card-text"><p>Size Guide</p><span>Ring, Bangle, Bracelet &amp; Chain sizes</span></div>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Cart Section -->
+    <div class="section">
+      <p class="section-title">Cart &amp; Checkout</p>
+      <div class="card-grid">
+        <a class="card" href="BeyonCart/cart.html">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M6 6h15l-1.5 9H7.5"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg></div>
+          <div class="card-text"><p>Cart</p><span>Shopping cart page</span></div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="card" href="BeyonCart/checkout.html">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="card-text"><p>Checkout</p><span>Checkout flow</span></div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="card" href="BeyonCart/NoAddress.html">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/><circle cx="12" cy="9" r="2"/></svg></div>
+          <div class="card-text"><p>No Address</p><span>Empty address state</span></div>
+          <span class="arrow">→</span>
+        </a>
+        <a class="card" href="BeyonCart/edge cases.html">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+          <div class="card-text"><p>Edge Cases</p><span>Cart edge case scenarios</span></div>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- PLP Section -->
+    <div class="section">
+      <p class="section-title">Product Listing</p>
+      <div class="card-grid">
+        <a class="card" href="plp/plp.html">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div class="card-text"><p>PLP</p><span>Product listing page</span></div>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
