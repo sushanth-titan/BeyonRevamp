@@ -28,8 +28,6 @@
 
       @keyframes metalShine { 0% { background-position: -200%; } to { background-position: 200%; } }
       @keyframes lbFadeIn { 0% { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
-      @keyframes truckDriveOnce { 0% { opacity: 0; transform: translate(-24px); } 10% { opacity: 1; } 72% { opacity: 1; transform: translate(116px); } 88% { opacity: 0.6; transform: translate(150px); } to { opacity: 0; transform: translate(168px); } }
-      @keyframes deliveryTextWipe { 0% { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0% 0 0); } }
 
       .metal-text-shine-gold, .metal-text-shine-rose, .metal-text-shine-silver {
         -webkit-text-fill-color: transparent;
@@ -42,10 +40,6 @@
       .metal-text-shine-rose { background-image: linear-gradient(90deg, #b76e79 0% 30%, #e8b4b8 45%, #ffd9d9 50%, #e8b4b8 55%, #b76e79 70% 100%); }
       .metal-text-shine-silver { background-image: linear-gradient(90deg, #8a8a8a 0% 30%, #d8d8d8 45%, #fff 50%, #d8d8d8 55%, #8a8a8a 70% 100%); }
 
-      .delivery-heading-anim { width: 124px; height: 14px; display: inline-block; position: relative; overflow: visible; }
-      .delivery-heading-anim .truck-icon { z-index: 2; will-change: transform, opacity; filter: drop-shadow(0 1px 2px rgba(211,11,57,0.15)); margin-top: -8px; animation: 2.2s cubic-bezier(0.4,0,0.2,1) 0.15s both truckDriveOnce; display: inline-flex; position: absolute; top: 50%; left: 0; }
-      .delivery-heading-anim .truck-text { white-space: nowrap; clip-path: inset(0 100% 0 0); will-change: clip-path; animation: 2s cubic-bezier(0.4,0,0.2,1) 0.3s both deliveryTextWipe; position: absolute; top: 50%; left: 0; transform: translateY(-50%); }
-
       .pdp-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-80px);background:#BF0E23;color:#fff;font-size:13px;font-weight:500;padding:10px 24px;border-radius:12px;z-index:9999;opacity:0;transition:all .35s cubic-bezier(.4,0,.2,1);pointer-events:none;box-shadow:0 4px 20px rgba(191,14,35,.25)}
       .pdp-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -57,23 +51,26 @@
       .pill-selected { background: #3c3c3c; color: #fff; box-shadow: 0 2px 8px rgba(60,60,60,0.2); }
       .pill-default { background: rgba(0,0,0,0.03); color: #8a7a60; border: 1.5px solid rgba(0,0,0,0.08); }
       .section-gold-bg { background: linear-gradient(135deg, #fdfcf8 0%, #f9f5ee 50%, #fdfcf8 100%); border-top: 1px solid rgba(212,168,67,0.15); }
-      .section-delivery-bg { background: linear-gradient(135deg, #fdf5f6 0%, #faf0f1 40%, #fdf5f6 100%); }
       .btn-request-design { background: #2c2c2c; }
       .btn-request-design:hover { background: #1a1a1a; }
 
-      @keyframes trustSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-      @keyframes trustBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
-      @keyframes trustPing { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
-      @keyframes trustRock { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(8deg); } 75% { transform: rotate(-8deg); } }
-      @keyframes trustScale { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
-      .trust-anim-0 { animation: trustSpin 4s linear infinite; }
-      .trust-anim-1 { animation: trustBounce 2s ease-in-out infinite; }
-      .trust-anim-2 { animation: trustRock 2.5s ease-in-out infinite; }
-      .trust-anim-3 { animation: trustScale 3s ease-in-out infinite; }
-      .trust-anim-4 { animation: trustPing 2s ease-in-out infinite; }
 
       /* App Banner */
       .app-banner { background: #fff; border-bottom: 1px solid rgba(0,0,0,0.06); }
+
+      /* Wishlist heart animation */
+      @keyframes heart-pop{
+        0%{transform:scale(1)}15%{transform:scale(1.4)}30%{transform:scale(.85)}45%{transform:scale(1.2)}60%{transform:scale(.95)}75%{transform:scale(1.08)}100%{transform:scale(1)}
+      }
+      @keyframes ring-burst{
+        0%{transform:translate(-50%,-50%) scale(.3);opacity:1}100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}
+      }
+      .wishlist-pop svg{animation:heart-pop .55s cubic-bezier(.17,.89,.32,1.49)}
+      .wishlist-pop::after{
+        content:'';position:absolute;top:50%;left:50%;width:28px;height:28px;
+        border:2px solid #d30b39;border-radius:50%;
+        animation:ring-burst .5s ease-out forwards;pointer-events:none;
+      }
 
       /* Request Design Popup */
       .rd-overlay { position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center; }
@@ -103,8 +100,7 @@
         diamond: { colour: 'FG', shape: 'Round', count: 7, weight: '0.3 Ct', clarity: 'VS' },
         sizes: ['16 INCHES', '18 INCHES'],
         defaultSize: '16 INCHES',
-        images: ['prd 1.webp', 'pd 2.webp', 'pd 3.webp', 'pd 4.webp', 'pd 5.webp'],
-        delivery: { estimate: 'Tomorrow, its yours! 1-day delivery for orders placed before 12pm for selected pincodes*' }
+        images: ['prd 1.webp', 'pd 2.webp', 'pd 3.webp', 'pd 4.webp', 'pd 5.webp']
       };
 
       const recommendations = [
@@ -133,14 +129,6 @@
         { id: 'hexagon', label: 'Hexagon' }
       ];
 
-      const trustBadges = [
-        { label: 'BIS Hallmarked', color: '#555', bg: 'rgba(0,0,0,0.03)', border: 'rgba(0,0,0,0.06)', iconBg: 'rgba(211,11,57,0.08)', icon: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>' },
-        { label: '7-day Easy Returns', color: '#555', bg: 'rgba(0,0,0,0.03)', border: 'rgba(0,0,0,0.06)', iconBg: 'rgba(211,11,57,0.08)', icon: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>' },
-        { label: 'Lifetime Gold Exchange', color: '#555', bg: 'rgba(0,0,0,0.03)', border: 'rgba(0,0,0,0.06)', iconBg: 'rgba(211,11,57,0.08)', icon: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>' },
-        { label: 'Free Shipping on All Orders', color: '#555', bg: 'rgba(0,0,0,0.03)', border: 'rgba(0,0,0,0.06)', iconBg: 'rgba(211,11,57,0.08)', icon: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>' },
-        { label: 'Secure Payments<br>TATA TRUST', color: '#555', bg: 'rgba(0,0,0,0.03)', border: 'rgba(0,0,0,0.06)', iconBg: 'rgba(211,11,57,0.08)', icon: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' }
-      ];
-
       const tagVariants = ['selling fast'];
 
       const state = {
@@ -154,8 +142,6 @@
         karat: '18KT',
         diamondShape: 'round',
         diamondSize: '0.33 ct',
-        pincode: '',
-        pincodeChecked: false,
         requestPopupOpen: false,
         appBannerDismissed: false
       };
@@ -312,41 +298,6 @@
         </div>`;
       }
 
-      function renderDelivery() {
-        const canCheck = state.pincode.length === 6;
-        return `<div class="px-5 py-5 section-delivery-bg">
-          <div class="flex items-center gap-2 mb-4">
-            <div class="w-1 h-4 rounded-full shrink-0" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
-            <div class="delivery-heading-anim">
-              <span class="truck-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
-              <span class="truck-text text-[10px] font-bold tracking-[0.18em] uppercase" style="color:#d30b39">Delivery Details</span>
-            </div>
-          </div>
-          <div class="flex items-center rounded-2xl overflow-hidden mb-3" style="background:rgba(255,255,255,0.85);border:1px solid rgba(211,11,57,0.15);box-shadow:0 2px 12px rgba(211,11,57,0.06);backdrop-filter:blur(8px)">
-            <button class="flex items-center gap-1.5 pl-4 pr-3 py-3.5 shrink-0" style="border-right:1px solid rgba(211,11,57,0.12)">
-              <span class="text-lg leading-none">\uD83C\uDDEE\uD83C\uDDF3</span>
-              <span class="text-sm font-semibold" style="color:#3c3c3c">IN</span>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <input type="tel" maxlength="6" value="${state.pincode}" oninput="state.pincode=this.value.replace(/\\D/g,'');state.pincodeChecked=false;render()" placeholder="Enter pincode" class="flex-1 px-4 py-3.5 text-sm font-medium outline-none bg-transparent placeholder-gray-400" style="color:#3c3c3c" />
-            <div class="pr-2.5 shrink-0">
-              <button onclick="if(state.pincode.length===6){state.pincodeChecked=true;render()}" class="text-[10px] font-bold whitespace-nowrap rounded-lg transition-all duration-200" style="padding:6px 10px;${canCheck ? 'background:#d30b39;color:#fff;border:none' : 'background:transparent;color:#ccc;border:1px solid #e0e0e0'}">CHECK</button>
-            </div>
-          </div>
-          ${state.pincodeChecked ? `<div class="flex items-center gap-2 mb-4 px-3 py-2.5 rounded-xl bg-green-50" style="border:1px solid rgba(46,125,50,0.2)">
-            <svg width="14" height="14" fill="none" stroke="#2E7D32" stroke-width="2.5" stroke-linecap="round"><path d="M3 7l3.5 3.5L13 4"/></svg>
-            <p class="text-[11px] font-semibold text-green-700">Delivery available to ${state.pincode}</p>
-          </div>` : ''}
-          <div class="flex items-start gap-2.5 p-3 rounded-2xl" style="background:rgba(255,255,255,0.6);border:1px solid rgba(211,11,57,0.1)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="#d30b39" stroke="none" class="shrink-0 mt-0.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <p class="text-[11px] text-gray-600 leading-relaxed">${product.delivery.estimate}</p>
-          </div>
-          <div class="mt-4 grid grid-cols-5 gap-1.5">
-              ${trustBadges.map((b, i) => `<div class="flex flex-col items-center gap-1.5 py-2.5 rounded-xl text-center" style="background:${b.bg}"><span class="w-6 h-6 rounded-full flex items-center justify-center trust-anim-${i}" style="background:${b.iconBg}">${b.icon}</span><span class="text-[7px] font-bold leading-tight px-0.5" style="color:${b.color}">${b.label}</span></div>`).join('')}
-          </div>
-        </div>`;
-      }
-
       function renderBrandImage() {
         return `<div class="relative w-full overflow-hidden" style="aspect-ratio:16/10;max-height:70vh"><img src="prd 1.webp" alt="Beyon brand" class="w-full h-full object-cover block" loading="lazy" /></div>`;
       }
@@ -367,7 +318,8 @@
       }
 
       function scrollToStack() {
-        document.querySelector('.stack-it-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const sections = document.querySelectorAll('.stack-it-section');
+        for (const el of sections) { if (el.offsetParent !== null) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); break; } }
       }
 
       function renderStackIt() {
@@ -482,10 +434,15 @@
               <p class="text-sm font-semibold text-[#1a1a1a] truncate">${product.name}</p>
               <span class="text-[11px] font-semibold px-2.5 py-1 rounded-full shrink-0" style="background:rgba(191,14,35,0.06);color:#BF0E23;border:1px solid rgba(191,14,35,0.15)">Available on Request</span>
             </div>
-            <button onclick="openRequestPopup()" class="flex items-center justify-center gap-2.5 px-14 xl:px-20 py-2.5 rounded-xl text-white font-bold text-sm active:scale-[0.98] transition-transform whitespace-nowrap flex-shrink-0 btn-request-design" style="box-shadow:0 4px 16px rgba(44,44,44,0.25)">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-              Request Design
-            </button>
+            <div class="flex items-center gap-3 flex-shrink-0">
+              <button onclick="toggleWishlist(this)" class="w-10 h-10 rounded-full flex items-center justify-center active:scale-90 transition-transform" style="background:rgba(255,255,255,0.9);backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.1);border:1px solid rgba(0,0,0,0.08)" aria-label="Wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
+              <button onclick="openRequestPopup()" class="flex items-center justify-center gap-2.5 px-14 xl:px-20 py-2.5 rounded-xl text-white font-bold text-sm active:scale-[0.98] transition-transform whitespace-nowrap flex-shrink-0 btn-request-design" style="box-shadow:0 4px 16px rgba(44,44,44,0.25)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Request Design
+              </button>
+            </div>
           </div>
         </div>`;
       }
@@ -545,7 +502,6 @@
                 <div class="mt-2 mx-3 sm:mx-4">${renderProductHeader()}</div>
                 <div class="mt-1 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm bg-white">${renderProductInfo()}</div>
                 <div class="mt-3 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderCustomisation()}</div>
-                <div class="mt-3 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderDelivery()}</div>
                 <div class="mt-3 overflow-hidden">${renderBrandImage()}</div>
                 ${renderStackIt()}
                 ${renderFAQ()}
@@ -559,7 +515,6 @@
                   <div>${renderProductHeader()}</div>
                   <div class="bg-white rounded-3xl shadow-sm overflow-hidden">${renderProductInfo()}</div>
                   <div class="rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderCustomisation()}</div>
-                  <div class="rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderDelivery()}</div>
                 </div>
               </div>
               <div class="w-full">${renderBrandImage()}</div>
@@ -592,8 +547,33 @@
       function toggleWishlist(btn) {
         const svg = btn.querySelector('svg');
         const isFilled = svg.getAttribute('fill') !== 'none';
-        svg.setAttribute('fill', isFilled ? 'none' : '#d30b39');
-        svg.setAttribute('stroke', isFilled ? '#3c3c3c' : '#d30b39');
+        const wishlisted = !isFilled;
+        svg.setAttribute('fill', wishlisted ? '#d30b39' : 'none');
+        svg.setAttribute('stroke', wishlisted ? '#d30b39' : '#3c3c3c');
+        btn.classList.remove('wishlist-pop'); void btn.offsetWidth; btn.classList.add('wishlist-pop');
+        btn.addEventListener('animationend', () => btn.classList.remove('wishlist-pop'), {once:true});
+        if (wishlisted) spawnHeartParticles(btn);
+      }
+
+      function spawnHeartParticles(btn) {
+        const rect = btn.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        for (let i = 0; i < 6; i++) {
+          const dot = document.createElement('div');
+          const angle = (Math.PI * 2 / 6) * i;
+          const dist = 18 + Math.random() * 10;
+          const dx = Math.cos(angle) * dist;
+          const dy = Math.sin(angle) * dist;
+          Object.assign(dot.style, {
+            position: 'fixed', left: cx + 'px', top: cy + 'px', width: '5px', height: '5px',
+            borderRadius: '50%', background: i % 2 ? '#d30b39' : '#C5A575', zIndex: '99',
+            pointerEvents: 'none'
+          });
+          dot.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx}px,${dy}px) scale(0)`,opacity:0}],{duration:450,easing:'ease-out'});
+          document.body.appendChild(dot);
+          setTimeout(() => dot.remove(), 500);
+        }
       }
 
       async function doShare() {
