@@ -270,7 +270,7 @@
             </div>
           </div>
           <div style="border-top:1px solid rgba(0,0,0,0.06)">
-            <p class="text-[11px] font-bold tracking-[0.18em] uppercase mt-5 mb-2" style="color:#d30b39">Laboratory-Grown Diamond/s</p>
+            <div class="flex items-center gap-3 mt-5 mb-2"><p class="text-[11px] font-bold tracking-[0.18em] uppercase" style="color:#d30b39">Laboratory-Grown Diamond/s</p><a onclick="var els=document.querySelectorAll('.lgd-faq-section');var el=els[window.innerWidth>=1024?1:0];if(el)el.scrollIntoView({behavior:'smooth',block:'start'})" class="text-[9px] font-semibold tracking-wide cursor-pointer inline-flex items-center gap-1 px-3 py-[4px] rounded-full transition-all" style="background:linear-gradient(135deg,#fff 0%,#fdf8f2 100%);color:#d30b39;border:1.2px solid rgba(211,11,57,0.2);box-shadow:0 1px 4px rgba(211,11,57,0.08);text-decoration:none"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg> LGD Facts</a></div>
             <div style="display:grid;grid-template-columns:1fr auto 1fr auto">
               ${[['Count', d.count], ['Shape', d.shape], ['Clarity & Colour', d.clarity + ' ' + d.colour], ['Weight', d.weight]].map(([label, val], i) => `
                 <span class="text-[11px] text-gray-400 py-3.5 ${i % 2 ? 'pl-2' : ''}">${label}</span>
@@ -479,7 +479,7 @@
           { tag: 'GOLD KARAT', q: 'What does 14kt vs 18kt mean?', a: "It's gold purity: 14kt is 58.5% gold, 18kt is 75%. Choose 18kt for richer colour, 14kt for stronger daily wear." },
           { tag: 'RETURNS & EXCHANGES', q: 'What is the return policy for jewellery?', a: 'Returns are accepted within 7 days for unworn items in their original packaging. Custom and engraved pieces are non-returnable.' }
         ];
-        return `<div class="w-full py-8 px-4">
+        return `<div class="lgd-faq-section w-full py-8 px-4">
           <div class="flex items-center gap-2.5 mb-5">
             <div class="w-1 h-5 rounded-full" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
             <h2 class="text-[11px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Frequently Asked Questions</h2>
