@@ -62,6 +62,34 @@
       .ribbon-gold { background: #C5A575; }
       .ribbon-dark { background: #2C2C2C; }
 
+      /* Customisation Request Popup */
+      .cr-overlay { position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center; }
+      @media(min-width:640px){ .cr-overlay{align-items:center} }
+      .cr-modal { background:#fff;width:100%;max-width:440px;border-radius:24px 24px 0 0;padding:28px 24px 32px;animation:lbFadeIn .25s ease; }
+      @media(min-width:640px){ .cr-modal{border-radius:24px} }
+      .cr-input { width:100%;padding:12px 16px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;font-family:inherit;color:#2c2c2c;transition:border-color .2s;outline:none;background:#fff; }
+      .cr-input:focus { border-color:#2c2c2c; }
+      .cr-input::placeholder { color:#b0b0b0; }
+      .cr-input.error { border-color:#d30b39; }
+      .cr-error { font-size:11px;color:#d30b39;margin-top:4px;display:none; }
+      .cr-error.show { display:block; }
+      .btn-customisation-request { background: #2c2c2c; }
+      .btn-customisation-request:hover { background: #1a1a1a; }
+      .cta-customise {
+        background: linear-gradient(135deg, #fdfcf8 0%, #f6f0e4 50%, #fdfcf8 100%);
+        border: 1px solid rgba(184,134,11,0.18);
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-customise::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%; width: 60%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(212,168,67,0.1), transparent);
+        animation: ctaShimmer 3s ease-in-out infinite;
+      }
+      @keyframes ctaShimmer { 0%{left:-100%} 100%{left:200%} }
+
       .pill-selected { background: #3c3c3c; color: #fff; box-shadow: 0 2px 8px rgba(60,60,60,0.2); }
       .pill-default { background: rgba(0,0,0,0.03); color: #8a7a60; border: 1.5px solid rgba(0,0,0,0.08); }
       .section-gold-bg { background: linear-gradient(135deg, #fdfcf8 0%, #f9f5ee 50%, #fdfcf8 100%); border-top: 1px solid rgba(212,168,67,0.15); }
@@ -101,6 +129,7 @@
   <body>
     <div id="pdpToast" class="pdp-toast"></div>
     <div id="root"></div>
+    <div id="customisationRequestPopup"></div>
 
     <script>
       const product = {
@@ -379,6 +408,16 @@
             <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Gross Weight</p>
             <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-semibold pill-selected">${product.grossWeight}</span>
           </div>
+
+          <button onclick="openCustomisationPopup()" class="w-full mt-3 flex items-center gap-3 px-4 py-3 rounded-xl active:scale-[0.98] transition-all duration-200 cta-customise" style="box-shadow:0 2px 12px rgba(184,134,11,0.08)">
+            <span class="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style="background:linear-gradient(135deg, #d4a843, #f5d77a)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </span>
+            <span class="flex flex-col items-start">
+              <span class="text-[10px] font-semibold tracking-wide" style="color:#3c3c3c">Customise Color, Size, Purity, Cut, Carat & More</span>
+              <span class="text-[8px] mt-0.5 tracking-wider uppercase font-medium" style="color:#b8860b">Personalise this piece →</span>
+            </span>
+          </button>
 
         </div>`;
       }
@@ -783,6 +822,107 @@
         t.textContent = msg;
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 2200);
+      }
+
+      // ─── Customisation Request Popup ───
+      const COUNTRY_CODES = [
+        { code: '+91', flag: '🇮🇳', name: 'India' },
+        { code: '+1', flag: '🇺🇸', name: 'USA' },
+        { code: '+44', flag: '🇬🇧', name: 'UK' },
+        { code: '+971', flag: '🇦🇪', name: 'UAE' },
+        { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
+        { code: '+49', flag: '🇩🇪', name: 'Germany' },
+        { code: '+65', flag: '🇸🇬', name: 'Singapore' },
+        { code: '+61', flag: '🇦🇺', name: 'Australia' },
+        { code: '+60', flag: '🇲🇾', name: 'Malaysia' },
+        { code: '+974', flag: '🇶🇦', name: 'Qatar' },
+        { code: '+968', flag: '🇴🇲', name: 'Oman' },
+        { code: '+965', flag: '🇰🇼', name: 'Kuwait' },
+      ];
+
+      function openCustomisationPopup() {
+        state.customisationPopupOpen = true;
+        document.body.style.overflow = 'hidden';
+        renderCustomisationPopup();
+      }
+
+      function closeCustomisationPopup() {
+        state.customisationPopupOpen = false;
+        document.body.style.overflow = '';
+        document.getElementById('customisationRequestPopup').innerHTML = '';
+      }
+
+      function renderCustomisationPopup() {
+        document.getElementById('customisationRequestPopup').innerHTML = `
+          <div class="cr-overlay" onclick="closeCustomisationPopup()">
+            <div class="cr-modal" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between mb-6">
+                <div>
+                  <h3 class="text-base font-bold text-[#1a1a1a]">Customisation Request</h3>
+                  <p class="text-xs text-gray-400 mt-0.5">Fill in your details and we'll get back to you in 24hrs</p>
+                </div>
+                <button onclick="closeCustomisationPopup()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+              <form id="customisationForm" onsubmit="submitCustomisationForm(event)" novalidate>
+                <div class="space-y-4">
+                  <div>
+                    <input type="text" id="crName" class="cr-input" placeholder="Full Name *" autocomplete="name" />
+                    <p class="cr-error" id="crErrName">Please enter your full name</p>
+                  </div>
+                  <div>
+                    <input type="email" id="crEmail" class="cr-input" placeholder="Email ID *" autocomplete="email" />
+                    <p class="cr-error" id="crErrEmail">Please enter a valid email</p>
+                  </div>
+                  <div>
+                    <div class="flex gap-2">
+                      <select id="crCountryCode" class="cr-input" style="width:110px;flex-shrink:0;padding-right:8px">
+                        ${COUNTRY_CODES.map(c => `<option value="${c.code}">${c.flag} ${c.code}</option>`).join('')}
+                      </select>
+                      <div class="flex-1">
+                        <input type="tel" id="crPhone" class="cr-input" placeholder="Phone Number *" maxlength="10" autocomplete="tel" />
+                      </div>
+                    </div>
+                    <p class="cr-error" id="crErrPhone">Please enter a valid phone number</p>
+                  </div>
+                  <div>
+                    <input type="text" id="crCity" class="cr-input" placeholder="Enter City *" autocomplete="address-level2" />
+                    <p class="cr-error" id="crErrCity">Please enter your city</p>
+                  </div>
+                  <div>
+                    <textarea id="crType" class="cr-input" rows="3" placeholder="Type your request e.g: Need 18KT, Rose gold, 16.44mm, princess cut 0.55 carat in same design"></textarea>
+                  </div>
+                </div>
+                <button type="submit" class="w-full mt-6 py-3.5 rounded-xl text-white font-bold text-sm btn-customisation-request active:scale-[0.98] transition-transform" style="box-shadow:0 4px 16px rgba(44,44,44,0.2)">
+                  Submit Request
+                </button>
+              </form>
+              <p class="text-[10px] text-gray-400 text-center mt-4 leading-relaxed">By submitting, you agree to be contacted regarding this customisation request.</p>
+            </div>
+          </div>`;
+      }
+
+      function submitCustomisationForm(e) {
+        e.preventDefault();
+        let valid = true;
+        const name = document.getElementById('crName').value.trim();
+        const email = document.getElementById('crEmail').value.trim();
+        const phone = document.getElementById('crPhone').value.trim();
+        const city = document.getElementById('crCity').value.trim();
+
+        document.querySelectorAll('.cr-input').forEach(el => el.classList.remove('error'));
+        document.querySelectorAll('.cr-error').forEach(el => el.classList.remove('show'));
+
+        if (!name) { document.getElementById('crName').classList.add('error'); document.getElementById('crErrName').classList.add('show'); valid = false; }
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('crEmail').classList.add('error'); document.getElementById('crErrEmail').classList.add('show'); valid = false; }
+        if (!phone || !/^\d{7,10}$/.test(phone)) { document.getElementById('crPhone').classList.add('error'); document.getElementById('crErrPhone').classList.add('show'); valid = false; }
+        if (!city) { document.getElementById('crCity').classList.add('error'); document.getElementById('crErrCity').classList.add('show'); valid = false; }
+
+        if (!valid) return;
+
+        closeCustomisationPopup();
+        showPdpToast('Customisation request submitted successfully!');
       }
 
       // Swipe handling (gallery + lightbox unified)
