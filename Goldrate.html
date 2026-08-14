@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gold Rate Today in India — Live 22K, 24K, 14K, 9K Gold & Silver Prices | Beyon</title>
+  <meta name="description" content="Check today's gold rate and silver rate in India. Live 9K, 14K, 18K, 22K and 24K gold prices per gram. View gold rate trends, historical data, and silver rates at Beyon." />
+  <meta name="keywords" content="gold rate today, gold price today, 22K gold rate, 24K gold rate, 14K gold rate, 9K gold rate, silver rate today, gold rate in India, gold price per gram" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --primary:#BF0E23;--primary-dark:#9B0B1C;--gold:#C5A575;--gold-light:#D4BA92;
+      --cream:#F9F6F3;--dark:#2C2C2C;--warm-grey:#B0ABAB;--soft-grey:#F6F6F6;
+      --green:#1B8751;--red-light:rgba(191,14,35,.08);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Outfit',sans-serif;background:#fff;color:var(--dark);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+    /* ── HERO ── */
+    .hero{position:relative;background:linear-gradient(135deg,#7a0012 0%,#BF0E23 40%,#9B0B1C 70%,#6b0010 100%);padding:80px 24px 60px;text-align:center;overflow:hidden}
+    .hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5L35 25H55L39 35L44 55L30 43L16 55L21 35L5 25H25Z' fill='%23FFD700' opacity='.06'/%3E%3C/svg%3E") repeat;animation:bg-drift 40s linear infinite}
+    @keyframes bg-drift{to{background-position:600px 600px}}
+    .hero::after{content:'';position:absolute;top:-50%;right:-30%;width:600px;height:600px;background:radial-gradient(circle,rgba(255,215,0,.08) 0%,transparent 60%);border-radius:50%;animation:hero-glow 6s ease-in-out infinite alternate}
+    @keyframes hero-glow{0%{transform:translate(0,0) scale(1);opacity:.6}100%{transform:translate(-40px,40px) scale(1.2);opacity:1}}
+    .hero h1{font-size:clamp(28px,5vw,48px);font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:.05em}
+    .hero h1 span{background:linear-gradient(135deg,var(--gold),#e8d5b0,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero .sub-title{font-size:clamp(16px,2.5vw,22px);font-weight:400;color:rgba(255,255,255,.5);margin-bottom:20px;letter-spacing:.03em}
+    .hero .sub-title span{color:var(--gold-light)}
+    .hero .date-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:100px;padding:8px 20px;font-size:13px;color:rgba(255,255,255,.9);margin-bottom:24px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:badge-fade-in .8s ease .3s both}
+    @keyframes badge-fade-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .hero .date-badge .pulse{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(27,135,81,.5)}50%{box-shadow:0 0 0 8px rgba(27,135,81,0)}}
+    .hero p{color:rgba(255,255,255,.75);font-size:15px;max-width:600px;margin:0 auto;position:relative}
+    .hero .api-note{display:inline-block;margin-top:16px;padding:6px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.3px;position:relative}
+
+    /* ── LIVE TICKER ── */
+    .ticker-strip{background:linear-gradient(90deg,#1a0008,#3a0510,#1a0008);padding:12px 0;overflow:hidden;position:relative;border-bottom:1px solid rgba(191,14,35,.2)}
+    .ticker-content{display:flex;gap:48px;animation:ticker 30s linear infinite;white-space:nowrap}
+    .ticker-content:hover{animation-play-state:paused}
+    @keyframes ticker{to{transform:translateX(-50%)}}
+    .ticker-item{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.7);font-weight:400}
+    .ticker-item strong{color:var(--gold);font-weight:600}
+    .ticker-item .up{color:var(--green)}
+    .ticker-item .down{color:var(--primary)}
+
+    /* ── MAIN CONTENT ── */
+    .main{max-width:1200px;margin:0 auto;padding:40px 24px 80px}
+
+    /* Rate Cards — horizontal strip */
+    .rate-cards{display:flex;gap:14px;margin-bottom:48px;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:var(--gold) transparent}
+    .rate-cards::-webkit-scrollbar{height:4px}
+    .rate-cards::-webkit-scrollbar-thumb{background:var(--gold);border-radius:4px}
+    .rate-card{background:#fff;border-radius:20px;padding:0;border:1.5px solid #eee;position:relative;overflow:hidden;transition:all .4s cubic-bezier(.2,.8,.2,1);min-width:200px;flex:1 0 200px;scroll-snap-align:start;display:flex;flex-direction:column;animation:card-pop .6s cubic-bezier(.2,.8,.2,1) both}
+    .rate-card:nth-child(1){animation-delay:.1s}.rate-card:nth-child(2){animation-delay:.18s}.rate-card:nth-child(3){animation-delay:.26s}.rate-card:nth-child(4){animation-delay:.34s}.rate-card:nth-child(5){animation-delay:.42s}.rate-card:nth-child(6){animation-delay:.5s}
+    @keyframes card-pop{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .rate-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(191,14,35,.1);border-color:var(--primary)}
+    /* Metallic top bar */
+    .rate-card .metal-bar{height:6px;width:100%}
+    .rate-card.k24 .metal-bar{background:linear-gradient(90deg,#B8860B,#DAA520,#FFD700,#DAA520,#B8860B);background-size:200% 100%;animation:metallic-shimmer 3s ease infinite}
+    .rate-card.k22 .metal-bar{background:linear-gradient(90deg,#C5A575,#D4BA92,#E8D5B0,#D4BA92,#C5A575);background-size:200% 100%;animation:metallic-shimmer 3s ease infinite}
+    .rate-card.k18 .metal-bar{background:linear-gradient(90deg,#D4A574,#E8C9A0,#F2DFC4,#E8C9A0,#D4A574);background-size:200% 100%;animation:metallic-shimmer 3s ease infinite}
+    .rate-card.k14 .metal-bar{background:linear-gradient(90deg,#D2B48C,#E6CEAC,#F5E6D0,#E6CEAC,#D2B48C);background-size:200% 100%;animation:metallic-shimmer 3s ease infinite}
+    .rate-card.k9 .metal-bar{background:linear-gradient(90deg,#8B0000,#BF0E23,#E8334A,#BF0E23,#8B0000);background-size:200% 100%;animation:metallic-shimmer 3s ease infinite}
+    .rate-card.silver .metal-bar{background:linear-gradient(90deg,#8C8C8C,#B8B8B8,#D8D8D8,#E8E8E8,#D8D8D8,#B8B8B8,#8C8C8C);background-size:300% 100%;animation:metallic-shimmer 3s ease infinite}
+    @keyframes metallic-shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .rate-card .card-body{padding:20px 22px 22px}
+    .rate-card .karat-label{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+    .rate-card.k24 .karat-label{color:#B8860B}
+    .rate-card.k22 .karat-label{color:#A88B5C}
+    .rate-card.k18 .karat-label{color:#C4956A}
+    .rate-card.k14 .karat-label{color:#B89B72}
+    .rate-card.k9 .karat-label{color:var(--primary)}
+    .rate-card.silver .karat-label{color:#777}
+    .rate-card .karat-label .purity-tag{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--soft-grey);color:var(--warm-grey);letter-spacing:.3px}
+    .rate-card .price{font-size:28px;font-weight:800;color:var(--dark);line-height:1;margin-bottom:4px}
+    .rate-card .price small{font-size:12px;font-weight:400;color:var(--warm-grey)}
+    .rate-card .change{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;margin-top:6px}
+    .rate-card .change.up{background:rgba(27,135,81,.08);color:var(--green)}
+    .rate-card .change.down{background:var(--red-light);color:var(--primary)}
+    .rate-card .unit{font-size:11px;color:var(--warm-grey);margin-top:10px;padding-top:10px;border-top:1px solid #f0ece6}
+    .rate-card .unit span{font-weight:600;color:var(--dark)}
+    .rate-card .change.up .arrow-icon{display:inline-block;animation:bounce-arrow 1s ease infinite}
+    @keyframes bounce-arrow{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+
+    /* Section Titles */
+    .section-heading{margin-bottom:24px}
+    .section-heading h2{font-size:24px;font-weight:700;color:var(--dark);margin-bottom:4px;position:relative;display:inline-block}
+    .section-heading h2::after{content:'';position:absolute;bottom:-4px;left:0;width:40px;height:3px;background:linear-gradient(90deg,var(--primary),var(--gold));border-radius:2px}
+    .section-heading p{font-size:14px;color:var(--warm-grey);margin-top:8px}
+
+    /* ── TREND CHART ── */
+    .chart-section{background:#fff;border-radius:20px;border:1.5px solid #eee;padding:32px;margin-bottom:48px;box-shadow:0 4px 24px rgba(0,0,0,.04)}
+    .chart-tabs{display:flex;gap:6px;margin-bottom:24px}
+    .chart-tab{padding:6px 16px;border-radius:8px;font-size:12px;font-weight:600;background:var(--soft-grey);border:none;cursor:pointer;font-family:inherit;transition:all .3s;color:var(--dark)}
+    .chart-tab.active{background:var(--primary);color:#fff}
+    .chart-area{position:relative;height:280px;background:linear-gradient(180deg,rgba(197,165,117,.04) 0%,rgba(197,165,117,.01) 100%);border-radius:12px;overflow:visible}
+    .chart-svg{width:100%;height:100%;overflow:visible}
+    .chart-grid line{stroke:#E5DDD3;stroke-dasharray:4 4}
+    .chart-line{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 4px rgba(197,165,117,.3))}
+    .chart-fill{fill:url(#goldGradient)}
+    .chart-labels{display:flex;justify-content:space-between;padding:12px 8px 0;font-size:11px;color:var(--warm-grey)}
+    .chart-tooltip{position:absolute;pointer-events:none;background:var(--dark);color:#fff;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:600;white-space:nowrap;transform:translate(-50%,-130%);opacity:0;transition:opacity .15s;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:10}
+    .chart-tooltip::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid var(--dark)}
+    .chart-tooltip .tooltip-label{font-size:10px;font-weight:400;color:rgba(255,255,255,.6)}
+
+    /* ── CALCULATOR ── */
+    .calc-section{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:48px}
+    @media(max-width:768px){.calc-section{grid-template-columns:1fr}}
+    .calc-card{background:#fff;border-radius:20px;border:1.5px solid #eee;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.04);transition:all .3s}
+    .calc-card:hover{box-shadow:0 8px 32px rgba(191,14,35,.08)}
+    .calc-card h3{font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+    .calc-card h3 .icon-circle{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+    .calc-card .field{margin-bottom:16px}
+    .calc-card label{font-size:12px;font-weight:600;color:var(--warm-grey);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:block}
+    .calc-card input,.calc-card select{width:100%;padding:12px 16px;border:1.5px solid #E5DDD3;border-radius:12px;font-family:inherit;font-size:14px;color:var(--dark);background:#fff;transition:border-color .3s;outline:none}
+    .calc-card input:focus,.calc-card select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(191,14,35,.06)}
+    .calc-result{background:var(--soft-grey);border-radius:12px;padding:16px;margin-top:8px;text-align:center}
+    .calc-result .result-value{font-size:28px;font-weight:800;color:var(--primary)}
+    .calc-result .result-label{font-size:12px;color:var(--warm-grey)}
+
+    /* ── FAQ ── */
+    .faq-section{margin-bottom:48px}
+    .faq-item{background:#fff;border-radius:16px;border:1.5px solid #eee;margin-bottom:12px;overflow:hidden;transition:all .3s}
+    .faq-item:hover{border-color:var(--primary);box-shadow:0 4px 16px rgba(191,14,35,.06)}
+    .faq-q{padding:20px 24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:15px;font-weight:600;gap:12px;user-select:none}
+    .faq-q .toggle{width:28px;height:28px;border-radius:8px;background:rgba(191,14,35,.06);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--primary);transition:all .3s;flex-shrink:0}
+    .faq-item.open .faq-q .toggle{background:var(--primary);color:#fff;transform:rotate(45deg)}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.2,.8,.2,1),padding .3s}
+    .faq-item.open .faq-a{max-height:400px;padding:0 24px 20px}
+    .faq-a p{font-size:14px;line-height:1.7;color:#666}
+
+    /* ── CTA BANNER ── */
+    .cta-banner{background:linear-gradient(135deg,#7a0012 0%,#BF0E23 50%,#9B0B1C 100%);border-radius:24px;padding:48px;text-align:center;position:relative;overflow:hidden;margin-bottom:48px}
+    .cta-banner::before{content:'';position:absolute;top:-50%;right:-20%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,215,0,.1) 0%,transparent 60%);border-radius:50%;animation:cta-orb 8s ease-in-out infinite alternate}
+    .cta-banner::after{content:'';position:absolute;bottom:-30%;left:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(255,255,255,.06) 0%,transparent 60%);border-radius:50%;animation:cta-orb 6s ease-in-out infinite alternate-reverse}
+    @keyframes cta-orb{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.3) translate(30px,-20px)}}
+    .cta-banner h2{font-size:28px;font-weight:800;color:#fff;margin-bottom:8px;position:relative}
+    .cta-banner h2 span{color:var(--gold)}
+    .cta-banner p{color:rgba(255,255,255,.6);font-size:15px;margin-bottom:24px;position:relative}
+    .cta-banner .btn-shop{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;background:#fff;color:var(--primary);text-decoration:none;font-weight:700;font-size:15px;transition:all .3s;position:relative;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+    .cta-banner .btn-shop:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 12px 32px rgba(0,0,0,.2);background:var(--gold);color:#fff}
+
+    /* ── SEO CONTENT ── */
+    .seo-content{background:#fff;border-radius:20px;border:1.5px solid #eee;padding:40px;margin-bottom:48px;box-shadow:0 4px 24px rgba(0,0,0,.04)}
+    .seo-content h2{font-size:22px;font-weight:700;margin-bottom:16px;color:var(--dark)}
+    .seo-content h3{font-size:17px;font-weight:600;margin:24px 0 8px;color:var(--primary)}
+    .seo-content p{font-size:14px;line-height:1.8;color:#666;margin-bottom:12px}
+    .seo-content ul{padding-left:20px;margin-bottom:12px}
+    .seo-content li{font-size:14px;line-height:1.8;color:#666;margin-bottom:4px}
+
+    /* ── ANIMATIONS ── */
+    .fade-up{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(.2,.8,.2,1)}
+    .fade-up.visible{opacity:1;transform:translateY(0)}
+    /* Staggered children animation */
+    .fade-up.visible .rate-card{opacity:1;transform:translateY(0)}
+    /* Animated red accent line */
+    .red-line{height:3px;background:linear-gradient(90deg,transparent,var(--primary),var(--gold),var(--primary),transparent);margin:0 auto 40px;max-width:200px;border-radius:2px;animation:line-glow 3s ease infinite}
+    @keyframes line-glow{0%,100%{opacity:.4;max-width:120px}50%{opacity:1;max-width:200px}}
+    /* Number count-up animation */
+    .count-up{animation:count-fade .6s ease both}
+    @keyframes count-fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── RESPONSIVENESS ── */
+    @media(max-width:768px){
+      .hero{padding:60px 20px 40px}
+      .rate-cards{gap:12px}
+      .rate-card{min-width:170px;flex:1 0 170px}
+      .rate-card .price{font-size:22px}
+      .cta-banner{padding:32px 20px}
+      .seo-content{padding:24px}
+    }
+    @media(max-width:480px){
+      .rate-card{min-width:155px;flex:1 0 155px}
+    }
+
+    /* ── FLOATING GOLD PARTICLES ── */
+    .particle{position:absolute;width:4px;height:4px;border-radius:50%;opacity:.3;animation:float-up 6s infinite}
+    .particle:nth-child(odd){background:var(--gold)}
+    .particle:nth-child(even){background:#fff}
+    @keyframes float-up{0%{transform:translateY(0) scale(1);opacity:.3}50%{opacity:.7}100%{transform:translateY(-200px) scale(0);opacity:0}}
+    /* Sparkle effect */
+    .sparkle{position:absolute;width:3px;height:3px;background:#FFD700;border-radius:50%;animation:sparkle-anim 4s ease-in-out infinite;pointer-events:none}
+    @keyframes sparkle-anim{0%,100%{opacity:0;transform:scale(0) rotate(0deg)}25%{opacity:1;transform:scale(1) rotate(90deg)}50%{opacity:0;transform:scale(0) rotate(180deg)}}
+  </style>
+</head>
+<body>
+
+<!-- LIVE TICKER -->
+<div class="ticker-strip">
+  <div class="ticker-content" id="tickerContent"></div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="particle" style="left:10%;top:60%;animation-delay:0s"></div>
+  <div class="particle" style="left:25%;top:40%;animation-delay:1.2s"></div>
+  <div class="particle" style="left:50%;top:70%;animation-delay:2.5s"></div>
+  <div class="particle" style="left:75%;top:30%;animation-delay:0.8s"></div>
+  <div class="particle" style="left:90%;top:55%;animation-delay:3s"></div>
+  <div class="particle" style="left:15%;top:80%;animation-delay:1.8s"></div>
+  <div class="particle" style="left:65%;top:20%;animation-delay:2.2s"></div>
+  <div class="particle" style="left:40%;top:85%;animation-delay:0.5s"></div>
+  <div class="sparkle" style="left:20%;top:25%;animation-delay:0s"></div>
+  <div class="sparkle" style="left:45%;top:15%;animation-delay:1.5s"></div>
+  <div class="sparkle" style="left:70%;top:60%;animation-delay:2.8s"></div>
+  <div class="sparkle" style="left:85%;top:35%;animation-delay:1s"></div>
+  <div class="sparkle" style="left:30%;top:75%;animation-delay:3.2s"></div>
+  <div class="date-badge"><span class="pulse"></span> Live Rates — <span id="heroDate"></span></div>
+  <h1>Gold Rate <span>Today</span> in India</h1>
+  <p class="sub-title">&amp; <span>Silver</span> Rate Today in India</p>
+  <p>Real-time 9K, 14K, 18K, 22K &amp; 24K gold and silver prices per gram, updated daily.</p>
+  <!--
+    ┌─────────────────────────────────────────────────────────────────────────┐
+    │  API NOTE:                                                             │
+    │  Currently NO live API is connected. All rates shown are STATIC /      │
+    │  hardcoded sample data for prototyping purposes only.                  │
+    │                                                                        │
+    │  For production, integrate one of these gold rate APIs:                │
+    │  1. GoldAPI.io        — https://www.goldapi.io (free tier available)   │
+    │  2. Metals-API        — https://metals-api.com                         │
+    │  3. MetalpriceAPI     — https://metalpriceapi.com                      │
+    │  4. Gold Price India   — Custom scraper from IBJA / MCX feeds          │
+    │                                                                        │
+    │  Recommended: GoldAPI.io — provides XAU, XAG prices in INR with       │
+    │  historical data. Fetch daily via a backend cron job and cache the     │
+    │  result; serve cached JSON to the frontend to avoid exposing API keys. │
+    └─────────────────────────────────────────────────────────────────────────┘
+  -->
+  <div class="api-note">⚡ Rates are sample data — connect a live API for production</div>
+</section>
+
+<!-- Animated accent line -->
+<div class="red-line"></div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- Rate Cards -->
+  <div class="rate-cards fade-up">
+    <div class="rate-card k9">
+      <div class="metal-bar"></div>
+      <div class="card-body">
+        <div class="karat-label">9K Gold <span class="purity-tag">37.5%</span></div>
+        <div class="price">₹<span id="rate9k">2,941</span> <small>/ gram</small></div>
+        <span class="change up" id="change9k">▲ ₹19 (0.65%)</span>
+        <div class="unit">Per 10g: <span id="rate9k10">₹29,410</span></div>
+      </div>
+    </div>
+    <div class="rate-card silver">
+      <div class="metal-bar"></div>
+      <div class="card-body">
+        <div class="karat-label">Silver <span class="purity-tag">99.9%</span></div>
+        <div class="price">₹<span id="rateSilver">98.50</span> <small>/ gram</small></div>
+        <span class="change up" id="changeSilver">▲ ₹0.80 (0.82%)</span>
+        <div class="unit">Per 10g: <span id="rateSilver10">₹985</span></div>
+      </div>
+    </div>
+    <div class="rate-card k14">
+      <div class="metal-bar"></div>
+      <div class="card-body">
+        <div class="karat-label">14K Gold <span class="purity-tag">58.3%</span></div>
+        <div class="price">₹<span id="rate14k">4,575</span> <small>/ gram</small></div>
+        <span class="change up" id="change14k">▲ ₹30 (0.66%)</span>
+        <div class="unit">Per 10g: <span id="rate14k10">₹45,750</span></div>
+      </div>
+    </div>
+    <div class="rate-card k18">
+      <div class="metal-bar"></div>
+      <div class="card-body">
+        <div class="karat-label">18K Gold <span class="purity-tag">75.0%</span></div>
+        <div class="price">₹<span id="rate18k">5,882</span> <small>/ gram</small></div>
+        <span class="change up" id="change18k">▲ ₹39 (0.67%)</span>
+        <div class="unit">Per 10g: <span id="rate18k10">₹58,820</span></div>
+      </div>
+    </div>
+    <div class="rate-card k22">
+      <div class="metal-bar"></div>
+      <div class="card-body">
+        <div class="karat-label">22K Gold <span class="purity-tag">91.6%</span></div>
+        <div class="price">₹<span id="rate22k">7,188</span> <small>/ gram</small></div>
+        <span class="change up" id="change22k">▲ ₹48 (0.67%)</span>
+        <div class="unit">Per 10g: <span id="rate22k10">₹71,880</span></div>
+      </div>
+    </div>
+    <div class="rate-card k24">
+      <div class="metal-bar"></div>
+      <div class="card-body">
+        <div class="karat-label">24K Gold <span class="purity-tag">99.9%</span></div>
+        <div class="price">₹<span id="rate24k">7,842</span> <small>/ gram</small></div>
+        <span class="change up" id="change24k">▲ ₹52 (0.67%)</span>
+        <div class="unit">Per 10g: <span id="rate24k10">₹78,420</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gold Price Trend Chart -->
+  <div class="fade-up">
+    <div class="section-heading">
+      <h2>Gold Price Trends</h2>
+      <p>Track gold rate movement over the past week, month, and year. Hover over the chart to see prices.</p>
+    </div>
+    <div class="chart-section">
+      <div class="chart-tabs">
+        <button class="chart-tab active" onclick="setChartPeriod('1W',this)">1 Week</button>
+        <button class="chart-tab" onclick="setChartPeriod('1M',this)">1 Month</button>
+        <button class="chart-tab" onclick="setChartPeriod('3M',this)">3 Months</button>
+        <button class="chart-tab" onclick="setChartPeriod('1Y',this)">1 Year</button>
+        <button class="chart-tab" onclick="setChartPeriod('5Y',this)">5 Years</button>
+      </div>
+      <div class="chart-area" id="chartAreaWrap">
+        <svg class="chart-svg" viewBox="0 0 800 260" preserveAspectRatio="none" id="trendChart">
+          <defs>
+            <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(197,165,117,.25)" />
+              <stop offset="100%" stop-color="rgba(197,165,117,0)" />
+            </linearGradient>
+          </defs>
+          <line class="chart-grid" x1="0" y1="65" x2="800" y2="65" />
+          <line class="chart-grid" x1="0" y1="130" x2="800" y2="130" />
+          <line class="chart-grid" x1="0" y1="195" x2="800" y2="195" />
+          <text id="gridLabel1" x="795" y="62" text-anchor="end" fill="#B0ABAB" font-size="11" font-family="Outfit"></text>
+          <text id="gridLabel2" x="795" y="127" text-anchor="end" fill="#B0ABAB" font-size="11" font-family="Outfit"></text>
+          <text id="gridLabel3" x="795" y="192" text-anchor="end" fill="#B0ABAB" font-size="11" font-family="Outfit"></text>
+          <path class="chart-fill" id="chartFill" />
+          <path class="chart-line" id="chartLine" />
+          <g id="chartDots"></g>
+          <circle id="chartDot" cx="0" cy="0" r="6" fill="#C5A575" stroke="#fff" stroke-width="2.5" style="display:none" />
+        </svg>
+        <div class="chart-tooltip" id="chartTooltip">
+          <div class="tooltip-label" id="tooltipLabel"></div>
+          <div id="tooltipValue"></div>
+        </div>
+      </div>
+      <div class="chart-labels" id="chartLabels"></div>
+    </div>
+  </div>
+
+  <!-- Calculator Section -->
+  <div class="fade-up">
+    <div class="section-heading">
+      <h2>Gold &amp; Silver Calculators</h2>
+      <p>Quickly estimate the value of your gold/silver or how much your budget can buy.</p>
+    </div>
+    <div class="calc-section">
+      <div class="calc-card">
+        <h3><span class="icon-circle" style="background:rgba(197,165,117,.12)">⚖️</span> Weight to Value</h3>
+        <div class="field">
+          <label>Weight (grams)</label>
+          <input type="number" id="calcWeight" value="10" min="0.1" step="0.1" oninput="calcGoldValue()" />
+        </div>
+        <div class="field">
+          <label>Metal / Purity</label>
+          <select id="calcPurity" onchange="calcGoldValue()">
+            <option value="24">24K Gold (99.9%)</option>
+            <option value="22" selected>22K Gold (91.6%)</option>
+            <option value="18">18K Gold (75.0%)</option>
+            <option value="14">14K Gold (58.3%)</option>
+            <option value="9">9K Gold (37.5%)</option>
+            <option value="silver">Silver</option>
+          </select>
+        </div>
+        <div class="calc-result">
+          <div class="result-label">Estimated Value</div>
+          <div class="result-value" id="calcValueResult">₹71,880</div>
+        </div>
+      </div>
+      <div class="calc-card">
+        <h3><span class="icon-circle" style="background:var(--red-light)">💰</span> Budget to Weight</h3>
+        <div class="field">
+          <label>Your Budget (₹)</label>
+          <input type="number" id="calcBudget" value="100000" min="100" step="100" oninput="calcGoldWeight()" />
+        </div>
+        <div class="field">
+          <label>Metal / Purity</label>
+          <select id="calcBudgetPurity" onchange="calcGoldWeight()">
+            <option value="24">24K Gold (99.9%)</option>
+            <option value="22" selected>22K Gold (91.6%)</option>
+            <option value="18">18K Gold (75.0%)</option>
+            <option value="14">14K Gold (58.3%)</option>
+            <option value="9">9K Gold (37.5%)</option>
+            <option value="silver">Silver</option>
+          </select>
+        </div>
+        <div class="calc-result">
+          <div class="result-label">You can buy</div>
+          <div class="result-value" id="calcWeightResult">13.91g</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Banner -->
+  <div class="cta-banner fade-up">
+    <h2>Invest in <span>Timeless Gold</span> Jewellery</h2>
+    <p>Browse our curated collection of 14KT &amp; 18KT gold jewellery — handcrafted for every occasion.</p>
+    <a href="#" class="btn-shop">Shop Gold Jewellery →</a>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="faq-section fade-up">
+    <div class="section-heading">
+      <h2>Frequently Asked Questions</h2>
+      <p>Everything you need to know about gold &amp; silver rates in India.</p>
+    </div>
+    <div class="faq-item open">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the gold rate today in India?<span class="toggle">+</span></div>
+      <div class="faq-a"><p>Today's 22K gold rate is approximately ₹71,880 per 10 grams and 24K gold rate is approximately ₹78,420 per 10 grams. Gold rates are updated daily based on international market trends, currency exchange rates, and local demand.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the difference between 9K, 14K, 18K, 22K and 24K gold?<span class="toggle">+</span></div>
+      <div class="faq-a"><p>24K gold is 99.9% pure gold — ideal for investment but too soft for jewellery. 22K (91.6% gold) is the traditional Indian jewellery standard. 18K (75% gold) is popular for diamond-studded and contemporary designs. 14K (58.3% gold) offers excellent durability and is widely used internationally. 9K (37.5% gold) is the most affordable karat and extremely durable, making it ideal for everyday wear pieces.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What is the silver rate today?<span class="toggle">+</span></div>
+      <div class="faq-a"><p>Today's silver rate is approximately ₹985 per 10 grams (₹98.50 per gram). Silver prices are influenced by industrial demand, investment sentiment, and global economic conditions. Silver is often considered a more affordable precious metal investment compared to gold.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What factors affect gold and silver prices in India?<span class="toggle">+</span></div>
+      <div class="faq-a"><p>Gold and silver prices in India are influenced by international prices (COMEX and London Bullion Market), the USD-INR exchange rate, import duties and GST, RBI monetary policies, inflation rates, geopolitical tensions, crude oil prices, and seasonal demand during festivals and wedding seasons.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Is it a good time to buy gold?<span class="toggle">+</span></div>
+      <div class="faq-a"><p>Gold has historically been a safe-haven asset that appreciates over the long term. While short-term fluctuations are normal, gold tends to perform well during economic uncertainty. Consider buying gold for jewellery during festive seasons like Dhanteras and Akshaya Tritiya when many jewellers offer special making charges.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How is gold rate calculated for jewellery?<span class="toggle">+</span></div>
+      <div class="faq-a"><p>The final price of gold jewellery is calculated as: (Weight of gold × Gold rate per gram) + Making charges + GST (3%). Making charges vary based on the complexity of the design, craftsmanship, and the jeweller. At Beyon, we ensure transparent pricing with clearly stated making charges on every piece.</p></div>
+    </div>
+  </div>
+
+  <!-- SEO Content -->
+  <div class="seo-content fade-up">
+    <h2>Stay Updated with Gold Rate Today for Smart Buying Decisions</h2>
+    <p>The gold rate today in India fluctuates as per global economic instability, inflation and overall demand. By tracking these rates, you can choose favourable times to buy or sell. Thus, make the most of this 'safe-haven' option, acting as a hedge against inevitable currency devaluation.</p>
+
+    <h3>How Is the Gold Rate Calculated in India?</h3>
+    <p>The gold rate today is determined based on international prices, adjusted for currency fluctuations, GST, import duty, transportation and local demand. Jewellers quote rates per gram, with the final price depending on purity and making charges.</p>
+    <p>Let us simplify the way in which the gold rate in India is calculated.</p>
+    <p>First, the international gold price is taken into consideration. It fluctuates on the basis of the overall economic state, global demand and currency changes, especially when USD is converted to the INR rate.</p>
+    <p>This base price is adjusted locally across various Indian states after adding GST, import duty and transportation. Additionally, if relevant, the demand variations also count, as per the city you are in.</p>
+    <p>Jewellers typically quote the gold rate per gram. Considering 1 gram/10 gram is common. The price also depends on the purity of gold, like whether the base is 22K or 18K, etc.</p>
+    <p>For example, if the 22k gold rate today is ₹14,759 per gram, you can calculate the price in the manner mentioned below.</p>
+    <p><strong>10 grams of 22K gold:</strong></p>
+    <ul>
+      <li>Base gold rate: 14,759 x 10 grams = ₹1,47,590</li>
+      <li>Making charges (say 10%): ₹14,759</li>
+      <li>Subtotal: ₹1,62,349</li>
+      <li>GST (3% on ₹1,62,349): ₹4,870.47</li>
+      <li>Total price = ₹1,62,349 + ₹4,870.47 = <strong>₹1,67,219.47</strong></li>
+    </ul>
+    <p>So, the total price for 10 grams of 22K gold would be approximately ₹1,67,219.</p>
+    <p>Prior to buying gold, check the live gold rate today in your city. In addition, make sure to request a detailed price breakup of your gold products to make smart and well-informed purchases. You can also refer to our gold rate calculator for accuracy.</p>
+
+    <h3>What Are the Reasons for Gold Price Fluctuation?</h3>
+    <p>Gold rates fluctuate mainly due to demand tweaks at times of geopolitical uncertainty, new policies introduced by the central bank, inflation and fluctuating dollar values. Other drivers for such fluctuations include supply constraints resulting from mining, higher-than-expected consumer demand during seasons hosting festivals/weddings, etc.</p>
+    <p>Here are the primary reasons why the gold rate fluctuates monthly and daily in India:</p>
+
+    <h3>1. Inflation</h3>
+    <p>Inflation directly impacts the gold rate today for 24K, 22K and other purities. As inflation rises and currency purchasing power declines, gold prices often increase. Being a tangible safe-haven asset, gold attracts higher investor demand during high inflation, further supporting its price.</p>
+
+    <h3>2. Rates of Currency Exchange</h3>
+    <p>If there are fluctuations in the values of the currency (INR against the U.S. Dollar), the gold rate today reflects it.</p>
+
+    <h3>3. Market Speculation</h3>
+    <p>Speculative trading and investor sentiment can lead to fluctuations in gold rates within the short term.</p>
+
+    <h3>4. Global Gold Rates</h3>
+    <p>The international gold market affects the local gold rates. This is because gold is priced in terms of dollars globally. If the dollar gets stronger, it makes gold more expensive in local currencies as well.</p>
+
+    <h3>5. Government Policies</h3>
+    <p>Import duties and various government regulations on gold cause fluctuations in gold rates.</p>
+
+    <h3>Why Should I Invest in Gold in 2026?</h3>
+    <p>Indian investors have trusted gold to be the epitome of stability and value for a long time. Be it in the form of jewellery or coins, gold holds emotional significance and measurable financial benefits. Here's why investing in gold in 2026 is a future-safe idea.</p>
+    <ul>
+      <li><strong>Safety Net During Times of Uncertainty:</strong> When or if economic instability takes a toll, gold comes to the rescue as a dependable form of investment.</li>
+      <li><strong>Trusted Hedge Against Inflation:</strong> Gold holds onto its value through the years, especially in the face of inflation. This makes it a smart asset to invest in long-term.</li>
+      <li><strong>Ease of Liquidity &amp; Flexibility:</strong> Knowing today's gold rate ensures easy buying or selling and allows you to leverage your gold for loans when needed.</li>
+      <li><strong>Tangible &amp; Transferable:</strong> You can store your gold items securely and pass them down, adding long-term value to your investment.</li>
+    </ul>
+    <p>Ready to make your gold investment in 2026? Explore our <a href="#" style="color:var(--primary);font-weight:600;text-decoration:underline">curated gold collection</a> and stay updated with today's gold rates to start investing smartly while enjoying timeless style.</p>
+
+    <h3>How to Check the Gold Purity?</h3>
+    <p>Visual inspection, such as checking for discolouration or tarnishing, can indicate impurities, but consulting a certified jeweller is the most reliable way to verify gold purity.</p>
+    <p>Other methods are also available to assess authenticity and quality:</p>
+    <table style="width:100%;border-collapse:collapse;margin:16px 0;border-radius:12px;overflow:hidden">
+      <thead>
+        <tr style="background:var(--soft-grey)">
+          <th style="padding:12px 16px;text-align:left;font-size:13px;font-weight:700;color:var(--dark);border-bottom:1.5px solid #E5DDD3">What You Need</th>
+          <th style="padding:12px 16px;text-align:left;font-size:13px;font-weight:700;color:var(--dark);border-bottom:1.5px solid #E5DDD3">What to Do</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:12px 16px;font-size:14px;border-bottom:1px solid #f0ece6">A magnifying glass</td><td style="padding:12px 16px;font-size:14px;border-bottom:1px solid #f0ece6">Use it to examine your gold minutely for hallmarks/stamps. These indicate purity levels.</td></tr>
+        <tr><td style="padding:12px 16px;font-size:14px;border-bottom:1px solid #f0ece6">Magnet</td><td style="padding:12px 16px;font-size:14px;border-bottom:1px solid #f0ece6">Conduct a magnetic test. Note that authentic gold is not magnetic. Use the magnet to tell real gold apart from other metals.</td></tr>
+        <tr><td style="padding:12px 16px;font-size:14px">Nitric Acid (professional help recommended)</td><td style="padding:12px 16px;font-size:14px">Have a professional jeweller conduct the nitric acid test for your gold, as chemicals are involved.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Is Investing in Gold Jewellery a Worthy Option?</h3>
+    <p>Investing in gold jewellery is a smart long-term choice, offering both tangible value and aesthetic appeal. It serves as a safe, portable asset that provides financial security while enhancing your style.</p>
+    <p>Here's why it's worth considering:</p>
+
+    <h3>1. Wearable Investment</h3>
+    <p>Investing in timeless gold jewellery is also an investment in yourself. It offers smart returns while letting you enjoy and showcase your pieces through style, whether at special events or daily wear.</p>
+
+    <h3>2. Long-Term Value</h3>
+    <p>Gold is a dependable form of investment, and the gold rate history proves how it's a stable source of wealth. Its predictable appreciation over the years is a major reliability indicator.</p>
+
+    <h3>3. Sturdy Enough for Long Wear</h3>
+    <p>Gold is resistant to corrosion and tarnishing. This makes it perfect for passing down as an inheritance.</p>
+    <p>Stay updated on the gold rate today for 18k, 14k &amp; 9k jewellery so you can invest in ultra-durable, sleek gold jewellery for daily wear.</p>
+
+    <h3>What Are the Points to Consider Before Buying Gold Jewellery?</h3>
+    <p>Knowing the gold rate for jewellery is significant, so you can decide for yourself whether or not a specific deal makes sense. Here are the other points to consider when you are buying gold jewellery:</p>
+
+    <h3>1. Highly-rated Jewellers</h3>
+    <p>Make sure to only associate with established jewellers holding a good reputation. Check out online reviews, ask around for recommendations or visit jewellery stores in person to ensure the quality of your purchase. At Beyon, our brand gives you this assurance.</p>
+
+    <h3>2. Certification of Authenticity/Hallmark</h3>
+    <p>Look for hallmark certification in your gold jewellery picks. It guarantees gold purity, which ensures that you are getting exactly what you are paying for.</p>
+
+    <h3>3. Understanding the Price Breakdown</h3>
+    <p>Apart from the gold rate today, explore the making charges and additional taxes/fees for more clarity.</p>
+    <p>Looking to invest in gold in the form of jewellery or <a href="#" style="color:var(--primary);font-weight:600;text-decoration:underline">coins</a>? Make sure to check out our timeless yet trendy designs at Beyon.</p>
+  </div>
+
+</div>
+
+<script>
+// ── DATA ──
+// NOTE: These are STATIC sample rates for prototyping.
+// No live API is currently connected. For production, integrate a gold rate API
+// such as GoldAPI.io (https://www.goldapi.io), Metals-API, or MetalpriceAPI.
+// Recommended approach: Backend cron fetches rates daily → caches as JSON → frontend reads cached JSON.
+// This avoids exposing API keys in client-side code.
+const goldRates = {
+  '24k': 7842, '22k': 7188, '18k': 5882, '14k': 4575, '9k': 2941,
+  'silver': 98.50,
+  change24k: 52, change22k: 48, change18k: 39, change14k: 30, change9k: 19,
+  changeSilver: 0.80
+};
+
+const chartData = {
+  '1W': { labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], values:[7790,7810,7795,7825,7830,7838,7842] },
+  '1M': { labels:['Week 1','Week 2','Week 3','Week 4'], values:[7680,7720,7790,7842] },
+  '3M': { labels:['Jun','Jul','Aug'], values:[7450,7620,7842] },
+  '1Y': { labels:['Sep','Nov','Jan','Mar','May','Jul','Aug'], values:[6850,7020,7180,7350,7520,7680,7842] },
+  '5Y': { labels:['2021','2022','2023','2024','2025','2026'], values:[4800,5200,5900,6500,7200,7842] }
+};
+
+// ── DATE ──
+const now = new Date();
+document.getElementById('heroDate').textContent = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+// ── TICKER ──
+function buildTicker(){
+  const items = [
+    `<strong>24K Gold:</strong> ₹${goldRates['24k'].toLocaleString('en-IN')}/g <span class="up">▲ ₹${goldRates.change24k}</span>`,
+    `<strong>22K Gold:</strong> ₹${goldRates['22k'].toLocaleString('en-IN')}/g <span class="up">▲ ₹${goldRates.change22k}</span>`,
+    `<strong>18K Gold:</strong> ₹${goldRates['18k'].toLocaleString('en-IN')}/g <span class="up">▲ ₹${goldRates.change18k}</span>`,
+    `<strong>14K Gold:</strong> ₹${goldRates['14k'].toLocaleString('en-IN')}/g <span class="up">▲ ₹${goldRates.change14k}</span>`,
+    `<strong>9K Gold:</strong> ₹${goldRates['9k'].toLocaleString('en-IN')}/g <span class="up">▲ ₹${goldRates.change9k}</span>`,
+    `<strong>Silver:</strong> ₹${goldRates['silver']}/g <span class="up">▲ ₹${goldRates.changeSilver}</span>`,
+  ];
+  const html = items.map(i=>`<span class="ticker-item">${i}</span>`).join('');
+  document.getElementById('tickerContent').innerHTML = html + html;
+}
+buildTicker();
+
+// ── CHART ──
+let currentChartData = null;
+let currentChartPoints = null;
+
+function drawChart(period){
+  const d = chartData[period];
+  currentChartData = d;
+  const vals = d.values;
+  const min = Math.min(...vals) - 50;
+  const max = Math.max(...vals) + 50;
+  const w = 800, h = 250;
+  const points = vals.map((v,i)=>[i*(w/(vals.length-1)), h - ((v-min)/(max-min))*h]);
+  currentChartPoints = points;
+  const lineD = 'M' + points.map(p=>p.join(',')).join(' L');
+  const fillD = lineD + ` L${w},${h} L0,${h} Z`;
+  document.getElementById('chartLine').setAttribute('d', lineD);
+  document.getElementById('chartFill').setAttribute('d', fillD);
+  document.getElementById('chartLabels').innerHTML = d.labels.map(l=>`<span>${l}</span>`).join('');
+
+  // Price labels on grid
+  const range = max - min;
+  const g1Val = Math.round(min + range * (1 - 65/250));
+  const g2Val = Math.round(min + range * (1 - 130/250));
+  const g3Val = Math.round(min + range * (1 - 195/250));
+  document.getElementById('gridLabel1').textContent = '₹' + g1Val.toLocaleString('en-IN');
+  document.getElementById('gridLabel2').textContent = '₹' + g2Val.toLocaleString('en-IN');
+  document.getElementById('gridLabel3').textContent = '₹' + g3Val.toLocaleString('en-IN');
+
+  // Data point dots
+  const dotsG = document.getElementById('chartDots');
+  dotsG.innerHTML = '';
+  points.forEach((pt) => {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', pt[0]);
+    circle.setAttribute('cy', pt[1]);
+    circle.setAttribute('r', '3.5');
+    circle.setAttribute('fill', '#C5A575');
+    circle.setAttribute('stroke', '#fff');
+    circle.setAttribute('stroke-width', '1.5');
+    circle.style.cursor = 'pointer';
+    dotsG.appendChild(circle);
+  });
+}
+
+// Chart hover
+const chartArea = document.getElementById('chartAreaWrap');
+const tooltip = document.getElementById('chartTooltip');
+const tooltipLabel = document.getElementById('tooltipLabel');
+const tooltipValue = document.getElementById('tooltipValue');
+const hoverDot = document.getElementById('chartDot');
+
+chartArea.addEventListener('mousemove', function(e){
+  if(!currentChartData || !currentChartPoints) return;
+  const rect = chartArea.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width * 800;
+  let closest = 0, closestDist = Infinity;
+  currentChartPoints.forEach((pt, i) => {
+    const dist = Math.abs(pt[0] - x);
+    if(dist < closestDist){ closestDist = dist; closest = i; }
+  });
+  const pt = currentChartPoints[closest];
+  const val = currentChartData.values[closest];
+  const label = currentChartData.labels[closest];
+  hoverDot.setAttribute('cx', pt[0]);
+  hoverDot.setAttribute('cy', pt[1]);
+  hoverDot.style.display = 'block';
+  const tooltipX = pt[0] / 800 * rect.width;
+  const tooltipY = pt[1] / 260 * rect.height;
+  tooltip.style.left = tooltipX + 'px';
+  tooltip.style.top = tooltipY + 'px';
+  tooltip.style.opacity = '1';
+  tooltipLabel.textContent = label;
+  tooltipValue.textContent = '₹' + val.toLocaleString('en-IN') + '/g';
+});
+chartArea.addEventListener('mouseleave', function(){
+  hoverDot.style.display = 'none';
+  tooltip.style.opacity = '0';
+});
+
+function setChartPeriod(period, btn){
+  document.querySelectorAll('.chart-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  drawChart(period);
+}
+drawChart('1W');
+
+// ── CALCULATORS ──
+function getRate(p){
+  if(p === 'silver') return goldRates.silver;
+  return goldRates[p+'k'];
+}
+function calcGoldValue(){
+  const w = parseFloat(document.getElementById('calcWeight').value) || 0;
+  const p = document.getElementById('calcPurity').value;
+  const rate = getRate(p);
+  const val = Math.round(w * rate);
+  document.getElementById('calcValueResult').textContent = '₹' + val.toLocaleString('en-IN');
+}
+function calcGoldWeight(){
+  const budget = parseFloat(document.getElementById('calcBudget').value) || 0;
+  const p = document.getElementById('calcBudgetPurity').value;
+  const rate = getRate(p);
+  const wt = (budget / rate).toFixed(2);
+  document.getElementById('calcWeightResult').textContent = wt + 'g';
+}
+
+// ── FAQ TOGGLE ──
+function toggleFaq(el){
+  const item = el.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+
+// ── SCROLL ANIMATIONS ──
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible') });
+},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+</script>
+
+</body>
+</html>
