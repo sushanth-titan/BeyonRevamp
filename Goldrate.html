@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gold Rate Today in India — Live 22K, 24K, 14K, 9K Gold & Silver Prices | Beyon</title>
-  <meta name="description" content="Check today's gold rate and silver rate in India. Live 9K, 14K, 18K, 22K and 24K gold prices per gram. View gold rate trends, historical data, and silver rates at Beyon." />
-  <meta name="keywords" content="gold rate today, gold price today, 22K gold rate, 24K gold rate, 14K gold rate, 9K gold rate, silver rate today, gold rate in India, gold price per gram" />
+  <title>Gold Rate Today in India — Live 9K, 14K, 18K, 22K & 24K Gold Prices | Beyon</title>
+  <meta name="description" content="Check today's gold rate in India. Live 9K, 14K, 18K, 22K and 24K gold prices per gram. View gold rate trends, historical data, and gold rates at Beyon." />
+  <meta name="keywords" content="gold rate today, gold price today, 22K gold rate, 24K gold rate, 14K gold rate, 9K gold rate, gold rate in India, gold price per gram" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -64,7 +64,7 @@
     .rate-card.k18 .metal-bar{background:linear-gradient(90deg,#D4A574,#E8C9A0,#F2DFC4,#E8C9A0,#D4A574);background-size:200% 100%;animation:metallic-shimmer 3s ease infinite}
     .rate-card.k14 .metal-bar{background:linear-gradient(90deg,#D2B48C,#E6CEAC,#F5E6D0,#E6CEAC,#D2B48C);background-size:200% 100%;animation:metallic-shimmer 3s ease infinite}
     .rate-card.k9 .metal-bar{background:linear-gradient(90deg,#8B0000,#BF0E23,#E8334A,#BF0E23,#8B0000);background-size:200% 100%;animation:metallic-shimmer 3s ease infinite}
-    .rate-card.silver .metal-bar{background:linear-gradient(90deg,#8C8C8C,#B8B8B8,#D8D8D8,#E8E8E8,#D8D8D8,#B8B8B8,#8C8C8C);background-size:300% 100%;animation:metallic-shimmer 3s ease infinite}
+
     @keyframes metallic-shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     .rate-card .card-body{padding:20px 22px 22px}
     .rate-card .karat-label{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px}
@@ -73,7 +73,9 @@
     .rate-card.k18 .karat-label{color:#C4956A}
     .rate-card.k14 .karat-label{color:#B89B72}
     .rate-card.k9 .karat-label{color:var(--primary)}
-    .rate-card.silver .karat-label{color:#777}
+    /* Card CTA */
+    .card-cta{display:block;text-align:center;padding:10px 12px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;text-decoration:none;color:var(--primary);border-top:1px solid #f0ece6;transition:all .25s;background:rgba(191,14,35,.02)}
+    .card-cta:hover{background:var(--primary);color:#fff}
     .rate-card .karat-label .purity-tag{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--soft-grey);color:var(--warm-grey);letter-spacing:.3px}
     .rate-card .price{font-size:28px;font-weight:800;color:var(--dark);line-height:1;margin-bottom:4px}
     .rate-card .price small{font-size:12px;font-weight:400;color:var(--warm-grey)}
@@ -210,8 +212,7 @@
   <div class="sparkle" style="left:30%;top:75%;animation-delay:3.2s"></div>
   <div class="date-badge"><span class="pulse"></span> Live Rates — <span id="heroDate"></span></div>
   <h1>Gold Rate <span>Today</span> in India</h1>
-  <p class="sub-title">&amp; <span>Silver</span> Rate Today in India</p>
-  <p>Real-time 9K, 14K, 18K, 22K &amp; 24K gold and silver prices per gram, updated daily.</p>
+  <p>Real-time 9K, 14K, 18K, 22K &amp; 24K gold prices per gram, updated daily.</p>
   <!--
     ┌─────────────────────────────────────────────────────────────────────────┐
     │  API NOTE:                                                             │
@@ -229,7 +230,6 @@
     │  result; serve cached JSON to the frontend to avoid exposing API keys. │
     └─────────────────────────────────────────────────────────────────────────┘
   -->
-  <div class="api-note">⚡ Rates are sample data — connect a live API for production</div>
 </section>
 
 <!-- Animated accent line -->
@@ -248,16 +248,9 @@
         <span class="change up" id="change9k">▲ ₹19 (0.65%)</span>
         <div class="unit">Per 10g: <span id="rate9k10">₹29,410</span></div>
       </div>
+      <a href="#" class="card-cta">Browse 9KT Selection →</a>
     </div>
-    <div class="rate-card silver">
-      <div class="metal-bar"></div>
-      <div class="card-body">
-        <div class="karat-label">Silver <span class="purity-tag">99.9%</span></div>
-        <div class="price">₹<span id="rateSilver">98.50</span> <small>/ gram</small></div>
-        <span class="change up" id="changeSilver">▲ ₹0.80 (0.82%)</span>
-        <div class="unit">Per 10g: <span id="rateSilver10">₹985</span></div>
-      </div>
-    </div>
+
     <div class="rate-card k14">
       <div class="metal-bar"></div>
       <div class="card-body">
@@ -266,6 +259,7 @@
         <span class="change up" id="change14k">▲ ₹30 (0.66%)</span>
         <div class="unit">Per 10g: <span id="rate14k10">₹45,750</span></div>
       </div>
+      <a href="#" class="card-cta">Browse 14KT Selection →</a>
     </div>
     <div class="rate-card k18">
       <div class="metal-bar"></div>
@@ -275,6 +269,7 @@
         <span class="change up" id="change18k">▲ ₹39 (0.67%)</span>
         <div class="unit">Per 10g: <span id="rate18k10">₹58,820</span></div>
       </div>
+      <a href="#" class="card-cta">Browse 18KT Selection →</a>
     </div>
     <div class="rate-card k22">
       <div class="metal-bar"></div>
@@ -284,6 +279,7 @@
         <span class="change up" id="change22k">▲ ₹48 (0.67%)</span>
         <div class="unit">Per 10g: <span id="rate22k10">₹71,880</span></div>
       </div>
+      <a href="#" class="card-cta">Browse 22KT Selection →</a>
     </div>
     <div class="rate-card k24">
       <div class="metal-bar"></div>
@@ -293,6 +289,7 @@
         <span class="change up" id="change24k">▲ ₹52 (0.67%)</span>
         <div class="unit">Per 10g: <span id="rate24k10">₹78,420</span></div>
       </div>
+      <a href="#" class="card-cta">Browse 24KT Selection →</a>
     </div>
   </div>
 
@@ -341,8 +338,8 @@
   <!-- Calculator Section -->
   <div class="fade-up">
     <div class="section-heading">
-      <h2>Gold &amp; Silver Calculators</h2>
-      <p>Quickly estimate the value of your gold/silver or how much your budget can buy.</p>
+      <h2>Gold Calculators</h2>
+      <p>Quickly estimate the value of your gold or how much your budget can buy.</p>
     </div>
     <div class="calc-section">
       <div class="calc-card">
@@ -359,7 +356,6 @@
             <option value="18">18K Gold (75.0%)</option>
             <option value="14">14K Gold (58.3%)</option>
             <option value="9">9K Gold (37.5%)</option>
-            <option value="silver">Silver</option>
           </select>
         </div>
         <div class="calc-result">
@@ -381,7 +377,6 @@
             <option value="18">18K Gold (75.0%)</option>
             <option value="14">14K Gold (58.3%)</option>
             <option value="9">9K Gold (37.5%)</option>
-            <option value="silver">Silver</option>
           </select>
         </div>
         <div class="calc-result">
@@ -403,7 +398,7 @@
   <div class="faq-section fade-up">
     <div class="section-heading">
       <h2>Frequently Asked Questions</h2>
-      <p>Everything you need to know about gold &amp; silver rates in India.</p>
+      <p>Everything you need to know about gold rates in India.</p>
     </div>
     <div class="faq-item open">
       <div class="faq-q" onclick="toggleFaq(this)">What is the gold rate today in India?<span class="toggle">+</span></div>
@@ -414,12 +409,8 @@
       <div class="faq-a"><p>24K gold is 99.9% pure gold — ideal for investment but too soft for jewellery. 22K (91.6% gold) is the traditional Indian jewellery standard. 18K (75% gold) is popular for diamond-studded and contemporary designs. 14K (58.3% gold) offers excellent durability and is widely used internationally. 9K (37.5% gold) is the most affordable karat and extremely durable, making it ideal for everyday wear pieces.</p></div>
     </div>
     <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">What is the silver rate today?<span class="toggle">+</span></div>
-      <div class="faq-a"><p>Today's silver rate is approximately ₹985 per 10 grams (₹98.50 per gram). Silver prices are influenced by industrial demand, investment sentiment, and global economic conditions. Silver is often considered a more affordable precious metal investment compared to gold.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">What factors affect gold and silver prices in India?<span class="toggle">+</span></div>
-      <div class="faq-a"><p>Gold and silver prices in India are influenced by international prices (COMEX and London Bullion Market), the USD-INR exchange rate, import duties and GST, RBI monetary policies, inflation rates, geopolitical tensions, crude oil prices, and seasonal demand during festivals and wedding seasons.</p></div>
+      <div class="faq-q" onclick="toggleFaq(this)">What factors affect gold prices in India?<span class="toggle">+</span></div>
+      <div class="faq-a"><p>Gold prices in India are influenced by international prices (COMEX and London Bullion Market), the USD-INR exchange rate, import duties and GST, RBI monetary policies, inflation rates, geopolitical tensions, crude oil prices, and seasonal demand during festivals and wedding seasons.</p></div>
     </div>
     <div class="faq-item">
       <div class="faq-q" onclick="toggleFaq(this)">Is it a good time to buy gold?<span class="toggle">+</span></div>
@@ -539,9 +530,7 @@
 // This avoids exposing API keys in client-side code.
 const goldRates = {
   '24k': 7842, '22k': 7188, '18k': 5882, '14k': 4575, '9k': 2941,
-  'silver': 98.50,
-  change24k: 52, change22k: 48, change18k: 39, change14k: 30, change9k: 19,
-  changeSilver: 0.80
+  change24k: 52, change22k: 48, change18k: 39, change14k: 30, change9k: 19
 };
 
 const chartData = {
@@ -564,7 +553,6 @@ function buildTicker(){
     `<strong>18K Gold:</strong> ₹${goldRates['18k'].toLocaleString('en-IN')}/g <span class="up">▲ ₹${goldRates.change18k}</span>`,
     `<strong>14K Gold:</strong> ₹${goldRates['14k'].toLocaleString('en-IN')}/g <span class="up">▲ ₹${goldRates.change14k}</span>`,
     `<strong>9K Gold:</strong> ₹${goldRates['9k'].toLocaleString('en-IN')}/g <span class="up">▲ ₹${goldRates.change9k}</span>`,
-    `<strong>Silver:</strong> ₹${goldRates['silver']}/g <span class="up">▲ ₹${goldRates.changeSilver}</span>`,
   ];
   const html = items.map(i=>`<span class="ticker-item">${i}</span>`).join('');
   document.getElementById('tickerContent').innerHTML = html + html;
@@ -659,7 +647,6 @@ drawChart('1W');
 
 // ── CALCULATORS ──
 function getRate(p){
-  if(p === 'silver') return goldRates.silver;
   return goldRates[p+'k'];
 }
 function calcGoldValue(){
