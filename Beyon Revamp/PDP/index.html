@@ -783,7 +783,7 @@
         appBannerDismissed: false,
         addedToBag: false,
         noOffer: false,
-        noCustomise: false,
+        noCustomise: true,
         selectedCountry: 'IN',
         countryDropdownOpen: false
       };
@@ -1760,11 +1760,11 @@
     <script src="shared/edge-cases.js"></script>
     <script>
       EdgeCases.init({
-        reset: () => { closeSheet(); state.pincode = ''; state.pincodeChecked = false; state.noOffer = false; if (state.noCustomise) state.noCustomise = false; product.gold.metal = '18 KT YELLOW'; render(); },
+        reset: () => { closeSheet(); state.pincode = ''; state.pincodeChecked = false; state.noOffer = false; state.noCustomise = true; product.gold.metal = '18 KT YELLOW'; render(); },
         cases: [
-          { id: 'default', group: 'PDP', label: 'In stock (default)', desc: 'Standard PDP.', run: () => {} },
+          { id: 'default', group: 'PDP', label: 'No customisation (default)', desc: 'Customise card shows only size, size chart, gross weight and the Personalise CTA.', run: () => {} },
           { id: 'oos', group: 'PDP', label: 'Out of stock', desc: 'No price / Add to Bag; Request Design instead.', run: () => location.href = 'oos.html' },
-          { id: 'nocustom', group: 'PDP', label: 'No customisation', desc: 'Customise card shows only size, size chart, gross weight and the Personalise CTA.', run: () => { state.noCustomise = true; render(); } },
+          { id: 'withcustom', group: 'PDP', label: 'With customisation', desc: 'Shows full Metal Colour/Gold Finish/Diamond Shape/Diamond Size options.', run: () => { state.noCustomise = false; render(); } },
           { id: 'ring', group: 'Size guides', label: 'Ring size', desc: 'Ring size chart popup.', run: () => openGuide('ring') },
           { id: 'bangle', group: 'Size guides', label: 'Bangle size', desc: 'Bangle size chart popup.', run: () => openGuide('bangle') },
           { id: 'bracelet', group: 'Size guides', label: 'Bracelet size', desc: 'Bracelet length popup.', run: () => openGuide('bracelet') },
