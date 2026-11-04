@@ -41,10 +41,8 @@
     .toast.show{transform:translateX(-50%) translateY(0)}.toast.success{background:rgba(232,245,233,.95);color:#2E7D32}.toast.error{background:rgba(255,240,240,.95);color:#BF0E23}
 
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
     @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     .anim{animation:fadeUp .5s ease forwards;opacity:0}
-    .anim-scale{animation:scaleIn .4s ease forwards;opacity:0}
 
     .header-bar{background:linear-gradient(135deg,#FDFAF5 0%,#F8F3EC 50%,#FDFAF5 100%);border-bottom:1px solid rgba(197,165,117,.15);position:sticky;top:0;z-index:30}
     .header-bar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(197,165,117,.3),transparent)}
@@ -62,8 +60,6 @@
     .btn-cta:hover{box-shadow:0 8px 32px rgba(191,14,35,.4);transform:translateY(-2px)}
     .btn-cta:active{transform:scale(.97)}
 
-    .btn-outline-metal{border:2px solid transparent;border-radius:14px;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#C5A575,#E8D8BE,#C5A575) border-box;color:#2C2C2C;font-weight:600;cursor:pointer;transition:all .3s}
-    .btn-outline-metal:hover{background:linear-gradient(#FFFBF5,#FFFBF5) padding-box,linear-gradient(135deg,#BF0E23,#E8334A,#BF0E23) border-box;transform:translateY(-1px)}
 
     input:focus,select:focus,textarea:focus{outline:none;border-color:#C5A575 !important;box-shadow:0 0 0 3px rgba(197,165,117,.12)}
     .input-field{width:100%;padding:12px 16px;border:1.5px solid #E0D8CE;border-radius:14px;font-size:14px;font-family:inherit;color:#2C2C2C;transition:all .3s;background:#fff}

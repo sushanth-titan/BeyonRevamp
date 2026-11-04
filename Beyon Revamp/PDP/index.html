@@ -318,7 +318,7 @@
     <div class="desktop-only flex items-center gap-2 ml-auto">
       <a href="#" class="header-cta cta-facts"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,3 18,9 12,21 6,9"/><path d="M6 9h12"/><path d="M9.5 3L6 9l6 12"/><path d="M14.5 3L18 9l-6 12"/></svg>Beyon Facts</a>
       <a href="#" class="header-cta cta-gift"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8V21"/><path d="M3 13h18"/></svg>Gifting</a>
-      <a href="#" class="header-cta cta-store"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Find Store</a>
+      <a href="https://www.beyon.co.in/en_IN/stores" target="_blank" rel="noopener" class="header-cta cta-store"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Find Store</a>
     </div>
     <div class="desktop-only flex items-center gap-5 ml-4">
       <div class="relative" id="accountWrap">
@@ -825,6 +825,7 @@
       function getMetalShineClass(metal) {
         const t = (metal || '').toUpperCase();
         if (t.includes('ROSE')) return 'metal-text-shine-rose';
+        if (t.includes('SILVER')) return 'metal-text-shine-silver';
         if (t.includes('WHITE')) return 'metal-text-shine-silver';
         return 'metal-text-shine-gold';
       }
@@ -871,7 +872,7 @@
         return `<div class="pt-1 px-1">
           <div>
             <div class="grid py-3.5 pd-grid">
-              <span class="text-[11px] font-bold ${getMetalShineClass(product.gold.metal)}" style="grid-column:1/3">18 KT YELLOW GOLD</span>
+              <span class="text-[11px] font-bold ${getMetalShineClass(product.gold.metal)}" style="grid-column:1/3">${product.gold.metal}${product.gold.metal.toUpperCase().includes('SILVER') ? '' : ' GOLD'}</span>
               <span class="text-[11px] text-gray-400 pl-2">Weight</span>
               <span class="text-[11px] font-bold text-[#2a2a2a] text-right">${product.gold.weight}</span>
             </div>
@@ -1205,7 +1206,7 @@
             <span class="text-[10px] font-bold text-[#1a1a1a] tracking-tight">Get the beYon App</span>
             <span class="text-[8px] text-gray-400 tracking-wide">Exclusive Coupons & Early Access</span>
           </div>
-          <button class="ml-auto shrink-0 px-3 py-1 rounded-full text-[8px] font-bold tracking-wider uppercase" style="background:#d30b39;color:#fff">Install</button>
+          <a href="https://dev.qrplus.ai/api/v1/r/1200058" target="_blank" rel="noopener" class="ml-auto shrink-0 px-3 py-1 rounded-full text-[8px] font-bold tracking-wider uppercase" style="background:#d30b39;color:#fff">Install</a>
         </div>`;
       }
 
@@ -1591,15 +1592,17 @@
         const store = `<div class="rounded-3xl p-4 section-delivery-bg" style="border:1px solid rgba(211,11,57,0.12)">
             <div class="flex items-center gap-2 mb-2"><svg width="20" height="20" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M24 4C15 4 9 11 9 19c0 12 15 25 15 25s15-13 15-25c0-8-6-15-15-15z"/><circle cx="24" cy="19" r="6"/>${sparkSvg(38, 8, 3.5)}${sparkSvg(8, 36, 3)}</svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Store Availability</span></div>
             <p class="text-[11px] text-gray-500 leading-relaxed">See if this piece is available at a store near you.</p>
-            <button onclick="openStores()" class="w-full mt-3 py-2.5 rounded-xl text-white text-[11px] font-bold tracking-wide btn-add-to-bag active:scale-[0.98] transition-transform">Check Store Availability</button>
+            <a href="https://www.beyon.co.in/en_IN/stores" target="_blank" rel="noopener" class="w-full mt-3 py-2.5 rounded-xl text-white text-[11px] font-bold tracking-wide btn-add-to-bag active:scale-[0.98] transition-transform flex items-center justify-center">Check Store Availability</a>
           </div>`;
         return reverse ? store + gold : gold + store;
       }
 
       const goldRate = k => Math.round(13991 * k / 24);
-      const exState = { k: 22, w: '' };
-      function openExchange() { renderExchange(); }
-      function renderExchange(result) {
+      const exState = { k: 22, w: '', name: '', mobile: '', computed: false };
+      function openExchange() { exState.computed = false; renderExchange(); }
+      function renderExchange(err) {
+        const value = Math.round((parseFloat(exState.w) || 0) * goldRate(exState.k));
+        const payLeft = Math.max(0, product.price - value);
         openSheet(`${sheetHead('Gold Exchange Calculator', 'Calculate the exchange value of your old gold jewellery.')}
           <p class="text-[9px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Karatage</p>
           <div class="flex flex-wrap gap-1.5">${[9,14,18,22,24].map(k => `<button onclick="exState.k=${k};renderExchange()" class="px-3.5 py-1.5 rounded-full text-[10px] font-semibold ${pillClass(exState.k === k)}">${k} KT</button>`).join('')}</div>
@@ -1610,27 +1613,40 @@
             <input id="exW" type="number" min="0" step="0.1" inputmode="decimal" value="${exState.w}" placeholder="Type here" oninput="exState.w=this.value" class="cr-input" style="text-align:center" />
             <button onclick="stepWeight(0.5)" aria-label="Increase" class="w-9 h-9 rounded-full bg-gray-100 font-bold">+</button>
           </div>
-          ${result ? `<div class="mt-4 p-3 rounded-xl text-center" style="background:rgba(211,11,57,0.05);border:1px solid rgba(211,11,57,0.12)"><p class="text-[10px] text-gray-500">Estimated exchange value</p><p class="text-xl font-bold" style="color:#d30b39">${result}</p><p class="text-[9px] text-gray-400 mt-1">Indicative. Final value after purity check at store.</p></div>` : ''}
-          <button onclick="calcExchange()" class="w-full mt-5 py-3.5 rounded-xl text-white font-bold text-sm btn-add-to-bag active:scale-[0.98] transition-transform">Calculate Exchange Value</button>`);
+          ${!exState.computed ? `
+          <p class="text-[9px] font-bold tracking-[0.14em] uppercase mt-4 mb-2" style="color:#b8a080">Your Name</p>
+          <input id="exName" type="text" placeholder="Enter your name" value="${exState.name}" oninput="exState.name=this.value" class="cr-input ${err === 'name' ? 'error' : ''}" />
+          <p class="cr-error ${err === 'name' ? 'show' : ''}">Enter your name</p>
+          <p class="text-[9px] font-bold tracking-[0.14em] uppercase mt-4 mb-2" style="color:#b8a080">Mobile Number</p>
+          <input id="exMobile" type="tel" maxlength="10" placeholder="10-digit number" value="${exState.mobile}" oninput="exState.mobile=this.value.replace(/\\D/g,'').slice(0,10)" class="cr-input ${err === 'mobile' ? 'error' : ''}" />
+          <p class="cr-error ${err === 'mobile' ? 'show' : ''}">Enter a valid 10-digit mobile number</p>
+          <p class="cr-error ${err === 'weight' ? 'show' : ''}">Enter the weight of your jewellery</p>
+          <button onclick="calcExchange()" class="w-full mt-5 py-3.5 rounded-xl text-white font-bold text-sm btn-add-to-bag active:scale-[0.98] transition-transform">Show Exchange Value</button>
+          ` : `
+          <div class="mt-5 p-4 rounded-2xl text-center" style="background:#faf0d8">
+            <p class="text-[11px] font-semibold" style="color:#8a6e3a">Your Gold Exchange Value*</p>
+            <p class="text-2xl font-bold mt-1" style="color:#b8860b">${formatPrice(value)}</p>
+          </div>
+          <div class="mt-3 p-4 rounded-2xl" style="background:rgba(211,11,57,0.05);border:1px solid rgba(211,11,57,0.1)">
+            <div class="flex items-center justify-between text-sm"><span class="text-gray-500">Product Price</span><span class="font-semibold">${formatPrice(product.price)}</span></div>
+            <div class="flex items-center justify-between text-sm mt-2"><span class="text-gray-500">Exchange Value</span><span class="font-semibold" style="color:#b8860b">- ${formatPrice(value)}</span></div>
+            <div class="h-px my-3" style="background:rgba(211,11,57,0.15)"></div>
+            <div class="flex items-center justify-between text-sm font-bold" style="color:#d30b39"><span>You Pay*</span><span>${formatPrice(payLeft)}</span></div>
+            ${payLeft === 0 ? `<p class="text-[10px] mt-2" style="color:#d30b39">Your exchange value covers this product. You can pick another piece from Beyon!</p>` : ''}
+          </div>
+          <a href="https://www.beyon.co.in/en_IN/stores" target="_blank" rel="noopener" class="w-full mt-4 py-3.5 rounded-xl text-white font-bold text-sm btn-add-to-bag active:scale-[0.98] transition-transform flex items-center justify-center">Find Stores Near You</a>
+          <p class="text-[9px] text-gray-400 mt-3 text-center">*This is an approximate value. Final exchange price may vary based on actual purity testing at the store. Visit your nearest Beyon store for exact valuation.</p>
+          `}`);
       }
       function stepWeight(d) { exState.w = Math.max(0, (parseFloat(exState.w) || 0) + d).toFixed(1); renderExchange(); }
       function calcExchange() {
-        const w = parseFloat(exState.w);
-        renderExchange(w > 0 ? formatPrice(Math.round(w * goldRate(exState.k))) : 'Enter a valid weight');
+        if (!(parseFloat(exState.w) > 0)) { renderExchange('weight'); return; }
+        if (!exState.name.trim()) { renderExchange('name'); return; }
+        if (!/^\d{10}$/.test(exState.mobile)) { renderExchange('mobile'); return; }
+        exState.computed = true;
+        renderExchange();
       }
 
-      const STORES = [
-        { n: 'BEYON · Indiranagar', d: '2.4 km', s: 'In stock · try on today' },
-        { n: 'BEYON · Koramangala', d: '5.1 km', s: 'In stock · try on today' },
-        { n: 'BEYON · Phoenix Marketcity', d: '11.8 km', s: 'Available in 2 days' }
-      ];
-      function openStores(res) {
-        openSheet(`${sheetHead('Store Availability', 'Check if ' + product.name + ' is at a store near you.')}
-          <div class="flex gap-2"><input id="stPin" type="tel" maxlength="6" placeholder="Enter pincode" class="cr-input" oninput="this.value=this.value.replace(/\\D/g,'')" /><button onclick="checkStores()" class="px-5 rounded-xl text-white text-xs font-bold btn-add-to-bag">CHECK</button></div>
-          <p class="cr-error ${res === 'bad' ? 'show' : ''}">Enter a valid 6-digit pincode</p>
-          ${res === 'ok' ? `<div class="mt-4 space-y-2">${STORES.map(t => `<div class="flex items-center justify-between p-3 rounded-xl" style="background:#fdf5f6;border:1px solid rgba(211,11,57,0.1)"><div><p class="text-[12px] font-semibold text-[#2a2a2a]">${t.n}</p><p class="text-[10px] text-green-700 mt-0.5">${t.s}</p></div><span class="text-[11px] text-gray-400">${t.d}</span></div>`).join('')}</div>` : ''}`);
-      }
-      function checkStores() { openStores(/^\d{6}$/.test(document.getElementById('stPin').value) ? 'ok' : 'bad'); }
 
       const GUIDES = {
         ring: { t: 'Ring Size', sub: 'Inner diameter by ring stick (mm)', head: ['Inner Dia', 'Circumference', 'Category'],
@@ -1744,7 +1760,7 @@
     <script src="shared/edge-cases.js"></script>
     <script>
       EdgeCases.init({
-        reset: () => { closeSheet(); state.pincode = ''; state.pincodeChecked = false; state.noOffer = false; if (state.noCustomise) state.noCustomise = false; render(); },
+        reset: () => { closeSheet(); state.pincode = ''; state.pincodeChecked = false; state.noOffer = false; if (state.noCustomise) state.noCustomise = false; product.gold.metal = '18 KT YELLOW'; render(); },
         cases: [
           { id: 'default', group: 'PDP', label: 'In stock (default)', desc: 'Standard PDP.', run: () => {} },
           { id: 'oos', group: 'PDP', label: 'Out of stock', desc: 'No price / Add to Bag; Request Design instead.', run: () => location.href = 'oos.html' },
@@ -1754,10 +1770,14 @@
           { id: 'bracelet', group: 'Size guides', label: 'Bracelet size', desc: 'Bracelet length popup.', run: () => openGuide('bracelet') },
           { id: 'chain', group: 'Size guides', label: 'Chain size', desc: 'Chain length popup.', run: () => openGuide('chain') },
           { id: 'exchange', group: 'Features', label: 'Gold exchange calculator', desc: 'Exchange value popup.', run: () => openExchange() },
-          { id: 'stores', group: 'Features', label: 'Store availability', desc: 'Pincode store check popup.', run: () => openStores() },
+          { id: 'exchange-error', group: 'Features', label: 'Gold exchange calculator - error', desc: 'Submits the exchange form empty to show validation errors.', run: () => { openExchange(); calcExchange(); } },
+          { id: 'stores', group: 'Features', label: 'Store availability', desc: 'Check Store Availability now links directly to the store locator.', run: () => window.open('https://www.beyon.co.in/en_IN/stores', '_blank') },
           { id: 'pin-ok', group: 'Delivery check', label: 'Delivery check success', desc: 'Pincode entered, deliverable with an ETA.', run: () => { state.pincode = '560001'; state.pincodeChecked = true; state.pincodeOk = true; state.pincodeDate = '28 Jun'; render(); } },
           { id: 'pin-fail', group: 'Delivery check', label: 'Delivery check error', desc: 'Pincode entered, not deliverable.', run: () => { state.pincode = '500001'; state.pincodeChecked = true; state.pincodeOk = false; render(); } },
-          { id: 'nooffer', group: 'PDP', label: 'No offer', desc: 'Removes the strikethrough MRP and the 15% off making-charges badge.', run: () => { state.noOffer = true; render(); } }
+          { id: 'nooffer', group: 'PDP', label: 'No offer', desc: 'Removes the strikethrough MRP and the 15% off making-charges badge.', run: () => { state.noOffer = true; render(); } },
+          { id: 'rose14', group: 'Metal', label: '14 KT Rose Gold', desc: 'Product details metal switches to 14 KT Rose Gold with rose shine animation.', run: () => { product.gold.metal = '14 KT ROSE'; render(); } },
+          { id: 'white14', group: 'Metal', label: '14 KT White Gold', desc: 'Product details metal switches to 14 KT White Gold with white-gold shine animation.', run: () => { product.gold.metal = '14 KT WHITE'; render(); } },
+          { id: 'silver925', group: 'Metal', label: '925 Silver', desc: 'Product details metal switches to 925 Silver with silver shine animation.', run: () => { product.gold.metal = '925 SILVER'; render(); } }
         ]
       });
     </script>

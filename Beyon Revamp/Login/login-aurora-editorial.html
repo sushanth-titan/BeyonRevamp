@@ -41,8 +41,6 @@
   @media (min-width:920px){ .cr-overlay{ align-items:center; padding:24px; } }
   @keyframes rise { 0%{ opacity:0; transform:translateY(24px) scale(0.98) } to{ opacity:1; transform:translateY(0) scale(1) } }
   @keyframes wordSlide { 0%{ opacity:0; transform:translateY(20px) } to{ opacity:1; transform:translateY(0) } }
-  @keyframes slowSpin { from{ transform:rotate(0deg) } to{ transform:rotate(360deg) } }
-  @keyframes gentlePulse { 0%,100%{ opacity:.55 } 50%{ opacity:1 } }
 
   .cut{ display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--gold); }
   .cut svg{ display:block; }
@@ -84,11 +82,6 @@
   }
   @media (min-width:920px){ .page-left{ padding:56px 44px; min-height:320px; gap:0; justify-content:space-between; border-bottom:none; border-right:1px solid rgba(255,255,255,0.4); } }
 
-  /* Hero mark — signature round-brilliant, single spinning element */
-  .hero-mark{ position:relative; width:56px; height:56px; margin-bottom:22px; }
-  .hero-mark .cut{ color:var(--gold); animation:slowSpin 18s linear infinite; transform-origin:center; }
-  .hero-mark .ring{ position:absolute; inset:-6px; border-radius:50%; border:1px dashed rgba(184,149,106,0.35); animation:slowSpin 30s linear infinite reverse; }
-
   .quote{
     font-family:var(--display); font-weight:300;
     font-size:48px; line-height:0.95; letter-spacing:0; color:var(--ink);
@@ -99,8 +92,6 @@
   .quote .word{ display:inline-block; animation:wordSlide .7s cubic-bezier(.2,.7,.2,1) both; }
   .quote .word:nth-child(1){ animation-delay:.05s }
   .quote .word:nth-child(2){ animation-delay:.20s; margin-left:.15em; }
-
-  .tagline{ margin-top:22px; font-family:var(--sans); font-weight:400; font-size:14px; color:var(--muted); letter-spacing:0.02em; }
 
   /* Promises — static 3-up row */
   .promises{
@@ -127,18 +118,6 @@
   }
   @media (min-width:920px){ .page-right{ padding:44px 44px; } }
 
-  /* Rail stepper — two distinct diamond cuts as nodes */
-  .rail{ display:flex; align-items:center; gap:10px; margin-bottom:26px; }
-  .rail .step{
-    display:flex; align-items:center; gap:8px;
-    font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; color:var(--hint); font-family:'Didact Gothic',sans-serif;
-  }
-  .rail .step.active{ color:var(--ink); }
-  .rail .step .cut{ color:var(--hint); transition:color .3s; }
-  .rail .step.active .cut{ color:var(--ink); animation:gentlePulse 2.4s ease-in-out infinite; }
-  .rail .step.done .cut{ color:var(--gold); }
-  .rail .line{ flex:0 0 32px; height:1px; background:rgba(44,44,44,0.14); }
-
   h2.head{ font-family:var(--sans); font-weight:400; font-size:18px; line-height:1.25; letter-spacing:-0.005em; margin:0 0 14px; color:var(--ink); }
   @media (min-width:920px){ h2.head{ font-size:22px; margin:0 0 18px; } }
   h2.head em{ font-family:var(--display); font-style:normal; font-weight:400; color:var(--gold); font-size:1.5em; line-height:0.9; letter-spacing:0; }
@@ -163,8 +142,6 @@
   .phone-input::placeholder{ color:var(--hint); }
   .phone-input:focus{ outline:none; border-color:var(--ink); box-shadow:0 0 0 3px var(--ink-soft); }
   .phone-input.err{ border-color:var(--red); box-shadow:0 0 0 3px var(--red-soft) !important; }
-
-  .row-inline{ display:flex; align-items:center; justify-content:space-between; margin-top:16px; }
 
   .check{ position:relative; display:inline-flex; align-items:center; gap:9px; cursor:pointer; user-select:none; font-size:13px; color:var(--ink-2); }
   .check input{ position:absolute; opacity:0; pointer-events:none; }

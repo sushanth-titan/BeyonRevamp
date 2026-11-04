@@ -41,13 +41,11 @@
     .toast.show{transform:translateX(-50%) translateY(0)}.toast.success{background:rgba(232,245,233,.95);color:#2E7D32}.toast.error{background:rgba(255,240,240,.95);color:#BF0E23}
 
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
     @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     @keyframes badgeTicker{0%{transform:translate(0)}to{transform:translate(-50%)}}
     .badge-ticker-track{align-items:center;width:max-content;animation:27s linear infinite badgeTicker;display:flex}
     .badge-ticker-track:hover{animation-play-state:paused}
     .anim{animation:fadeUp .5s ease forwards;opacity:0}
-    .anim-scale{animation:scaleIn .4s ease forwards;opacity:0}
 
     .header-bar{background:#ffffff;border-bottom:1px solid rgba(197,165,117,.15);position:sticky;top:0;z-index:30}
     .header-bar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(197,165,117,.3),transparent)}
@@ -537,6 +535,9 @@
     let addresses=[
       {id:'a1',type:'HOME',firstName:'Rahul',lastName:'Sharma',phone:'9876543210',country:'India',pincode:'110001',state:'Delhi',city:'New Delhi',building:'B-204, Sunrise Apartments',street:'MG Road, Connaught Place',landmark:'Near Metro Station',isDefault:true},
       {id:'a2',type:'WORK',firstName:'Rahul',lastName:'Sharma',phone:'9876543210',country:'India',pincode:'400001',state:'Maharashtra',city:'Mumbai',building:'Office 1502, Tower A',street:'BKC, Bandra East',landmark:'',isDefault:false},
+      {id:'a3',type:'HOME',firstName:'Priya',lastName:'Sharma',phone:'9988776655',country:'India',pincode:'560001',state:'Karnataka',city:'Bengaluru',building:'Flat 7B, Lake View Residency',street:'Indiranagar 100ft Road',landmark:'Opposite City Park',isDefault:false},
+      {id:'a4',type:'OTHER',firstName:'Rahul',lastName:'Sharma',phone:'9876543210',country:'India',pincode:'600001',state:'Tamil Nadu',city:'Chennai',building:'No. 12, Greenways Road',street:'Raja Annamalaipuram',landmark:'Near Temple',isDefault:false},
+      {id:'a5',type:'WORK',firstName:'Priya',lastName:'Sharma',phone:'9988776655',country:'India',pincode:'700001',state:'West Bengal',city:'Kolkata',building:'3rd Floor, Camac Towers',street:'Camac Street',landmark:'',isDefault:false},
     ];
     let selectedAddrId='a1';
     let neuState={balance:500,redeemed:0,applied:false};
