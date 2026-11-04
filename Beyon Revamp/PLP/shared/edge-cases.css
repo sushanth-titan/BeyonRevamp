@@ -1,0 +1,43 @@
+/* Prototype-only edge-case switcher. Drop this file + edge-cases.js for production. */
+.ec { position: fixed; left: 16px; bottom: calc(16px + env(safe-area-inset-bottom) + var(--ec-offset, 0px)); z-index: 2000; font: 400 13px/1.4 'Geom', ui-sans-serif, system-ui, -apple-system, sans-serif; color: #F4F4F5; }
+.ec button, .ec select { font: inherit; color: inherit; }
+.ec :focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+.ec-pill { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border: 1px solid rgba(255,255,255,.08); border-radius: 999px; background: #1C1C1E; box-shadow: 0 12px 32px -12px rgba(0,0,0,.6); cursor: pointer; transition: transform 160ms cubic-bezier(.23,1,.32,1), background-color 150ms ease; }
+.ec-pill:active { transform: scale(.97); }
+.ec-name { max-width: 52vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ec-dot { width: 7px; height: 7px; border-radius: 50%; background: #34C759; }
+.ec[data-group="1"] .ec-dot { background: #F5B544; }
+
+.ec-panel { position: absolute; left: 0; bottom: calc(100% + 10px); width: min(300px, calc(100vw - 32px)); padding: 14px; border-radius: 18px; background: #1C1C1E; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 24px 60px -20px rgba(0,0,0,.6);
+  transform-origin: bottom left; opacity: 0; transform: translateY(6px) scale(.97); visibility: hidden;
+  transition: opacity 150ms ease, transform 150ms ease, visibility 0s linear 150ms; }
+.ec[data-expanded] .ec-panel { opacity: 1; transform: none; visibility: visible; transition: opacity 200ms ease, transform 250ms cubic-bezier(.23,1,.32,1); }
+
+.ec-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.ec-head strong { font-weight: 600; }
+.ec-head span, .ec-meta { font-size: 11px; color: #8E8E93; }
+.ec-select { width: 100%; min-height: 40px; padding: 0 32px 0 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,.1); appearance: none; -webkit-appearance: none; cursor: pointer;
+  background: #2C2C2E url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'><path d='M1 1l4 4 4-4' stroke='%23AEAEB2' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 12px center; }
+.ec-select option, .ec-select optgroup { background: #2C2C2E; color: #fff; }
+.ec-desc { margin: 10px 0 12px; min-height: 3em; font-size: 12px; color: #AEAEB2; }
+.ec-ctrls { display: grid; grid-template-columns: 40px 1fr 1fr 40px; gap: 6px; }
+.ec-ctrls button { min-height: 36px; border-radius: 10px; border: 1px solid rgba(255,255,255,.08); background: #2C2C2E; cursor: pointer; transition: transform 160ms cubic-bezier(.23,1,.32,1), background-color 150ms ease; }
+.ec-ctrls button:active { transform: scale(.96); }
+.ec-meta { margin: 10px 0 0; }
+@media (hover: hover) and (pointer: fine) { .ec-pill:hover, .ec-ctrls button:hover { background: #3A3A3C; } }
+@media (prefers-reduced-motion: reduce) { .ec-panel { transform: none !important; } }
+
+/* Lets Reset/Replay snap state back instantly so the case's own animation plays from the start */
+.ec-instant *, .ec-instant *::before, .ec-instant *::after { transition: none !important; animation: none !important; }
+
+/* Subtle override: tiny, translucent, wakes on hover/focus/open */
+.ec { left: 10px; bottom: calc(10px + env(safe-area-inset-bottom) + var(--ec-offset, 0px)); font-size: 11px; opacity: .45; transition: opacity 200ms ease; }
+.ec:hover, .ec:focus-within, .ec[data-expanded] { opacity: 1; }
+.ec-pill { min-height: 24px; padding: 0 9px; gap: 6px; background: rgba(28,28,30,.6); backdrop-filter: blur(10px); box-shadow: none; }
+.ec-pill svg { width: 11px; height: 11px; }
+.ec-name { max-width: 34vw; }
+.ec-dot { width: 5px; height: 5px; }
+.ec-panel { width: min(260px, calc(100vw - 20px)); padding: 12px; border-radius: 14px; }
+.ec-select { min-height: 32px; }
+.ec-ctrls button { min-height: 30px; }

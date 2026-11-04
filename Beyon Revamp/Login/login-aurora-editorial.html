@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BEYON — Sign in or sign up</title>
+<link rel="stylesheet" href="shared/geom.css" />
+<link href="https://fonts.googleapis.com/css2?family=Oooh+Baby&family=Didact+Gothic&display=swap" rel="stylesheet" />
+<style>
+  /* Oooh Baby — Google Fonts, replaces Devina Garden per BEYON design system */
+  :root{
+    --ink:#2C2C2C; --ink-2:#3F3F46; --muted:#71717A; --hint:#A1A1AA;
+    --line:rgba(255,255,255,0.6); --line-2:rgba(255,255,255,0.35);
+    --gold:#B8956A; --gold-2:#8A6D45;
+    --red:#B91C1C;
+    --red-soft:rgba(185,28,28,0.10);
+    --ink-soft:rgba(44,44,44,0.06);
+    --serif:'Geom', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --sans:'Geom', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --display:'Oooh Baby', 'Cormorant Garamond', ui-serif, Georgia, cursive;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; height:100%; font-family:var(--sans); font-weight:400; color:var(--ink); background:#F4F4F5; -webkit-font-smoothing:antialiased; letter-spacing:0.005em; }
+  ::-webkit-scrollbar{ width:4px } ::-webkit-scrollbar-thumb{ background:#ccc; border-radius:99px }
+
+  .pdp-bg{ position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+  .pdp-bg iframe{ width:100%; height:100%; border:0; filter:blur(24px) brightness(1.02) saturate(1.2); transform:scale(1.08); opacity:0.55; }
+
+  /* Aurora — soft mixed palette */
+  .aurora{ position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden; }
+  .blob{ position:absolute; border-radius:50%; filter:blur(80px); opacity:0.5; }
+  .blob-1{ width:520px; height:520px; background:#E8B4C0; top:-10%; left:-8%; animation:drift1 22s ease-in-out infinite; }
+  .blob-2{ width:600px; height:600px; background:#C5A575; bottom:-15%; right:-12%; animation:drift2 26s ease-in-out infinite; }
+  .blob-3{ width:420px; height:420px; background:#A5B4FC; top:35%; left:45%; animation:drift3 30s ease-in-out infinite; }
+  .blob-4{ width:360px; height:360px; background:#FDE68A; top:60%; left:15%; animation:drift1 24s ease-in-out infinite reverse; }
+  @keyframes drift1 { 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(60px,-40px) scale(1.1) } }
+  @keyframes drift2 { 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(-80px,40px) scale(0.95) } }
+  @keyframes drift3 { 0%,100%{ transform:translate(0,0) scale(1) } 50%{ transform:translate(40px,60px) scale(1.05) } }
+
+  .cr-overlay{ position:fixed; inset:0; z-index:200; display:flex; align-items:flex-end; justify-content:center; padding:0; }
+  @media (min-width:920px){ .cr-overlay{ align-items:center; padding:24px; } }
+  @keyframes rise { 0%{ opacity:0; transform:translateY(24px) scale(0.98) } to{ opacity:1; transform:translateY(0) scale(1) } }
+  @keyframes wordSlide { 0%{ opacity:0; transform:translateY(20px) } to{ opacity:1; transform:translateY(0) } }
+  @keyframes slowSpin { from{ transform:rotate(0deg) } to{ transform:rotate(360deg) } }
+  @keyframes gentlePulse { 0%,100%{ opacity:.55 } 50%{ opacity:1 } }
+
+  .cut{ display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--gold); }
+  .cut svg{ display:block; }
+
+  /* Glass two-column card */
+  .glass{
+    position:relative; width:100%; max-width:940px;
+    background:rgba(255,255,255,0.55);
+    backdrop-filter:blur(30px) saturate(1.4);
+    -webkit-backdrop-filter:blur(30px) saturate(1.4);
+    border-radius:28px 28px 0 0;
+    border:1px solid var(--line); border-bottom:none;
+    box-shadow:0 30px 80px -20px rgba(44,44,44,0.25), inset 0 1px 0 rgba(255,255,255,0.8);
+    animation:rise .5s cubic-bezier(.2,.7,.2,1);
+    overflow:hidden;
+    display:grid; grid-template-columns:1fr;
+  }
+  @media (min-width:920px){
+    .glass{ border-radius:28px; border-bottom:1px solid var(--line); grid-template-columns:1.05fr 1fr; max-height:88vh; }
+  }
+
+  .glass::before{
+    content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:1;
+    background:radial-gradient(600px circle at var(--mx,50%) var(--my,0%), rgba(255,255,255,0.5), transparent 40%);
+    opacity:0.9;
+  }
+
+  .close-x{ position:absolute; top:16px; right:16px; width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.5); backdrop-filter:blur(8px); border:1px solid var(--line-2); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:5; transition:background .2s, border-color .2s; }
+  .close-x:hover{ background:var(--ink); border-color:var(--ink); }
+  .close-x:hover svg{ stroke:#fff; }
+  .close-x svg{ transition:stroke .2s; }
+
+  /* ============ LEFT: editorial ============ */
+  .page-left{
+    position:relative; z-index:2;
+    padding:22px 22px 18px;
+    display:flex; flex-direction:column; gap:14px;
+    border-bottom:1px solid rgba(255,255,255,0.4);
+  }
+  @media (min-width:920px){ .page-left{ padding:56px 44px; min-height:320px; gap:0; justify-content:space-between; border-bottom:none; border-right:1px solid rgba(255,255,255,0.4); } }
+
+  /* Hero mark — signature round-brilliant, single spinning element */
+  .hero-mark{ position:relative; width:56px; height:56px; margin-bottom:22px; }
+  .hero-mark .cut{ color:var(--gold); animation:slowSpin 18s linear infinite; transform-origin:center; }
+  .hero-mark .ring{ position:absolute; inset:-6px; border-radius:50%; border:1px dashed rgba(184,149,106,0.35); animation:slowSpin 30s linear infinite reverse; }
+
+  .quote{
+    font-family:var(--display); font-weight:300;
+    font-size:48px; line-height:0.95; letter-spacing:0; color:var(--ink);
+    margin:0; text-transform:lowercase;
+  }
+  @media (min-width:920px){ .quote{ font-size:92px; margin:6px 0 0; } }
+  .quote em{ font-style:normal; font-weight:300; color:var(--red); }
+  .quote .word{ display:inline-block; animation:wordSlide .7s cubic-bezier(.2,.7,.2,1) both; }
+  .quote .word:nth-child(1){ animation-delay:.05s }
+  .quote .word:nth-child(2){ animation-delay:.20s; margin-left:.15em; }
+
+  .tagline{ margin-top:22px; font-family:var(--sans); font-weight:400; font-size:14px; color:var(--muted); letter-spacing:0.02em; }
+
+  /* Promises — static 3-up row */
+  .promises{
+    margin-top:0; padding-top:4px;
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:12px;
+  }
+  @media (min-width:920px){ .promises{ margin-top:auto; padding-top:26px; gap:18px; } }
+  .promise{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+  .promise .cut{ color:var(--gold); opacity:.9; transition:transform .5s; }
+  @media (max-width:919px){ .promise .cut{ display:none; } }
+  .promise:hover .cut{ transform:rotate(15deg); }
+  .promise .metric{ font-family:var(--sans); font-weight:400; font-size:18px; line-height:1.1; color:var(--ink); letter-spacing:-.01em; }
+  @media (min-width:920px){ .promise .metric{ font-size:22px; } }
+  .promise .metric em{ font-family:var(--display); font-style:normal; font-weight:400; color:var(--gold-2); font-size:1.4em; line-height:0.9; }
+  .promise .lbl{ font-family:'Didact Gothic',sans-serif; font-weight:400; font-size:10px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; line-height:1.3; }
+  @media (min-width:920px){ .promise .lbl{ font-size:10.5px; } }
+
+  /* ============ RIGHT: form ============ */
+  .page-right{
+    position:relative; z-index:2;
+    padding:18px 22px 22px;
+    display:flex; flex-direction:column;
+    overflow-y:auto;
+  }
+  @media (min-width:920px){ .page-right{ padding:44px 44px; } }
+
+  /* Rail stepper — two distinct diamond cuts as nodes */
+  .rail{ display:flex; align-items:center; gap:10px; margin-bottom:26px; }
+  .rail .step{
+    display:flex; align-items:center; gap:8px;
+    font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; color:var(--hint); font-family:'Didact Gothic',sans-serif;
+  }
+  .rail .step.active{ color:var(--ink); }
+  .rail .step .cut{ color:var(--hint); transition:color .3s; }
+  .rail .step.active .cut{ color:var(--ink); animation:gentlePulse 2.4s ease-in-out infinite; }
+  .rail .step.done .cut{ color:var(--gold); }
+  .rail .line{ flex:0 0 32px; height:1px; background:rgba(44,44,44,0.14); }
+
+  h2.head{ font-family:var(--sans); font-weight:400; font-size:18px; line-height:1.25; letter-spacing:-0.005em; margin:0 0 14px; color:var(--ink); }
+  @media (min-width:920px){ h2.head{ font-size:22px; margin:0 0 18px; } }
+  h2.head em{ font-family:var(--display); font-style:normal; font-weight:400; color:var(--gold); font-size:1.5em; line-height:0.9; letter-spacing:0; }
+  p.sub{ color:var(--muted); font-size:13px; line-height:1.55; margin:0 0 16px; }
+  @media (min-width:920px){ p.sub{ margin:0 0 24px; } }
+
+  /* Form primitives */
+  .phone-row{ display:flex; gap:8px; }
+  .cc-select{
+    appearance:none; -webkit-appearance:none;
+    padding:14px 24px 14px 12px; border:1px solid rgba(44,44,44,0.08); border-radius:14px;
+    background:rgba(255,255,255,0.7) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1l4 4 4-4' stroke='%2371717A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 8px center;
+    backdrop-filter:blur(6px); font-family:inherit; font-size:13px; font-weight:400; letter-spacing:0.01em; color:var(--ink); cursor:pointer; min-width:92px; width:92px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .cc-select:focus, .cc-select:hover{ outline:none; border-color:var(--ink); box-shadow:0 0 0 3px var(--ink-soft); }
+  .phone-input{
+    flex:1; padding:14px 16px; border:1px solid rgba(44,44,44,0.08); border-radius:14px;
+    background:rgba(255,255,255,0.7); backdrop-filter:blur(6px);
+    font-family:inherit; font-weight:400; font-size:15px; letter-spacing:0.02em; color:var(--ink); transition:border-color .2s, box-shadow .2s;
+  }
+  .phone-input::placeholder{ color:var(--hint); }
+  .phone-input:focus{ outline:none; border-color:var(--ink); box-shadow:0 0 0 3px var(--ink-soft); }
+  .phone-input.err{ border-color:var(--red); box-shadow:0 0 0 3px var(--red-soft) !important; }
+
+  .row-inline{ display:flex; align-items:center; justify-content:space-between; margin-top:16px; }
+
+  .check{ position:relative; display:inline-flex; align-items:center; gap:9px; cursor:pointer; user-select:none; font-size:13px; color:var(--ink-2); }
+  .check input{ position:absolute; opacity:0; pointer-events:none; }
+  .check .box{ width:16px; height:16px; border:1.5px solid rgba(44,44,44,0.18); border-radius:5px; background:rgba(255,255,255,0.7); display:inline-flex; align-items:center; justify-content:center; transition:all .15s; flex:0 0 auto; }
+  .check input:checked ~ .box{ background:#C5A575; border-color:#C5A575; }
+  .check input:checked ~ .box::after{ content:''; width:7px; height:4px; border-left:1.5px solid #fff; border-bottom:1.5px solid #fff; transform:rotate(-45deg) translate(0.5px, -0.5px); }
+
+  .link{ font-size:12.5px; color:var(--ink-2); text-decoration:none; padding-bottom:1px; cursor:pointer; background:none; border:none; border-bottom:1px solid rgba(44,44,44,0.15); font-family:inherit; transition:color .15s, border-color .15s; }
+  .link:hover{ color:var(--ink); border-color:var(--ink); }
+
+  /* CTA — sleek ink, gold cut spins on hover */
+  .btn{
+    width:100%; margin-top:14px; padding:15px 20px; border:none; border-radius:14px; cursor:pointer;
+    background:linear-gradient(180deg, #3A3A3A 0%, #2C2C2C 100%); color:#fff; font-weight:400; font-size:13px; letter-spacing:0.06em; text-transform:uppercase; font-family:'Didact Gothic',sans-serif;
+    transition:transform .15s, box-shadow .2s, opacity .15s;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    box-shadow:0 10px 30px -10px rgba(44,44,44,0.5);
+    position:relative; overflow:hidden;
+  }
+  .btn::before{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+    transform:translateX(-100%); transition:transform .7s;
+  }
+  .btn:hover:not(:disabled){ transform:translateY(-1px); box-shadow:0 14px 34px -10px rgba(44,44,44,0.6); }
+  .btn:hover:not(:disabled)::before{ transform:translateX(100%); }
+  .btn:disabled{ background:rgba(44,44,44,0.12); color:var(--hint); cursor:not-allowed; box-shadow:none; }
+  .btn .arr{ transition:transform .2s; }
+  .btn:hover:not(:disabled) .arr{ transform:translateX(3px); }
+  .btn .cut{ color:var(--gold); transition:transform .6s; }
+  .btn:hover:not(:disabled) .cut{ transform:rotate(360deg); }
+
+  .terms-line{ display:flex; align-items:flex-start; gap:9px; margin-top:12px; font-size:9px; color:var(--muted); line-height:1.55; }
+  .terms-line a{ color:var(--ink-2); text-decoration:none; border-bottom:1px solid rgba(44,44,44,0.15); }
+  .terms-line a:hover{ color:var(--ink); }
+  .terms-line .box{ margin-top:2px; }
+
+  /* Prefs */
+  .prefs{ margin-top:18px; padding-top:14px; border-top:1px solid rgba(44,44,44,0.08); }
+  .prefs-trigger{ display:flex; align-items:center; justify-content:space-between; width:100%; background:none; border:none; padding:0; font-family:inherit; cursor:pointer; font-size:12px; color:var(--ink-2); transition:color .15s; }
+  .prefs-trigger:hover{ color:var(--ink); }
+  .prefs-trigger .chev{ transition:transform .25s; opacity:0.5; }
+  .prefs.open .prefs-trigger .chev{ transform:rotate(180deg); }
+  .prefs-body{ display:none; padding-top:12px; }
+  .prefs.open .prefs-body{ display:block; animation:rise .35s ease; }
+  .prefs-item{ padding:10px 0; border-top:1px solid rgba(44,44,44,0.06); }
+  .prefs-item:first-child{ border-top:none; padding-top:2px; }
+  .prefs-item .check{ align-items:flex-start; font-size:11.5px; color:var(--muted); line-height:1.5; }
+  .prefs-item .check .box{ margin-top:2px; }
+  .prefs-item .check a{ color:var(--ink-2); border-bottom:1px solid rgba(44,44,44,0.15); text-decoration:none; }
+  .chan-row{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; margin-left:25px; }
+  .chan{ position:relative; }
+  .chan input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .chan span{ display:inline-block; padding:5px 11px; border-radius:999px; border:1px solid rgba(44,44,44,0.1); background:rgba(255,255,255,0.6); font-size:10.5px; color:var(--ink-2); transition:all .15s; }
+  .chan input:checked + span{ background:#C5A575; border-color:#C5A575; color:#fff; }
+  .chan input:disabled + span{ opacity:0.45; cursor:not-allowed; }
+
+  /* OTP */
+  .otp-panel{ display:none; }
+  .otp-panel.active{ display:block; animation:rise .35s ease; }
+  .form-panel.hidden-panel{ display:none; }
+  .otp-boxes{ display:flex; gap:8px; margin:16px 0 8px; }
+  .otp-boxes input{
+    flex:1; max-width:52px; aspect-ratio:1/1; text-align:center;
+    font-size:20px; font-weight:400; color:var(--ink); font-family:var(--sans); letter-spacing:0.04em;
+    border:1px solid rgba(44,44,44,0.08); border-radius:12px; background:rgba(255,255,255,0.7); backdrop-filter:blur(6px);
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .otp-boxes input:focus{ outline:none; border-color:var(--ink); box-shadow:0 0 0 3px var(--ink-soft); }
+
+  .back-link{ display:inline-flex; align-items:center; gap:6px; background:none; border:none; padding:0; margin-bottom:14px; cursor:pointer; font-family:inherit; font-size:12px; color:var(--muted); }
+  .back-link:hover{ color:var(--ink); }
+</style>
+</head>
+<body>
+
+<!-- Diamond cut SVG library -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="cut-round" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+    <polygon points="12,3 20.5,12 12,21 3.5,12" fill="none" stroke="currentColor" stroke-width="0.9"/>
+    <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="0.9"/>
+    <path d="M12 3v3.5M12 21v-3.5M3.5 12h3.5M21 12h-3.5" stroke="currentColor" stroke-width="0.7" opacity="0.7"/>
+  </symbol>
+  <symbol id="cut-marquise" viewBox="0 0 24 24">
+    <path d="M12 3 C 6 9 6 15 12 21 C 18 15 18 9 12 3 Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M4.5 12h15" stroke="currentColor" stroke-width="0.8" opacity="0.6"/>
+    <path d="M12 3l-3 9 3 9M12 3l3 9-3 9" stroke="currentColor" stroke-width="0.7" opacity="0.5" fill="none"/>
+  </symbol>
+  <symbol id="cut-pear" viewBox="0 0 24 24">
+    <path d="M12 3 C 7 9 6 14 8 18 C 10 21 14 21 16 18 C 18 14 17 9 12 3 Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M12 3v18M7 14h10" stroke="currentColor" stroke-width="0.7" opacity="0.55" fill="none"/>
+  </symbol>
+  <symbol id="cut-princess" viewBox="0 0 24 24">
+    <rect x="3.5" y="3.5" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M3.5 3.5 L20.5 20.5 M20.5 3.5 L3.5 20.5" stroke="currentColor" stroke-width="0.75" opacity="0.55"/>
+    <rect x="8.5" y="8.5" width="7" height="7" fill="none" stroke="currentColor" stroke-width="0.9"/>
+  </symbol>
+  <symbol id="cut-emerald" viewBox="0 0 24 24">
+    <path d="M6 4 L18 4 L21 8 L21 16 L18 20 L6 20 L3 16 L3 8 Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M6 4 L8.5 8 L15.5 8 L18 4 M6 20 L8.5 16 L15.5 16 L18 20 M3 8 L8.5 8 L8.5 16 L3 16 M21 8 L15.5 8 L15.5 16 L21 16" stroke="currentColor" stroke-width="0.7" opacity="0.55" fill="none"/>
+  </symbol>
+  <symbol id="cut-trillion" viewBox="0 0 24 24">
+    <path d="M12 3 L21 19 L3 19 Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M12 3 L12 19 M7.5 11 L16.5 11" stroke="currentColor" stroke-width="0.7" opacity="0.55" fill="none"/>
+  </symbol>
+</svg>
+
+<div class="pdp-bg" aria-hidden="true">
+  <iframe src="../PDP/index.html" title="Product page background" tabindex="-1"></iframe>
+</div>
+<div class="aurora" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
+</div>
+
+<div class="cr-overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="glass" id="glassCard">
+    <button class="close-x" aria-label="Close" onclick="closeModal()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+
+    <!-- LEFT: editorial -->
+    <div class="page-left">
+      <div>
+        <div class="quote">
+          <span class="word"><em>Indulge</em></span>
+          <span class="word">now.</span>
+        </div>
+      </div>
+
+      <div class="promises">
+        <div class="promise">
+          <span class="cut"><svg width="18" height="18"><use href="#cut-marquise"/></svg></span>
+          <div class="metric"><em>₹500</em></div>
+          <div class="lbl">Off your first order</div>
+        </div>
+        <div class="promise">
+          <span class="cut"><svg width="18" height="18"><use href="#cut-round"/></svg></span>
+          <div class="metric">Neu<em>Coins</em></div>
+          <div class="lbl">Earn on every purchase</div>
+        </div>
+        <div class="promise">
+          <span class="cut"><svg width="18" height="18"><use href="#cut-emerald"/></svg></span>
+          <div class="metric"><em>7 days</em></div>
+          <div class="lbl">Free returns</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: form -->
+    <div class="page-right">
+      <div class="form-panel" id="formPanel">
+        <h2 class="head">Sign <em>in</em> or sign <em>up</em>.</h2>
+
+        <div class="phone-row">
+          <select class="cc-select" id="cc">
+            <option value="+91" selected>🇮🇳 IN +91</option>
+            <option value="+971">🇦🇪 AE +971</option>
+            <option value="+49">🇩🇪 DE +49</option>
+            <option value="+966">🇸🇦 SA +966</option>
+            <option value="+31">🇳🇱 NL +31</option>
+            <option value="+60">🇲🇾 MY +60</option>
+            <option value="+254">🇰🇪 KE +254</option>
+            <option value="+40">🇷🇴 RO +40</option>
+            <option value="+34">🇪🇸 ES +34</option>
+            <option value="+351">🇵🇹 PT +351</option>
+            <option value="+974">🇶🇦 QA +974</option>
+            <option value="+39">🇮🇹 IT +39</option>
+            <option value="+968">🇴🇲 OM +968</option>
+            <option value="+965">🇰🇼 KW +965</option>
+            <option value="+973">🇧🇭 BH +973</option>
+            <option value="+27">🇿🇦 ZA +27</option>
+            <option value="+1-ca">🇨🇦 CA +1</option>
+            <option value="+64">🇳🇿 NZ +64</option>
+            <option value="+61">🇦🇺 AU +61</option>
+            <option value="+65">🇸🇬 SG +65</option>
+            <option value="+1-us">🇺🇸 US +1</option>
+            <option value="+44">🇬🇧 UK +44</option>
+          </select>
+          <input type="tel" class="phone-input" id="phone" inputmode="numeric" maxlength="15" placeholder="Your mobile number" autocomplete="tel-national" />
+        </div>
+        <div id="phoneErr" style="display:none; font-size:11px; color:var(--red); margin-top:6px;">Enter a valid mobile number</div>
+
+        <label class="terms-line">
+          <span class="check" style="gap:0;">
+            <input type="checkbox" id="pnAck" checked />
+            <span class="box"></span>
+          </span>
+          <span>I've read and accept the <a href="#">Terms</a> &amp; acknowledge the <a href="#">Privacy Notice</a>.</span>
+        </label>
+
+        <button class="btn" id="getOtpBtn" disabled onclick="goToOtp()">
+          <span class="cut"><svg width="12" height="12"><use href="#cut-princess"/></svg></span>
+          Send code
+          <svg class="arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+
+        <div class="prefs open" id="prefs">
+          <button class="prefs-trigger" onclick="document.getElementById('prefs').classList.toggle('open')">
+            <span>Communication &amp; personalization</span>
+            <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="prefs-body">
+            <div class="prefs-item">
+              <label class="check">
+                <input type="checkbox" id="mkt" checked onchange="toggleChan()" />
+                <span class="box"></span>
+                <span>Marketing communications from Titan Company Limited. Withdraw anytime per <a href="#">Privacy Notice</a>.</span>
+              </label>
+              <div class="chan-row" id="chanRow">
+                <label class="chan"><input type="checkbox" checked /><span>Email</span></label>
+                <label class="chan"><input type="checkbox" checked /><span>WhatsApp</span></label>
+                <label class="chan"><input type="checkbox" checked /><span>Call</span></label>
+                <label class="chan"><input type="checkbox" checked /><span>SMS</span></label>
+                <label class="chan"><input type="checkbox" checked /><span>RCS</span></label>
+              </div>
+            </div>
+            <div class="prefs-item">
+              <label class="check">
+                <input type="checkbox" id="personalize" checked />
+                <span class="box"></span>
+                <span>Personalized recommendations based on my activity.</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="otp-panel" id="otpPanel">
+        <button class="back-link" onclick="backToForm()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back
+        </button>
+        <h2 class="head">The <em>code</em>.</h2>
+        <p class="sub">Sent to <b id="otpTo" style="color:var(--ink); font-weight:500;">+91 · **********</b></p>
+        <div class="otp-boxes">
+          <input type="tel" inputmode="numeric" maxlength="1" />
+          <input type="tel" inputmode="numeric" maxlength="1" />
+          <input type="tel" inputmode="numeric" maxlength="1" />
+          <input type="tel" inputmode="numeric" maxlength="1" />
+          <input type="tel" inputmode="numeric" maxlength="1" />
+          <input type="tel" inputmode="numeric" maxlength="1" />
+        </div>
+        <div style="font-size:12px; color:var(--muted); margin-top:6px;">
+          <span id="timerText">Resend in <b id="timerNum" style="color:var(--ink-2);">30</b>s</span>
+          <button class="link" id="resendBtn" style="display:none; margin-left:6px;" onclick="startTimer()">Resend</button>
+        </div>
+        <button class="btn" onclick="alert('Signed in — demo only')">
+          <span class="cut"><svg width="12" height="12"><use href="#cut-round"/></svg></span>
+          Verify &amp; sign in
+          <svg class="arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const phone = $('phone'), pnAck = $('pnAck'), cta = $('getOtpBtn'), pErr = $('phoneErr');
+  // Country codes vary: 7–15 digits accepted
+  const isValidPhone = v => /^[0-9]{7,15}$/.test(v);
+  const valid = () => cta.disabled = !(isValidPhone(phone.value) && pnAck.checked);
+  phone.addEventListener('input', () => {
+    phone.value = phone.value.replace(/[^0-9]/g,'').slice(0,15);
+    const bad = phone.value.length > 0 && phone.value.length < 7;
+    phone.classList.toggle('err', bad); pErr.style.display = bad ? 'block' : 'none'; valid();
+  });
+  pnAck.addEventListener('change', valid);
+  function toggleChan(){
+    const on = $('mkt').checked;
+    document.querySelectorAll('#chanRow input').forEach(el => { el.disabled = !on; if(!on) el.checked = false; });
+  }
+  function goToOtp(){
+    const dial = $('cc').value.split('-')[0];
+    $('otpTo').textContent = dial + ' · ' + phone.value.replace(/(\d{3,5})(\d+)/, '$1 $2');
+    $('formPanel').classList.add('hidden-panel'); $('otpPanel').classList.add('active');
+    startTimer(); setTimeout(() => document.querySelector('.otp-boxes input')?.focus(), 100);
+  }
+  function backToForm(){
+    $('otpPanel').classList.remove('active'); $('formPanel').classList.remove('hidden-panel');
+  }
+  document.querySelectorAll('.otp-boxes input').forEach((inp, i, arr) => {
+    inp.addEventListener('input', () => { inp.value = inp.value.replace(/[^0-9]/g,'').slice(0,1); if (inp.value && arr[i+1]) arr[i+1].focus(); });
+    inp.addEventListener('keydown', e => { if (e.key === 'Backspace' && !inp.value && arr[i-1]) arr[i-1].focus(); });
+  });
+  let timerId;
+  function startTimer(){
+    let t = 30; $('resendBtn').style.display = 'none'; $('timerText').style.display = 'inline'; $('timerNum').textContent = t;
+    clearInterval(timerId);
+    timerId = setInterval(() => { t--; $('timerNum').textContent = t; if (t <= 0) { clearInterval(timerId); $('timerText').style.display = 'none'; $('resendBtn').style.display = 'inline-block'; } }, 1000);
+  }
+  const card = $('glassCard');
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+  function closeModal(){ $('overlay').style.display = 'none'; }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  $('overlay').addEventListener('click', e => { if (e.target.id === 'overlay') closeModal(); });
+  toggleChan();
+</script>
+</body>
+</html>

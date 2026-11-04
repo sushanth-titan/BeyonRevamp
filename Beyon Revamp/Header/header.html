@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beyon — Header</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oooh+Baby&family=Didact+Gothic&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/geom.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#BF0E23', 'primary-dark': '#9B0B1C',
+            dark: '#2C2C2C', 'warm-grey': '#B0ABAB',
+            cream: '#EFEAE3', gold: '#C5A575', 'soft-grey': '#F6F6F6',
+          },
+          fontFamily: { sans: ['Geom', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Geom',sans-serif;background:#fff;color:#2C2C2C;-webkit-font-smoothing:antialiased;overflow:hidden;height:100vh}
+
+    /* ── FROSTED HEADER ── */
+    .header-main{position:fixed;top:0;left:0;right:0;z-index:100;
+      background:rgba(255,255,255,0.25);
+      backdrop-filter:blur(12px) saturate(160%);
+      -webkit-backdrop-filter:blur(12px) saturate(160%);
+      border-bottom:1px solid rgba(255,255,255,.18);
+      transition:background .45s ease,backdrop-filter .45s ease,-webkit-backdrop-filter .45s ease,box-shadow .45s ease,border-color .45s ease}
+    .header-main.scrolled{
+      background:rgba(255,255,255,0.78);
+      backdrop-filter:blur(28px) saturate(200%);
+      -webkit-backdrop-filter:blur(28px) saturate(200%);
+      box-shadow:0 1px 3px rgba(0,0,0,.05),0 8px 32px rgba(0,0,0,.07);
+      border-bottom-color:rgba(0,0,0,.06)}
+
+    /* ── IFRAME sits behind the header, starting from top:0 ── */
+    .bg-iframe{position:fixed;top:0;left:0;width:100%;height:100vh;border:none;z-index:0}
+
+    .search-wrap{position:relative;display:flex;align-items:center;background:rgba(240,240,240,.75);border:1.5px solid rgba(44,44,44,.1);border-radius:12px;transition:all .3s;overflow:hidden}
+    .search-wrap:focus-within{border-color:rgba(191,14,35,.2);background:rgba(255,255,255,.85);box-shadow:0 0 0 3px rgba(191,14,35,.06)}
+    .search-wrap input{flex:1;padding:8px 14px 8px 40px;border:none;outline:none;font-family:'Geom',sans-serif;font-size:13px;background:transparent;color:#2C2C2C}
+    .search-wrap .search-icon{position:absolute;left:12px;color:#B0ABAB;pointer-events:none;transition:color .2s}
+    .search-wrap:focus-within .search-icon{color:#BF0E23}
+    .search-wrap input::placeholder{color:transparent}
+    .search-placeholder{position:absolute;left:40px;top:50%;transform:translateY(-50%);font-size:13px;color:#B0ABAB;pointer-events:none;white-space:nowrap}
+    .search-placeholder span{display:inline-block;animation:ph-fade 3s ease-in-out infinite}
+    @keyframes ph-fade{0%,10%{opacity:1;transform:translateY(0)}45%,55%{opacity:0;transform:translateY(-8px)}60%{opacity:0;transform:translateY(8px)}75%,100%{opacity:1;transform:translateY(0)}}
+    .search-wrap input:focus ~ .search-placeholder,.search-wrap input:not(:placeholder-shown) ~ .search-placeholder{display:none}
+
+    .nav-cat a{position:relative;font-size:12px;font-weight:500;color:#2C2C2C;text-decoration:none;padding:10px 0;white-space:nowrap;transition:color .3s;letter-spacing:.2px}
+    .nav-cat a::before{content:'';position:absolute;bottom:0;left:50%;width:0;height:2.5px;background:linear-gradient(90deg,#BF0E23,#E8334A);transition:all .3s;border-radius:2px;transform:translateX(-50%)}
+    .nav-cat a:hover,.nav-cat a.mega-active{color:#BF0E23}
+    .nav-cat a:hover::before,.nav-cat a.mega-active::before{width:100%}
+
+    .icon-btn{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;font-weight:500;letter-spacing:.4px;color:#2C2C2C;cursor:pointer;transition:all .25s;position:relative;background:none;border:none;font-family:'Didact Gothic',sans-serif}
+    .icon-btn:hover{color:#BF0E23;transform:translateY(-2px)}
+    .icon-btn .badge{position:absolute;top:-4px;right:-6px;width:16px;height:16px;background:#BF0E23;color:#fff;font-size:8px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+    .header-cta{padding:7px 16px;border-radius:8px;font-size:11px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:all .3s;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:5px;position:relative;overflow:hidden;font-family:'Didact Gothic',sans-serif}
+    .cta-facts{background:transparent;color:#2C2C2C;border:1.3px solid rgba(44,44,44,.18)}
+    .cta-facts::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(44,44,44,.06),transparent);transition:left .5s}
+    .cta-facts:hover::before{left:100%}
+    .cta-facts:hover{border-color:rgba(44,44,44,.35);background:rgba(44,44,44,.03)}
+    .cta-gift{background:transparent;color:#BF0E23;border:1.3px solid rgba(191,14,35,.3);box-shadow:none;animation:none}
+    .cta-gift::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(191,14,35,.06),transparent);transform:translateX(-100%);transition:transform .5s}
+    .cta-gift:hover::before{transform:translateX(100%)}
+    .cta-gift:hover{border-color:rgba(191,14,35,.5);background:rgba(191,14,35,.03)}
+    .cta-store{background:linear-gradient(135deg,#BF0E23 0%,#E8334A 50%,#BF0E23 100%);background-size:200% 200%;color:#fff;animation:gift-grad 3s ease infinite;box-shadow:0 2px 12px rgba(191,14,35,.2)}
+    .cta-store::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:translateX(-100%);transition:transform .5s}
+    .cta-store:hover::before{transform:translateX(100%)}
+    .cta-store:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 6px 20px rgba(191,14,35,.35)}
+    @keyframes gift-grad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    /* HAMBURGER */
+    .hamburger{width:28px;height:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;background:none;border:none;padding:0;z-index:200;position:relative;border-radius:8px;transition:background .2s}
+    .hamburger:active{background:rgba(0,0,0,.04)}
+    .hamburger .line{display:block;width:16px;height:1.6px;border-radius:2px;background:#2C2C2C;transition:all .35s cubic-bezier(.77,.2,.05,1)}
+    .hamburger.active .line{background:#BF0E23}
+    .hamburger.active .line:nth-child(1){transform:translateY(5.6px) rotate(45deg)}
+    .hamburger.active .line:nth-child(2){opacity:0;transform:translateX(-10px)}
+    .hamburger.active .line:nth-child(3){transform:translateY(-5.6px) rotate(-45deg)}
+
+    /* MEGA MENU */
+    .mega-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:90;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .35s}
+    .mega-overlay.active{opacity:1;pointer-events:auto}
+    .mega-menu{position:absolute;top:100%;left:0;right:0;z-index:99;background:rgba(18,18,22,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.06);max-height:0;overflow:hidden;opacity:0;transition:max-height .4s cubic-bezier(.4,0,.2,1),opacity .3s}
+    .mega-menu.open{max-height:520px;opacity:1;overflow-y:auto;box-shadow:0 30px 60px rgba(0,0,0,.3)}
+    .mega-inner{max-width:1280px;margin:0 auto;padding:28px 32px 32px;display:flex;gap:0}
+    .mega-col{padding:0 20px;min-width:0}
+    .mega-col:first-child{padding-left:0}
+    .mega-col:last-child{padding-right:0}
+    .mega-col + .mega-col{border-left:1px solid rgba(255,255,255,.06)}
+    .mega-col-title{font-size:10px;font-weight:700;letter-spacing:1.3px;color:rgba(255,255,255,.35);text-transform:uppercase;margin-bottom:10px}
+    .mega-col a{display:block;padding:5px 0;font-size:12px;color:rgba(255,255,255,.7);text-decoration:none;transition:color .15s}
+    .mega-col a:hover{color:#fff}
+    .mega-col a.featured{color:#BF0E23;font-weight:600}
+    .mega-col a.featured:hover{color:#E8334A}
+    .mega-img-slot{width:100%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);margin-bottom:10px;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.3);transition:all .25s;cursor:pointer}
+    .mega-img-slot:hover{background:rgba(255,255,255,.07);border-color:rgba(191,14,35,.2)}
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu{position:fixed;inset:0;z-index:150;background:rgba(18,18,20,.97);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);transform:translateX(-100%);transition:transform .45s cubic-bezier(.77,.2,.05,1);overflow-y:auto;overscroll-behavior:contain;padding-top:70px}
+    .mobile-menu.open{transform:translateX(0)}
+
+    .mobile-close-btn{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .25s;z-index:10}
+    .mobile-close-btn:hover{background:rgba(191,14,35,.15);border-color:rgba(191,14,35,.3)}
+    .mobile-close-btn svg{color:rgba(255,255,255,.7);transition:color .2s}
+    .mobile-close-btn:hover svg{color:#BF0E23}
+
+    .mobile-menu .menu-section{padding:0 20px;margin-bottom:16px}
+    .mobile-menu .menu-section-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:8px;padding-left:4px}
+    .mobile-menu .menu-link{display:flex;align-items:center;gap:12px;padding:13px 16px;font-size:14px;font-weight:500;color:rgba(255,255,255,.85);border-radius:12px;transition:all .2s;text-decoration:none;cursor:pointer}
+    .mobile-menu .menu-link:hover,.mobile-menu .menu-link:active{background:rgba(191,14,35,.1);color:#fff}
+    .mobile-menu .menu-link .menu-icon{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .mobile-menu .menu-link .chevron{margin-left:auto;color:rgba(255,255,255,.2);transition:transform .3s}
+
+    /* ── MOBILE SUB-PAGES (slide-in panels) ── */
+    .mobile-subpage{position:fixed;inset:0;z-index:160;background:rgba(18,18,20,.97);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);overflow-y:auto;overscroll-behavior:contain;padding:0}
+    .mobile-subpage.open{transform:translateX(0)}
+    .mobile-subpage .subpage-header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:18px 20px;background:rgba(18,18,20,.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .mobile-subpage .back-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .25s;flex-shrink:0}
+    .mobile-subpage .back-btn:hover{background:rgba(191,14,35,.15);border-color:rgba(191,14,35,.3)}
+    .mobile-subpage .back-btn svg{color:rgba(255,255,255,.7)}
+    .mobile-subpage .subpage-title{font-size:16px;font-weight:700;color:#fff;letter-spacing:.3px}
+    .mobile-subpage .subpage-body{padding:20px}
+    .mobile-subpage .sub-section-title{font-size:10px;font-weight:700;letter-spacing:1.3px;color:rgba(255,255,255,.3);text-transform:uppercase;margin:16px 0 8px;padding-left:4px}
+    .mobile-subpage .sub-section-title:first-child{margin-top:0}
+    .mobile-subpage .sub-link{display:block;padding:11px 16px;font-size:14px;color:rgba(255,255,255,.75);text-decoration:none;border-radius:10px;transition:all .15s}
+    .mobile-subpage .sub-link:hover{color:#fff;background:rgba(255,255,255,.04)}
+    .mobile-subpage .sub-link.featured{color:#BF0E23;font-weight:600}
+
+    .profile-card{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(191,14,35,.1),rgba(44,44,44,.4));border-radius:20px;padding:22px 20px;margin:0 20px 20px;border:1px solid rgba(255,255,255,.06)}
+    .profile-card .watermark{position:absolute;right:-15px;top:-15px;width:150px;height:150px;opacity:.07;object-fit:cover;pointer-events:none;border-radius:50%;filter:grayscale(1) brightness(2)}
+    .profile-card .profile-name{font-size:18px;font-weight:700;color:#fff;position:relative}
+    .profile-card .profile-detail{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;position:relative}
+    .profile-card .view-profile-btn{margin-top:14px;padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;color:#fff;background:rgba(191,14,35,.7);border:none;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:6px;position:relative}
+    .profile-card .view-profile-btn:hover{background:rgba(191,14,35,.9);transform:scale(1.02)}
+    .profile-sub-menu{display:none;margin-top:12px;background:rgba(255,255,255,.04);border-radius:12px;overflow:hidden;position:relative}
+    .profile-sub-menu.open{display:block;animation:slideDown .3s ease}
+    .profile-sub-menu a{display:flex;align-items:center;gap:10px;padding:12px 14px;font-size:13px;color:rgba(255,255,255,.75);text-decoration:none;transition:all .2s}
+    .profile-sub-menu a:hover{background:rgba(191,14,35,.08);color:#fff}
+    .profile-sub-menu a+a{border-top:1px solid rgba(255,255,255,.04)}
+    .login-btn-mobile{display:flex;align-items:center;gap:12px;margin:0 20px 20px;padding:18px 20px;background:linear-gradient(135deg,#BF0E23,#E8334A);border-radius:16px;color:#fff;cursor:pointer;border:none;width:calc(100% - 40px);font-family:'Geom',sans-serif;font-size:14px;font-weight:600;transition:all .25s;box-shadow:0 4px 20px rgba(191,14,35,.3)}
+    .login-btn-mobile:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(191,14,35,.4)}
+    .sign-out-btn{display:flex;align-items:center;gap:10px;margin:8px 20px 30px;padding:14px 16px;border-radius:12px;font-size:14px;font-weight:500;color:rgba(255,255,255,.4);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);cursor:pointer;width:calc(100% - 40px);font-family:'Geom',sans-serif;transition:all .2s}
+    .sign-out-btn:hover{background:rgba(191,14,35,.1);color:#BF0E23;border-color:rgba(191,14,35,.2)}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+    .profile-dropdown{position:absolute;top:calc(100% + 12px);right:-20px;width:300px;background:rgba(255,255,255,.98);backdrop-filter:blur(20px);border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12),0 0 0 1px rgba(229,221,211,.3);opacity:0;transform:translateY(-8px) scale(.96);pointer-events:none;transition:all .3s cubic-bezier(.4,0,.2,1);z-index:200}
+    .profile-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+    .profile-dropdown .dd-profile{position:relative;overflow:hidden;background:linear-gradient(135deg,#FDFAF6,#F5F0E8);padding:20px;border-bottom:1px solid rgba(229,221,211,.3)}
+    .profile-dropdown .dd-profile .watermark{position:absolute;right:-10px;top:-10px;width:100px;height:100px;opacity:.05;object-fit:cover;pointer-events:none;border-radius:50%}
+    .profile-dropdown .dd-profile .dd-name{font-size:16px;font-weight:700;color:#2C2C2C}
+    .profile-dropdown .dd-profile .dd-detail{font-size:11px;color:#B0ABAB;margin-top:2px}
+    .profile-dropdown .dd-link{display:flex;align-items:center;gap:12px;padding:13px 20px;font-size:13px;font-weight:500;color:#2C2C2C;text-decoration:none;transition:all .2s;cursor:pointer}
+    .profile-dropdown .dd-link:hover{background:rgba(191,14,35,.04);color:#BF0E23}
+    .profile-dropdown .dd-link+.dd-link{border-top:1px solid rgba(229,221,211,.15)}
+    .profile-dropdown .dd-link svg{color:#B0ABAB;flex-shrink:0}
+    .profile-dropdown .dd-signout{display:flex;align-items:center;gap:12px;padding:13px 20px;font-size:13px;font-weight:500;color:#BF0E23;cursor:pointer;background:rgba(191,14,35,.03);border:none;width:100%;font-family:'Geom',sans-serif;transition:all .2s;border-top:1px solid rgba(229,221,211,.2)}
+    .profile-dropdown .dd-signout:hover{background:rgba(191,14,35,.08)}
+
+    .mobile-search{display:none}
+    @media(max-width:767px){
+      .mobile-search{display:flex;flex:1;min-width:0;margin:0 6px}
+      .mobile-search .search-wrap{width:100%}
+      .mobile-search .search-wrap input{padding:6px 8px 6px 30px;font-size:11px}
+      .mobile-search .search-placeholder{left:30px;font-size:11px;right:8px;max-width:calc(100% - 38px);overflow:hidden;text-overflow:ellipsis}
+      .mobile-only.flex{gap:8px !important}
+      .desktop-only{display:none !important}
+      .header-row-1{padding:8px 10px !important;gap:8px !important}
+    }
+    @media(min-width:768px){.mobile-only{display:none !important}}
+  </style>
+</head>
+<body class="min-h-screen">
+
+<!-- IFRAME behind everything, starts from top:0 so content shows through translucent header -->
+<iframe src="../PDP/index.html" class="bg-iframe" id="bgIframe"></iframe>
+
+<header class="header-main" id="siteHeader">
+  <div class="header-row-1 max-w-7xl mx-auto flex items-center gap-4 px-4 sm:px-6 lg:px-8" style="height:54px">
+    <button class="hamburger mobile-only" id="hamburgerBtn" aria-label="Menu">
+      <span class="line"></span><span class="line"></span><span class="line"></span>
+    </button>
+    <a href="/" class="flex-shrink-0">
+      <img src="Logo.png" alt="Beyon" class="desktop-only" style="height:66px" />
+      <img src="Logo.png" alt="Beyon" class="mobile-only" style="height:53px" />
+    </a>
+    <div class="search-wrap desktop-only" style="flex:1;max-width:420px;margin-left:20px">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" placeholder=" " id="desktopSearch" autocomplete="off" />
+      <div class="search-placeholder" id="desktopPlaceholder"></div>
+    </div>
+    <div class="mobile-search mobile-only">
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" placeholder=" " id="mobileSearch" autocomplete="off" />
+        <div class="search-placeholder" id="mobilePlaceholder"></div>
+      </div>
+    </div>
+    <div class="desktop-only flex items-center gap-2 ml-auto">
+      <a href="#" class="header-cta cta-facts"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,3 18,9 12,21 6,9"/><path d="M6 9h12"/><path d="M9.5 3L6 9l6 12"/><path d="M14.5 3L18 9l-6 12"/></svg>Beyon Facts</a>
+      <a href="#" class="header-cta cta-gift"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8V21"/><path d="M3 13h18"/></svg>Gifting</a>
+      <a href="#" class="header-cta cta-store"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Find Store</a>
+    </div>
+    <div class="desktop-only flex items-center gap-5 ml-4">
+      <div class="relative" id="accountWrap">
+        <button class="icon-btn" id="accountBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Account</span></button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="dd-profile" id="ddProfileSection"><img src="Y.png" class="watermark" alt="" /><div class="dd-name">Priya Sharma</div><div class="dd-detail">+91 98765 43210</div><div class="dd-detail">priya.sharma@email.com</div></div>
+          <a href="#" class="dd-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Edit Profile</a>
+          <a href="#" class="dd-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Address</a>
+          <a href="#" class="dd-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Saved Cards</a>
+          <a href="#" class="dd-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>NeuPass</a>
+          <a href="#" class="dd-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 11h5"/></svg>Orders</a>
+          <button class="dd-signout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+        </div>
+      </div>
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span>Wishlist</span><span class="badge">2</span></button>
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span>Bag</span><span class="badge">1</span></button>
+    </div>
+    <div class="mobile-only flex items-center gap-3">
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="badge">2</span></button>
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="badge">1</span></button>
+    </div>
+  </div>
+
+  <!-- ROW 2 -->
+  <div class="desktop-only border-t" style="border-color:rgba(229,221,211,.3);position:relative">
+    <div class="nav-cat max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-6 overflow-x-auto" style="height:38px;scrollbar-width:none" id="navCat">
+      <a href="#" data-mega="rings">Rings</a>
+      <a href="#" data-mega="earrings">Earrings</a>
+      <a href="#" data-mega="bracelets">Bracelets & Bangles</a>
+      <a href="#" data-mega="solitaires">Solitaires</a>
+      <a href="#" data-mega="neckwear">Neckwear & Pendants</a>
+      <a href="#" data-mega="silver">Silver</a>
+      <a href="#" data-mega="gifting">Gifting</a>
+      <a href="#" data-mega="collections">Collections</a>
+      <a href="#" data-mega="more">More Jewellery</a>
+      <a href="#" data-mega="trending" style="color:#BF0E23;font-weight:600">Trending</a>
+    </div>
+
+    <!-- MEGA MENUS -->
+    <div class="mega-menu" id="mega-rings"><div class="mega-inner">
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Featured</div><a href="#" class="featured">Latest Designs</a><a href="#" class="featured">Bestsellers</a><a href="#" class="featured">Fast Delivery</a></div>
+      <div class="mega-col" style="min-width:150px"><div class="mega-col-title">By Style</div><a href="#">All Rings</a><a href="#">Engagement</a><a href="#">Dailywear</a><a href="#">Infinity</a><a href="#">Cocktail</a><a href="#">Solitaire</a><a href="#">Couple Rings</a><a href="#">Bands</a><a href="#">Promise Rings</a><a href="#">Silver By Shaya</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stone</div><a href="#">Diamond</a><a href="#">Pearl</a><a href="#">Navratna</a><a href="#">Gemstone</a><a href="#">Platinum</a><a href="#">Gold</a><a href="#">Rose Gold</a><a href="#">Yellow Gold</a><a href="#">White Gold</a><a href="#">22KT Gold</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">Under ₹ 10k</a><a href="#">₹ 10k - ₹ 20k</a><a href="#">₹ 20k - ₹ 30k</a><a href="#">₹ 30k - ₹ 50k</a><a href="#">₹ 40k - ₹ 50k</a><a href="#">₹ 50k - ₹ 75k</a><a href="#">₹ 75k & Above</a></div>
+      <div class="mega-col" style="min-width:280px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Shop Rings</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Bestsellers</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-earrings"><div class="mega-inner">
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Featured</div><a href="#" class="featured">Latest Designs</a><a href="#" class="featured">Bestsellers</a></div>
+      <div class="mega-col" style="min-width:140px"><div class="mega-col-title">By Style</div><a href="#">All Earrings</a><a href="#">Studs</a><a href="#">Hoops</a><a href="#">Drops</a><a href="#">Earcuffs</a><a href="#">Sui Dhagas</a><a href="#">Jhumkas</a><a href="#">Silver Earrings</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stone</div><a href="#">Diamond</a><a href="#">Pearl</a><a href="#">Navratna</a><a href="#">Gemstone</a><a href="#">Platinum</a><a href="#">Rose Gold</a><a href="#">Yellow Gold</a><a href="#">White Gold</a><a href="#">22kt Gold</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">Under ₹ 10k</a><a href="#">₹ 10k - ₹ 20k</a><a href="#">₹ 20k - ₹ 30k</a><a href="#">₹ 30k - ₹ 50k</a><a href="#">₹ 50k - ₹ 75k</a><a href="#">₹ 75K & Above</a></div>
+      <div class="mega-col" style="min-width:280px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Shop Earrings</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>New Arrivals</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-bracelets"><div class="mega-inner">
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Featured</div><a href="#" class="featured">Latest Designs</a><a href="#" class="featured">Bestsellers</a><a href="#" class="featured">Fast Delivery</a><a href="#" class="featured">Special Deals</a></div>
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">By Style</div><a href="#">All Bracelets & Bangles</a><a href="#">Adjustable Bracelets</a><a href="#">Chain Bracelets</a><a href="#">Flexible Bracelets</a><a href="#">Tennis Bracelets</a><a href="#">Bridal Bangles</a><a href="#">Lightweight Bangles</a><a href="#">Silver Bracelets</a><a href="#">Oval Bracelets</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stone</div><a href="#">Diamond</a><a href="#">Gemstone</a><a href="#">Rose Gold</a><a href="#">Platinum</a><a href="#">Pearl</a><a href="#">Navratna</a><a href="#">Yellow Gold</a><a href="#">White Gold</a><a href="#">22kt Gold</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">Under ₹ 10K</a><a href="#">₹ 10k - ₹ 20k</a><a href="#">₹ 20k - ₹ 30k</a><a href="#">₹ 30k - ₹ 50k</a><a href="#">₹ 50k - ₹ 75k</a><a href="#">Above ₹ 75k</a></div>
+      <div class="mega-col" style="min-width:250px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Bracelets</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Bangles</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-solitaires"><div class="mega-inner">
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Featured</div><a href="#" class="featured">Latest Designs</a><a href="#" class="featured">Bestsellers</a><a href="#" class="featured">Fast Delivery</a><a href="#" class="featured">Special Deals</a></div>
+      <div class="mega-col" style="min-width:140px"><div class="mega-col-title">By Style</div><a href="#">All Solitaires</a><a href="#">Rings</a><a href="#">Earrings</a><a href="#">Bridal Sets</a><a href="#">Mangalsutras</a><a href="#">Pendants</a><a href="#">Necklaces</a><a href="#">Bracelets</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stones</div><a href="#">Diamond</a><a href="#">Platinum</a><a href="#">Rose Gold</a><a href="#">White Gold</a><a href="#">Yellow Gold</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">₹ 30K to ₹ 50K</a><a href="#">₹ 50K to ₹ 75K</a><a href="#">₹ 75K to ₹ 1L</a><a href="#">₹ 1L to ₹ 1.5L</a><a href="#">₹ 1.5L to ₹ 2L</a></div>
+      <div class="mega-col" style="min-width:250px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Solitaires</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Bridal Sets</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-neckwear"><div class="mega-inner">
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Featured</div><a href="#" class="featured">Latest Designs</a><a href="#" class="featured">Bestsellers</a><a href="#" class="featured">Fast Delivery</a><a href="#" class="featured">Special Deals</a></div>
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">By Style</div><a href="#">Mangalsutra</a><a href="#">All Necklaces</a><a href="#">Lightweight</a><a href="#">Bridal</a><a href="#">Evil Eye</a><a href="#">Choker</a><a href="#">All Pendants</a><a href="#">Alphabet Pendants</a><a href="#">Heart Pendants</a><a href="#">Butterfly Pendants</a><a href="#">Silver Necklaces</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stone</div><a href="#">Gold</a><a href="#">Diamond</a><a href="#">Pearl</a><a href="#">Gemstone</a><a href="#">Yellow Gold</a><a href="#">Rose Gold</a><a href="#">White Gold</a><a href="#">22KT Gold</a><a href="#">Platinum</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">Under ₹ 10K</a><a href="#">₹ 10K to ₹ 20K</a><a href="#">₹ 20K to ₹ 30K</a><a href="#">₹ 30K to ₹ 50K</a><a href="#">₹ 50k to ₹ 75k</a><a href="#">₹ 75K & Above</a></div>
+      <div class="mega-col" style="min-width:250px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Necklaces</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Pendants</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-silver"><div class="mega-inner">
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">By Style</div><a href="#">Earrings</a><a href="#">Necklaces</a><a href="#">Bracelets</a><a href="#">Rings</a><a href="#">Coins & Articles</a><a href="#">More Styles</a></div>
+      <div class="mega-col" style="min-width:280px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Silver Collection</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>New In Silver</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-gifting"><div class="mega-inner">
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">By Occasions</div><a href="#">Anniversary Gifts</a><a href="#">Personalised</a><a href="#">Bracelet & Bangles</a><a href="#">Charms</a><a href="#">Earrings</a><a href="#">Necklaces & Pendants</a><a href="#">Rings</a><a href="#">Solitaires</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">Under ₹ 10k</a><a href="#">₹ 10k to ₹ 20k</a><a href="#">₹ 20k to ₹ 30k</a><a href="#">₹ 30k to ₹ 50k</a><a href="#">₹ 50k to ₹ 75k</a><a href="#">₹ 75k & Above</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Gifting</div><a href="#">Wife</a><a href="#">Daughter</a><a href="#">Kids</a><a href="#">Men</a><a href="#">Mother</a><a href="#">Self</a></div>
+      <div class="mega-col" style="min-width:250px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Gift Sets</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Gift Cards</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-collections"><div class="mega-inner">
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">Our Collections</div><a href="#">Evil Eye</a><a href="#">Celestial</a><a href="#">Forever Love</a><a href="#">Minimalist</a><a href="#">Nature</a><a href="#">Heritage</a></div>
+      <div class="mega-col" style="min-width:280px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Featured Collection</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>New Launch</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-more"><div class="mega-inner">
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">Shop For Women</div><a href="#">Nose Rings</a><a href="#">Nose Pins</a><a href="#">Watch Charms</a><a href="#">Charms</a><a href="#">22kt Jewellery</a><a href="#">Silver Jewellery</a><a href="#">Platinum Jewellery</a><a href="#">Gold Chains</a></div>
+      <div class="mega-col" style="min-width:140px"><div class="mega-col-title">Shop For Men</div><a href="#">Rings</a><a href="#">Studs</a><a href="#">Chains</a><a href="#">Pendants</a><a href="#">Bracelets</a><a href="#">Kadas</a><div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px"><a href="#" style="font-size:11px">Under ₹ 10k</a><a href="#" style="font-size:11px">₹ 10k to ₹ 20k</a><a href="#" style="font-size:11px">₹ 20k to ₹ 30k</a><a href="#" style="font-size:11px">₹ 30k to ₹ 50k</a><a href="#" style="font-size:11px">₹ 50k to ₹ 70k</a><a href="#" style="font-size:11px">₹ 75k & Above</a></div></div>
+      <div class="mega-col" style="min-width:140px"><div class="mega-col-title">Shop For Kids</div><a href="#">Earrings</a><a href="#">Rings</a><a href="#">Bracelets</a><a href="#">Necklaces</a><a href="#">Pendants</a><a href="#">Baby Bangles</a><div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px"><a href="#" style="font-size:11px">Under ₹10k</a><a href="#" style="font-size:11px">₹10k - ₹20k</a><a href="#" style="font-size:11px">₹20k - ₹30k</a><a href="#" style="font-size:11px">₹30k - ₹40k</a></div></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stone</div><a href="#">Gold</a><a href="#">Diamond</a><a href="#">Pearl</a><a href="#">Gemstone</a><a href="#">Yellow Gold</a><a href="#">Rose Gold</a><a href="#">White Gold</a><a href="#">22kt Gold</a></div>
+      <div class="mega-col" style="min-width:220px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>For Him</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>For Kids</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-trending"><div class="mega-inner">
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">What's Hot</div><a href="#" class="featured">Trending Now</a><a href="#" class="featured">New Arrivals</a><a href="#" class="featured">Most Wishlisted</a><a href="#" class="featured">Celebrity Picks</a><a href="#" class="featured">Flash Deals</a></div>
+      <div class="mega-col" style="min-width:280px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Trending</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Editor's Pick</span></div></div></div>
+    </div></div>
+
+  </div>
+</header>
+
+<div class="mega-overlay" id="megaOverlay"></div>
+
+<!-- ═══ MOBILE MENU ═══ -->
+<nav class="mobile-menu mobile-only" id="mobileMenu">
+  <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <div class="profile-card" id="profileCard">
+    <img src="Y.png" class="watermark" alt="" />
+    <div class="profile-name">Priya Sharma</div>
+    <div class="profile-detail">+91 98765 43210</div>
+    <div class="profile-detail">priya.sharma@email.com</div>
+    <button class="view-profile-btn" onclick="toggleProfileSub()">View Profile <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" id="profileChevron" style="transition:transform .25s"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="profile-sub-menu" id="profileSubMenu">
+      <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Profile</a>
+      <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Address</a>
+      <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Saved Cards</a>
+      <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>NeuPass</a>
+    </div>
+  </div>
+  <button class="login-btn-mobile" id="loginBtn" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Login / Sign Up</button>
+
+  <div class="menu-section">
+    <a href="#" class="menu-link"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 11h5"/><path d="M8 15h3"/></svg></span>Orders<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-section-title">Our Selection</div>
+
+    <div class="menu-link" data-subpage="sp-rings"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></span>Rings<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-earrings"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M8 12v6a4 4 0 0 0 8 0v-6"/></svg></span>Earrings<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-bracelets"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><path d="M12 22c5.5 0 10-4.5 10-10h-4c0 3.3-2.7 6-6 6s-6-2.7-6-6H2c0 5.5 4.5 10 10 10z"/></svg></span>Bracelets & Bangles<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-solitaires"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Solitaires<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-neckwear"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><path d="M12 2v6l3-2"/><circle cx="12" cy="14" r="6"/></svg></span>Neckwear & Pendants<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-silver"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><path d="M20.2 7.8l-7.7 7.7-4-4-5.7 5.7"/><path d="M15 7h6v6"/></svg></span>Silver<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-gifting"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8V21"/><path d="M3 13h18"/></svg></span>Gifting<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-collections"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Collections<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-trending" style="color:#BF0E23"><span class="menu-icon" style="background:rgba(191,14,35,.15)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>Trending<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-more"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>More Jewellery<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+  </div>
+
+  <button class="sign-out-btn" id="signOutBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+</nav>
+
+<!-- ═══ MOBILE SUB-PAGES (slide from right) ═══ -->
+
+<div class="mobile-subpage" id="sp-rings">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Rings</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Featured</div>
+    <a href="#" class="sub-link featured">Latest Designs</a><a href="#" class="sub-link featured">Bestsellers</a><a href="#" class="sub-link featured">Fast Delivery</a>
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">All Rings</a><a href="#" class="sub-link">Engagement</a><a href="#" class="sub-link">Dailywear</a><a href="#" class="sub-link">Infinity</a><a href="#" class="sub-link">Cocktail</a><a href="#" class="sub-link">Solitaire</a><a href="#" class="sub-link">Couple Rings</a><a href="#" class="sub-link">Bands</a><a href="#" class="sub-link">Promise Rings</a><a href="#" class="sub-link">Silver By Shaya</a>
+    <div class="sub-section-title">By Metal & Stone</div>
+    <a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Navratna</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Platinum</a><a href="#" class="sub-link">Gold</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22KT Gold</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">Under ₹ 10k</a><a href="#" class="sub-link">₹ 10k - ₹ 20k</a><a href="#" class="sub-link">₹ 20k - ₹ 30k</a><a href="#" class="sub-link">₹ 30k - ₹ 50k</a><a href="#" class="sub-link">₹ 50k - ₹ 75k</a><a href="#" class="sub-link">₹ 75k & Above</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-earrings">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Earrings</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Featured</div>
+    <a href="#" class="sub-link featured">Latest Designs</a><a href="#" class="sub-link featured">Bestsellers</a>
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">All Earrings</a><a href="#" class="sub-link">Studs</a><a href="#" class="sub-link">Hoops</a><a href="#" class="sub-link">Drops</a><a href="#" class="sub-link">Earcuffs</a><a href="#" class="sub-link">Sui Dhagas</a><a href="#" class="sub-link">Jhumkas</a><a href="#" class="sub-link">Silver Earrings</a>
+    <div class="sub-section-title">By Metal & Stone</div>
+    <a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Navratna</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Platinum</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22kt Gold</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">Under ₹ 10k</a><a href="#" class="sub-link">₹ 10k - ₹ 20k</a><a href="#" class="sub-link">₹ 20k - ₹ 30k</a><a href="#" class="sub-link">₹ 30k - ₹ 50k</a><a href="#" class="sub-link">₹ 50k - ₹ 75k</a><a href="#" class="sub-link">₹ 75K & Above</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-bracelets">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Bracelets & Bangles</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Featured</div>
+    <a href="#" class="sub-link featured">Latest Designs</a><a href="#" class="sub-link featured">Bestsellers</a><a href="#" class="sub-link featured">Fast Delivery</a><a href="#" class="sub-link featured">Special Deals</a>
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">All Bracelets & Bangles</a><a href="#" class="sub-link">Adjustable Bracelets</a><a href="#" class="sub-link">Chain Bracelets</a><a href="#" class="sub-link">Flexible Bracelets</a><a href="#" class="sub-link">Tennis Bracelets</a><a href="#" class="sub-link">Bridal Bangles</a><a href="#" class="sub-link">Lightweight Bangles</a><a href="#" class="sub-link">Silver Bracelets</a><a href="#" class="sub-link">Oval Bracelets</a>
+    <div class="sub-section-title">By Metal & Stone</div>
+    <a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">Platinum</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Navratna</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22kt Gold</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">Under ₹ 10K</a><a href="#" class="sub-link">₹ 10k - ₹ 20k</a><a href="#" class="sub-link">₹ 20k - ₹ 30k</a><a href="#" class="sub-link">₹ 30k - ₹ 50k</a><a href="#" class="sub-link">₹ 50k - ₹ 75k</a><a href="#" class="sub-link">Above ₹ 75k</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-solitaires">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Solitaires</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Featured</div>
+    <a href="#" class="sub-link featured">Latest Designs</a><a href="#" class="sub-link featured">Bestsellers</a><a href="#" class="sub-link featured">Fast Delivery</a><a href="#" class="sub-link featured">Special Deals</a>
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">All Solitaires</a><a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Earrings</a><a href="#" class="sub-link">Bridal Sets</a><a href="#" class="sub-link">Mangalsutras</a><a href="#" class="sub-link">Pendants</a><a href="#" class="sub-link">Necklaces</a><a href="#" class="sub-link">Bracelets</a>
+    <div class="sub-section-title">By Metal & Stones</div>
+    <a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Platinum</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">Yellow Gold</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">₹ 30K to ₹ 50K</a><a href="#" class="sub-link">₹ 50K to ₹ 75K</a><a href="#" class="sub-link">₹ 75K to ₹ 1L</a><a href="#" class="sub-link">₹ 1L to ₹ 1.5L</a><a href="#" class="sub-link">₹ 1.5L to ₹ 2L</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-neckwear">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Neckwear & Pendants</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Featured</div>
+    <a href="#" class="sub-link featured">Latest Designs</a><a href="#" class="sub-link featured">Bestsellers</a><a href="#" class="sub-link featured">Fast Delivery</a><a href="#" class="sub-link featured">Special Deals</a>
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">Mangalsutra</a><a href="#" class="sub-link">All Necklaces</a><a href="#" class="sub-link">Lightweight</a><a href="#" class="sub-link">Bridal</a><a href="#" class="sub-link">Evil Eye</a><a href="#" class="sub-link">Choker</a><a href="#" class="sub-link">All Pendants</a><a href="#" class="sub-link">Alphabet Pendants</a><a href="#" class="sub-link">Heart Pendants</a><a href="#" class="sub-link">Butterfly Pendants</a><a href="#" class="sub-link">Silver Necklaces</a>
+    <div class="sub-section-title">By Metal & Stone</div>
+    <a href="#" class="sub-link">Gold</a><a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22KT Gold</a><a href="#" class="sub-link">Platinum</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">Under ₹ 10K</a><a href="#" class="sub-link">₹ 10K to ₹ 20K</a><a href="#" class="sub-link">₹ 20K to ₹ 30K</a><a href="#" class="sub-link">₹ 30K to ₹ 50K</a><a href="#" class="sub-link">₹ 50k to ₹ 75k</a><a href="#" class="sub-link">₹ 75K & Above</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-silver">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Silver</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">Earrings</a><a href="#" class="sub-link">Necklaces</a><a href="#" class="sub-link">Bracelets</a><a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Coins & Articles</a><a href="#" class="sub-link">More Styles</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-gifting">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Gifting</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">By Occasions</div>
+    <a href="#" class="sub-link">Anniversary Gifts</a><a href="#" class="sub-link">Personalised</a><a href="#" class="sub-link">Bracelet & Bangles</a><a href="#" class="sub-link">Charms</a><a href="#" class="sub-link">Earrings</a><a href="#" class="sub-link">Necklaces & Pendants</a><a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Solitaires</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">Under ₹ 10k</a><a href="#" class="sub-link">₹ 10k to ₹ 20k</a><a href="#" class="sub-link">₹ 20k to ₹ 30k</a><a href="#" class="sub-link">₹ 30k to ₹ 50k</a><a href="#" class="sub-link">₹ 50k to ₹ 75k</a><a href="#" class="sub-link">₹ 75k & Above</a>
+    <div class="sub-section-title">Gifting For</div>
+    <a href="#" class="sub-link">Wife</a><a href="#" class="sub-link">Daughter</a><a href="#" class="sub-link">Kids</a><a href="#" class="sub-link">Men</a><a href="#" class="sub-link">Mother</a><a href="#" class="sub-link">Self</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-collections">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Collections</div></div>
+  <div class="subpage-body">
+    <a href="#" class="sub-link">Evil Eye</a><a href="#" class="sub-link">Celestial</a><a href="#" class="sub-link">Forever Love</a><a href="#" class="sub-link">Minimalist</a><a href="#" class="sub-link">Nature</a><a href="#" class="sub-link">Heritage</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-trending">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Trending</div></div>
+  <div class="subpage-body">
+    <a href="#" class="sub-link featured">Trending Now</a><a href="#" class="sub-link featured">New Arrivals</a><a href="#" class="sub-link featured">Most Wishlisted</a><a href="#" class="sub-link featured">Celebrity Picks</a><a href="#" class="sub-link featured">Flash Deals</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-more">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">More Jewellery</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Shop For Women</div>
+    <a href="#" class="sub-link">Nose Rings</a><a href="#" class="sub-link">Nose Pins</a><a href="#" class="sub-link">Watch Charms</a><a href="#" class="sub-link">Charms</a><a href="#" class="sub-link">22kt Jewellery</a><a href="#" class="sub-link">Silver Jewellery</a><a href="#" class="sub-link">Platinum Jewellery</a><a href="#" class="sub-link">Gold Chains</a>
+    <div class="sub-section-title">Shop For Men</div>
+    <a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Studs</a><a href="#" class="sub-link">Chains</a><a href="#" class="sub-link">Pendants</a><a href="#" class="sub-link">Bracelets</a><a href="#" class="sub-link">Kadas</a>
+    <div class="sub-section-title">Shop For Kids</div>
+    <a href="#" class="sub-link">Earrings</a><a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Bracelets</a><a href="#" class="sub-link">Necklaces</a><a href="#" class="sub-link">Pendants</a><a href="#" class="sub-link">Baby Bangles</a>
+    <div class="sub-section-title">By Metal & Stone</div>
+    <a href="#" class="sub-link">Gold</a><a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22kt Gold</a>
+  </div>
+</div>
+
+<script>
+  // ── FROSTED SCROLL ──
+  // The iframe is now position:fixed at top:0, content shows THROUGH the translucent header.
+  // We listen to scroll inside the iframe via postMessage (cross-origin safe).
+  const header = document.getElementById('siteHeader');
+  const bgIframe = document.getElementById('bgIframe');
+
+  // Try same-origin scroll listener on the iframe
+  bgIframe.addEventListener('load', () => {
+    try {
+      const iframeWin = bgIframe.contentWindow;
+      const iframeDoc = iframeWin.document;
+      // Listen on both the window and documentElement scroll
+      iframeWin.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', iframeWin.scrollY > 8);
+      }, { passive: true });
+      // Also handle scrollable elements inside the iframe
+      iframeDoc.addEventListener('scroll', () => {
+        const scrollTop = iframeDoc.documentElement.scrollTop || iframeDoc.body.scrollTop;
+        header.classList.toggle('scrolled', scrollTop > 8);
+      }, { passive: true });
+    } catch(e) {
+      // Cross-origin fallback: inject a scroll reporter script
+      console.warn('Cannot access iframe scroll (cross-origin). Using fallback.');
+      // Fallback: after 1s assume scrolled
+      setTimeout(() => header.classList.add('scrolled'), 1500);
+    }
+  });
+  // Also listen to main window scroll (in case content overflows)
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 8);
+  }, { passive: true });
+
+  // ── HAMBURGER + CLOSE ──
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+
+  function closeMobileMenu() {
+    hamburger.classList.remove('active');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+    // Close any open subpage
+    document.querySelectorAll('.mobile-subpage.open').forEach(sp => sp.classList.remove('open'));
+  }
+  function toggleMobileMenu() {
+    if (mobileMenu.classList.contains('open')) {
+      closeMobileMenu();
+    } else {
+      hamburger.classList.add('active');
+      mobileMenu.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  hamburger.addEventListener('click', toggleMobileMenu);
+  mobileCloseBtn.addEventListener('click', closeMobileMenu);
+
+  // ── MOBILE SUB-PAGES (slide-in from right) ──
+  document.querySelectorAll('[data-subpage]').forEach(link => {
+    link.addEventListener('click', () => {
+      const target = document.getElementById(link.dataset.subpage);
+      if (target) { target.classList.add('open'); target.scrollTop = 0; }
+    });
+  });
+  document.querySelectorAll('[data-back]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.mobile-subpage').classList.remove('open');
+    });
+  });
+
+  // ── Profile sub-menu ──
+  function toggleProfileSub() {
+    const sub = document.getElementById('profileSubMenu');
+    const chev = document.getElementById('profileChevron');
+    sub.classList.toggle('open');
+    chev.style.transform = sub.classList.contains('open') ? 'rotate(180deg)' : '';
+  }
+
+  // ── Desktop profile dropdown ──
+  const accountBtn = document.getElementById('accountBtn');
+  const profileDropdown = document.getElementById('profileDropdown');
+  let ddOpen = false;
+  accountBtn.addEventListener('click', e => { e.stopPropagation(); ddOpen = !ddOpen; profileDropdown.classList.toggle('open', ddOpen); });
+  document.addEventListener('click', e => { if (ddOpen && !document.getElementById('accountWrap').contains(e.target)) { ddOpen = false; profileDropdown.classList.remove('open'); } });
+
+  // ── Mega menu hover ──
+  const navLinks = document.querySelectorAll('#navCat a[data-mega]');
+  const megaOverlay = document.getElementById('megaOverlay');
+  let activeMega = null, megaTimeout = null;
+  function openMega(id) {
+    clearTimeout(megaTimeout);
+    if (activeMega && activeMega !== id) { const p = document.getElementById('mega-' + activeMega); if (p) p.classList.remove('open'); navLinks.forEach(l => l.classList.remove('mega-active')); }
+    activeMega = id;
+    const el = document.getElementById('mega-' + id);
+    if (el) { el.classList.add('open'); megaOverlay.classList.add('active'); navLinks.forEach(l => l.classList.toggle('mega-active', l.dataset.mega === id)); }
+  }
+  function closeMega() {
+    megaTimeout = setTimeout(() => { if (activeMega) { const el = document.getElementById('mega-' + activeMega); if (el) el.classList.remove('open'); megaOverlay.classList.remove('active'); navLinks.forEach(l => l.classList.remove('mega-active')); activeMega = null; } }, 150);
+  }
+  navLinks.forEach(link => { link.addEventListener('mouseenter', () => openMega(link.dataset.mega)); link.addEventListener('mouseleave', closeMega); });
+  document.querySelectorAll('.mega-menu').forEach(mm => { mm.addEventListener('mouseenter', () => clearTimeout(megaTimeout)); mm.addEventListener('mouseleave', closeMega); });
+  megaOverlay.addEventListener('click', () => { clearTimeout(megaTimeout); if (activeMega) { document.getElementById('mega-' + activeMega).classList.remove('open'); megaOverlay.classList.remove('active'); navLinks.forEach(l => l.classList.remove('mega-active')); activeMega = null; } });
+
+  // ── Search placeholder ──
+  const suggestions = ['Search for "Solitaire Rings"','Search for "Gold Earrings"','Search for "Diamond Pendants"','Search for "Silver Bracelets"','Search for "Mangalsutra"','Search for "Wedding Bangles"'];
+  const suggestionsMobile = ['"Solitaire Rings"','"Gold Earrings"','"Diamond Pendants"','"Silver Bracelets"','"Mangalsutra"','"Wedding Bangles"'];
+  function animatePH(el, input, list) { let i = 0; function u() { el.innerHTML = '<span>' + list[i] + '</span>'; i = (i+1)%list.length; } u(); setInterval(u, 3000); input.addEventListener('input', () => { el.style.display = input.value ? 'none' : ''; }); }
+  const dp = document.getElementById('desktopPlaceholder'), ds = document.getElementById('desktopSearch');
+  if (dp && ds) animatePH(dp, ds, suggestions);
+  const mp2 = document.getElementById('mobilePlaceholder'), ms2 = document.getElementById('mobileSearch');
+  if (mp2 && ms2) animatePH(mp2, ms2, suggestionsMobile);
+
+  // ── Login toggle ──
+  const isLoggedIn = true;
+  if (!isLoggedIn) {
+    document.getElementById('profileCard').style.display = 'none';
+    document.getElementById('signOutBtn').style.display = 'none';
+    document.getElementById('loginBtn').style.display = 'flex';
+    document.getElementById('ddProfileSection').innerHTML = '<div style="text-align:center;padding:10px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div style="margin-top:8px;font-size:14px;font-weight:600;color:#2C2C2C">Welcome to Beyon</div><div style="font-size:11px;color:#B0ABAB;margin-top:4px">Login for a personalised experience</div><a href="#" style="display:inline-block;margin-top:12px;padding:10px 28px;background:linear-gradient(135deg,#BF0E23,#E8334A);color:#fff;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none">Login / Sign Up</a></div>';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1765 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beyon — Cross My Lines Pendant With Chain</title>
+    <link rel="stylesheet" href="shared/geom.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Oooh+Baby&family=Didact+Gothic&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="shared/edge-cases.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['"Geom"', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'] },
+          },
+        },
+      }
+    </script>
+    <style>
+      * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+      body { color: #3c3c3c; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background: #f7f7f7; margin: 0; font-family: 'Geom', ui-sans-serif, system-ui, -apple-system, sans-serif; }
+      h1, h2, h3 { font-family: 'Oooh Baby', cursive; }
+      .uppercase { font-family: 'Didact Gothic', sans-serif; }
+      #root { width: 100%; max-width: 100%; min-height: 100svh; }
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 99px; }
+
+      @keyframes metalShine { 0% { background-position: -200%; } to { background-position: 200%; } }
+      @keyframes lbFadeIn { 0% { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+      @keyframes truckDriveOnce { 0% { opacity: 0; transform: translate(-24px); } 10% { opacity: 1; } 72% { opacity: 1; transform: translate(116px); } 88% { opacity: 0.6; transform: translate(150px); } to { opacity: 0; transform: translate(168px); } }
+      @keyframes deliveryTextWipe { 0% { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0% 0 0); } }
+
+      .price-shine {
+        -webkit-text-fill-color: transparent;
+        background: linear-gradient(90deg, #3c3c3c 0% 28%, #7a7a7a 40%, silver 50%, #7a7a7a 60%, #3c3c3c 72% 100%) 0 0 / 300%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        animation: 3s linear infinite metalShine;
+      }
+
+      .metal-text-shine-gold, .metal-text-shine-rose, .metal-text-shine-silver {
+        -webkit-text-fill-color: transparent;
+        background-size: 250%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        animation: 3s linear infinite metalShine;
+      }
+      .metal-text-shine-gold { background-image: linear-gradient(90deg, #b8860b 0% 30%, #f5d77a 45%, #fff8dc 50%, #f5d77a 55%, #b8860b 70% 100%); }
+      .metal-text-shine-rose { background-image: linear-gradient(90deg, #b76e79 0% 30%, #e8b4b8 45%, #ffd9d9 50%, #e8b4b8 55%, #b76e79 70% 100%); }
+      .metal-text-shine-silver { background-image: linear-gradient(90deg, #8a8a8a 0% 30%, #d8d8d8 45%, #fff 50%, #d8d8d8 55%, #8a8a8a 70% 100%); }
+
+      .delivery-heading-anim { width: 124px; height: 14px; display: inline-block; position: relative; overflow: visible; }
+      .delivery-heading-anim .truck-icon { z-index: 2; will-change: transform, opacity; filter: drop-shadow(0 1px 2px rgba(211,11,57,0.15)); margin-top: -8px; animation: 2.2s cubic-bezier(0.4,0,0.2,1) 0.15s both truckDriveOnce; display: inline-flex; position: absolute; top: 50%; left: 0; }
+      .delivery-heading-anim .truck-text { white-space: nowrap; clip-path: inset(0 100% 0 0); will-change: clip-path; animation: 2s cubic-bezier(0.4,0,0.2,1) 0.3s both deliveryTextWipe; position: absolute; top: 50%; left: 0; transform: translateY(-50%); }
+
+      .pdp-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-80px);background:#BF0E23;color:#fff;font-size:13px;font-weight:500;padding:10px 24px;border-radius:12px;z-index:9999;opacity:0;transition:all .35s cubic-bezier(.4,0,.2,1);pointer-events:none;box-shadow:0 4px 20px rgba(191,14,35,.25)}
+      .pdp-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+      .ribbon { position: absolute; top: 10px; left: 0; z-index: 2; padding: 4px 10px 4px 8px; font-size: 9px; font-weight: 700; letter-spacing: .7px; color: #fff; border-radius: 0 5px 5px 0; text-transform: uppercase; }
+      .ribbon-red { background: #BF0E23; }
+      .ribbon-gold { background: #C5A575; }
+      .ribbon-dark { background: #2C2C2C; }
+
+      /* Customisation Request Popup */
+      .cr-overlay { position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center; }
+      @media(min-width:640px){ .cr-overlay{align-items:center} }
+      .cr-modal { background:#fff;width:100%;max-width:440px;border-radius:24px 24px 0 0;padding:28px 24px 32px;animation:lbFadeIn .25s ease; }
+      @media(min-width:640px){ .cr-modal{border-radius:24px} }
+      .cr-input { width:100%;padding:12px 16px;border:1.5px solid #e0e0e0;border-radius:12px;font-size:14px;font-family:inherit;color:#2c2c2c;transition:border-color .2s;outline:none;background:#fff; }
+      .cr-input:focus { border-color:#2c2c2c; }
+      .cr-input::placeholder { color:#b0b0b0; }
+      .cr-input.error { border-color:#d30b39; }
+      .cr-error { font-size:11px;color:#d30b39;margin-top:4px;display:none; }
+      .cr-error.show { display:block; }
+      .btn-customisation-request { background: #2c2c2c; }
+      .btn-customisation-request:hover { background: #1a1a1a; }
+      .cta-customise {
+        background: linear-gradient(135deg, #fdfcf8 0%, #f6f0e4 50%, #fdfcf8 100%);
+        border: 1px solid rgba(184,134,11,0.18);
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-customise::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%; width: 60%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(212,168,67,0.1), transparent);
+        animation: ctaShimmer 3s ease-in-out infinite;
+      }
+      @keyframes ctaShimmer { 0%{left:-100%} 100%{left:200%} }
+
+      .size-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;border-radius:12px;overflow:hidden;border:1px solid #E5DDD3}
+      .size-table thead{background:#2C2C2C;color:#fff}
+      .size-table th{padding:9px 8px;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;text-align:center}
+      .size-table td{padding:8px;text-align:center;border-top:1px solid #F0EBE4}
+      .size-table tbody tr:nth-child(even){background:#FDFAF5}
+      .cat{display:inline-flex;padding:2px 9px;border-radius:8px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+      .cat-L{background:rgba(191,14,35,.06);color:#BF0E23}.cat-G{background:rgba(44,44,44,.06);color:#2C2C2C}.cat-K{background:rgba(197,165,117,.12);color:#8B6914}.cat-U{background:rgba(46,125,50,.07);color:#2E7D32}
+      .sheet-scroll{max-height:62vh;overflow-y:auto;border-radius:12px}
+      .cp-slide { opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .4s ease, transform .4s cubic-bezier(.2,.7,.2,1); }
+      .cp-slide.on { opacity:1; transform:none; pointer-events:auto; }
+      .pd-grid { display:grid; grid-template-columns:118px 1fr auto auto; }
+      .pill-selected { background: #3c3c3c; color: #fff; box-shadow: 0 2px 8px rgba(60,60,60,0.2); }
+      .pill-default { background: rgba(0,0,0,0.03); color: #8a7a60; border: 1.5px solid rgba(0,0,0,0.08); }
+      .section-gold-bg { background: linear-gradient(135deg, #fdfcf8 0%, #f9f5ee 50%, #fdfcf8 100%); border-top: 1px solid rgba(212,168,67,0.15); }
+      .section-delivery-bg { background: linear-gradient(135deg, #fdf5f6 0%, #faf0f1 40%, #fdf5f6 100%); }
+      .btn-add-to-bag { background: linear-gradient(135deg, #d30b39 0%, #a00828 100%); }
+      .btn-go-to-bag { border: 1px solid; background: linear-gradient(65.77deg, #11b26a 22.54%, #04ad61 52.99%, #1dde88 80.97%) !important; border-image-source: linear-gradient(90deg, #04ad61 0%, #11b26a 100%) !important; }
+
+      @keyframes trustSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      @keyframes trustBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+      @keyframes trustPing { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+      @keyframes trustRock { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(8deg); } 75% { transform: rotate(-8deg); } }
+      @keyframes trustScale { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+      .trust-anim-0 { animation: trustSpin 4s linear infinite; }
+      .trust-anim-1 { animation: trustBounce 2s ease-in-out infinite; }
+      .trust-anim-2 { animation: trustRock 2.5s ease-in-out infinite; }
+      .trust-anim-3 { animation: trustScale 3s ease-in-out infinite; }
+      .trust-anim-4 { animation: trustPing 2s ease-in-out infinite; }
+
+      /* App Banner */
+      .app-banner { background: #fff; border-bottom: 1px solid rgba(0,0,0,0.06); }
+
+      /* Wishlist heart animation */
+      @keyframes heart-pop{
+        0%{transform:scale(1)}15%{transform:scale(1.4)}30%{transform:scale(.85)}45%{transform:scale(1.2)}60%{transform:scale(.95)}75%{transform:scale(1.08)}100%{transform:scale(1)}
+      }
+      @keyframes ring-burst{
+        0%{transform:translate(-50%,-50%) scale(.3);opacity:1}100%{transform:translate(-50%,-50%) scale(2.4);opacity:0}
+      }
+      .wishlist-pop svg{animation:heart-pop .55s cubic-bezier(.17,.89,.32,1.49)}
+      .wishlist-pop::after{
+        content:'';position:absolute;top:50%;left:50%;width:28px;height:28px;
+        border:2px solid #d30b39;border-radius:50%;
+        animation:ring-burst .5s ease-out forwards;pointer-events:none;
+      }
+    </style>
+    <style>
+
+    
+    /* ── FROSTED HEADER ── */
+    .header-main{position:sticky;top:0;left:0;right:0;z-index:100;
+      background:rgba(255,255,255,0.25);
+      backdrop-filter:blur(12px) saturate(160%);
+      -webkit-backdrop-filter:blur(12px) saturate(160%);
+      border-bottom:1px solid rgba(255,255,255,.18);
+      transition:background .45s ease,backdrop-filter .45s ease,-webkit-backdrop-filter .45s ease,box-shadow .45s ease,border-color .45s ease}
+    .header-main.scrolled{
+      background:rgba(255,255,255,0.78);
+      backdrop-filter:blur(28px) saturate(200%);
+      -webkit-backdrop-filter:blur(28px) saturate(200%);
+      box-shadow:0 1px 3px rgba(0,0,0,.05),0 8px 32px rgba(0,0,0,.07);
+      border-bottom-color:rgba(0,0,0,.06)}
+
+    .search-wrap{position:relative;display:flex;align-items:center;background:rgba(240,240,240,.75);border:1.5px solid rgba(44,44,44,.1);border-radius:12px;transition:all .3s;overflow:hidden}
+    .search-wrap:focus-within{border-color:rgba(191,14,35,.2);background:rgba(255,255,255,.85);box-shadow:0 0 0 3px rgba(191,14,35,.06)}
+    .search-wrap input{flex:1;padding:8px 14px 8px 40px;border:none;outline:none;font-family:'Geom',sans-serif;font-size:13px;background:transparent;color:#2C2C2C}
+    .search-wrap .search-icon{position:absolute;left:12px;color:#B0ABAB;pointer-events:none;transition:color .2s}
+    .search-wrap:focus-within .search-icon{color:#BF0E23}
+    .search-wrap input::placeholder{color:transparent}
+    .search-placeholder{position:absolute;left:40px;top:50%;transform:translateY(-50%);font-size:13px;color:#B0ABAB;pointer-events:none;white-space:nowrap}
+    .search-placeholder span{display:inline-block;animation:ph-fade 3s ease-in-out infinite}
+    @keyframes ph-fade{0%,10%{opacity:1;transform:translateY(0)}45%,55%{opacity:0;transform:translateY(-8px)}60%{opacity:0;transform:translateY(8px)}75%,100%{opacity:1;transform:translateY(0)}}
+    .search-wrap input:focus ~ .search-placeholder,.search-wrap input:not(:placeholder-shown) ~ .search-placeholder{display:none}
+
+    .nav-cat a{position:relative;font-size:12px;font-weight:500;color:#2C2C2C;text-decoration:none;padding:10px 0;white-space:nowrap;transition:color .3s;letter-spacing:.2px}
+    .nav-cat a::before{content:'';position:absolute;bottom:0;left:50%;width:0;height:2.5px;background:linear-gradient(90deg,#BF0E23,#E8334A);transition:all .3s;border-radius:2px;transform:translateX(-50%)}
+    .nav-cat a:hover,.nav-cat a.mega-active{color:#BF0E23}
+    .nav-cat a:hover::before,.nav-cat a.mega-active::before{width:100%}
+
+    .icon-btn{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;font-weight:500;letter-spacing:.4px;color:#2C2C2C;cursor:pointer;transition:all .25s;position:relative;background:none;border:none;font-family:'Didact Gothic',sans-serif}
+    .icon-btn:hover{color:#BF0E23;transform:translateY(-2px)}
+    .icon-btn .badge{position:absolute;top:-4px;right:-6px;width:16px;height:16px;background:#BF0E23;color:#fff;font-size:8px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+    .header-cta{padding:7px 16px;border-radius:8px;font-size:11px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:all .3s;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:5px;position:relative;overflow:hidden;font-family:'Didact Gothic',sans-serif}
+    .cta-facts{background:transparent;color:#2C2C2C;border:1.3px solid rgba(44,44,44,.18)}
+    .cta-facts::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(44,44,44,.06),transparent);transition:left .5s}
+    .cta-facts:hover::before{left:100%}
+    .cta-facts:hover{border-color:rgba(44,44,44,.35);background:rgba(44,44,44,.03)}
+    .cta-gift{background:transparent;color:#BF0E23;border:1.3px solid rgba(191,14,35,.3);box-shadow:none;animation:none}
+    .cta-gift::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(191,14,35,.06),transparent);transform:translateX(-100%);transition:transform .5s}
+    .cta-gift:hover::before{transform:translateX(100%)}
+    .cta-gift:hover{border-color:rgba(191,14,35,.5);background:rgba(191,14,35,.03)}
+    .cta-store{background:linear-gradient(135deg,#BF0E23 0%,#E8334A 50%,#BF0E23 100%);background-size:200% 200%;color:#fff;animation:gift-grad 3s ease infinite;box-shadow:0 2px 12px rgba(191,14,35,.2)}
+    .cta-store::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:translateX(-100%);transition:transform .5s}
+    .cta-store:hover::before{transform:translateX(100%)}
+    .cta-store:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 6px 20px rgba(191,14,35,.35)}
+    @keyframes gift-grad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    /* HAMBURGER */
+    .hamburger{width:28px;height:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;background:none;border:none;padding:0;z-index:200;position:relative;border-radius:8px;transition:background .2s}
+    .hamburger:active{background:rgba(0,0,0,.04)}
+    .hamburger .line{display:block;width:16px;height:1.6px;border-radius:2px;background:#2C2C2C;transition:all .35s cubic-bezier(.77,.2,.05,1)}
+    .hamburger.active .line{background:#BF0E23}
+    .hamburger.active .line:nth-child(1){transform:translateY(5.6px) rotate(45deg)}
+    .hamburger.active .line:nth-child(2){opacity:0;transform:translateX(-10px)}
+    .hamburger.active .line:nth-child(3){transform:translateY(-5.6px) rotate(-45deg)}
+
+    /* MEGA MENU */
+    .mega-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:90;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .35s}
+    .mega-overlay.active{opacity:1;pointer-events:auto}
+    .mega-menu{position:absolute;top:100%;left:0;right:0;z-index:99;background:rgba(18,18,22,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.06);max-height:0;overflow:hidden;opacity:0;transition:max-height .4s cubic-bezier(.4,0,.2,1),opacity .3s}
+    .mega-menu.open{max-height:520px;opacity:1;overflow-y:auto;box-shadow:0 30px 60px rgba(0,0,0,.3)}
+    .mega-inner{max-width:1280px;margin:0 auto;padding:28px 32px 32px;display:flex;gap:0}
+    .mega-col{padding:0 20px;min-width:0}
+    .mega-col:first-child{padding-left:0}
+    .mega-col:last-child{padding-right:0}
+    .mega-col + .mega-col{border-left:1px solid rgba(255,255,255,.06)}
+    .mega-col-title{font-size:10px;font-weight:700;letter-spacing:1.3px;color:rgba(255,255,255,.35);text-transform:uppercase;margin-bottom:10px}
+    .mega-col a{display:block;padding:5px 0;font-size:12px;color:rgba(255,255,255,.7);text-decoration:none;transition:color .15s}
+    .mega-col a:hover{color:#fff}
+    .mega-col a.featured{color:#BF0E23;font-weight:600}
+    .mega-col a.featured:hover{color:#E8334A}
+    .mega-img-slot{width:100%;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);margin-bottom:10px;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.3);transition:all .25s;cursor:pointer}
+    .mega-img-slot:hover{background:rgba(255,255,255,.07);border-color:rgba(191,14,35,.2)}
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu{position:fixed;inset:0;z-index:150;background:rgba(18,18,20,.97);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);transform:translateX(-100%);transition:transform .45s cubic-bezier(.77,.2,.05,1);overflow-y:auto;overscroll-behavior:contain;padding-top:70px}
+    .mobile-menu.open{transform:translateX(0)}
+
+    .mobile-close-btn{position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .25s;z-index:10}
+    .mobile-close-btn:hover{background:rgba(191,14,35,.15);border-color:rgba(191,14,35,.3)}
+    .mobile-close-btn svg{color:rgba(255,255,255,.7);transition:color .2s}
+    .mobile-close-btn:hover svg{color:#BF0E23}
+
+    .mobile-menu .menu-section{padding:0 20px;margin-bottom:16px}
+    .mobile-menu .menu-section-title{font-size:10px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:8px;padding-left:4px}
+    .mobile-menu .menu-link{display:flex;align-items:center;gap:12px;padding:13px 16px;font-size:14px;font-weight:500;color:rgba(255,255,255,.85);border-radius:12px;transition:all .2s;text-decoration:none;cursor:pointer}
+    .mobile-menu .menu-link:hover,.mobile-menu .menu-link:active{background:rgba(191,14,35,.1);color:#fff}
+    .mobile-menu .menu-link .menu-icon{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .mobile-menu .menu-link .chevron{margin-left:auto;color:rgba(255,255,255,.2);transition:transform .3s}
+
+    /* ── MOBILE SUB-PAGES (slide-in panels) ── */
+    .mobile-subpage{position:fixed;inset:0;z-index:160;background:rgba(18,18,20,.97);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);overflow-y:auto;overscroll-behavior:contain;padding:0}
+    .mobile-subpage.open{transform:translateX(0)}
+    .mobile-subpage .subpage-header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:18px 20px;background:rgba(18,18,20,.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .mobile-subpage .back-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .25s;flex-shrink:0}
+    .mobile-subpage .back-btn:hover{background:rgba(191,14,35,.15);border-color:rgba(191,14,35,.3)}
+    .mobile-subpage .back-btn svg{color:rgba(255,255,255,.7)}
+    .mobile-subpage .subpage-title{font-size:16px;font-weight:700;color:#fff;letter-spacing:.3px}
+    .mobile-subpage .subpage-body{padding:20px}
+    .mobile-subpage .sub-section-title{font-size:10px;font-weight:700;letter-spacing:1.3px;color:rgba(255,255,255,.3);text-transform:uppercase;margin:16px 0 8px;padding-left:4px}
+    .mobile-subpage .sub-section-title:first-child{margin-top:0}
+    .mobile-subpage .sub-link{display:block;padding:11px 16px;font-size:14px;color:rgba(255,255,255,.75);text-decoration:none;border-radius:10px;transition:all .15s}
+    .mobile-subpage .sub-link:hover{color:#fff;background:rgba(255,255,255,.04)}
+    .mobile-subpage .sub-link.featured{color:#BF0E23;font-weight:600}
+
+    .profile-card{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(191,14,35,.1),rgba(44,44,44,.4));border-radius:20px;padding:22px 20px;margin:0 20px 20px;border:1px solid rgba(255,255,255,.06)}
+    .profile-card .watermark{position:absolute;right:-15px;top:-15px;width:150px;height:150px;opacity:.07;object-fit:cover;pointer-events:none;border-radius:50%;filter:grayscale(1) brightness(2)}
+    .profile-card .profile-name{font-size:18px;font-weight:700;color:#fff;position:relative}
+    .profile-card .profile-detail{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;position:relative}
+    .profile-card .view-profile-btn{margin-top:14px;padding:9px 18px;border-radius:10px;font-size:12px;font-weight:600;color:#fff;background:rgba(191,14,35,.7);border:none;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:6px;position:relative}
+    .profile-card .view-profile-btn:hover{background:rgba(191,14,35,.9);transform:scale(1.02)}
+    .profile-sub-menu{display:none;margin-top:12px;background:rgba(255,255,255,.04);border-radius:12px;overflow:hidden;position:relative}
+    .profile-sub-menu.open{display:block;animation:slideDown .3s ease}
+    .profile-sub-menu a{display:flex;align-items:center;gap:10px;padding:12px 14px;font-size:13px;color:rgba(255,255,255,.75);text-decoration:none;transition:all .2s}
+    .profile-sub-menu a:hover{background:rgba(191,14,35,.08);color:#fff}
+    .profile-sub-menu a+a{border-top:1px solid rgba(255,255,255,.04)}
+    .login-btn-mobile{display:flex;align-items:center;gap:12px;margin:0 20px 20px;padding:18px 20px;background:linear-gradient(135deg,#BF0E23,#E8334A);border-radius:16px;color:#fff;cursor:pointer;border:none;width:calc(100% - 40px);font-family:'Geom',sans-serif;font-size:14px;font-weight:600;transition:all .25s;box-shadow:0 4px 20px rgba(191,14,35,.3)}
+    .login-btn-mobile:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(191,14,35,.4)}
+    .sign-out-btn{display:flex;align-items:center;gap:10px;margin:8px 20px 30px;padding:14px 16px;border-radius:12px;font-size:14px;font-weight:500;color:rgba(255,255,255,.4);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);cursor:pointer;width:calc(100% - 40px);font-family:'Geom',sans-serif;transition:all .2s}
+    .sign-out-btn:hover{background:rgba(191,14,35,.1);color:#BF0E23;border-color:rgba(191,14,35,.2)}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+    .profile-dropdown{position:absolute;top:calc(100% + 12px);right:-20px;width:300px;background:rgba(255,255,255,.98);backdrop-filter:blur(20px);border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12),0 0 0 1px rgba(229,221,211,.3);opacity:0;transform:translateY(-8px) scale(.96);pointer-events:none;transition:all .3s cubic-bezier(.4,0,.2,1);z-index:200}
+    .profile-dropdown.open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+    .profile-dropdown .dd-profile{position:relative;overflow:hidden;background:linear-gradient(135deg,#FDFAF6,#F5F0E8);padding:20px;border-bottom:1px solid rgba(229,221,211,.3)}
+    .profile-dropdown .dd-profile .watermark{position:absolute;right:-10px;top:-10px;width:100px;height:100px;opacity:.05;object-fit:cover;pointer-events:none;border-radius:50%}
+    .profile-dropdown .dd-profile .dd-name{font-size:16px;font-weight:700;color:#2C2C2C}
+    .profile-dropdown .dd-profile .dd-detail{font-size:11px;color:#B0ABAB;margin-top:2px}
+    .profile-dropdown .dd-link{display:flex;align-items:center;gap:12px;padding:13px 20px;font-size:13px;font-weight:500;color:#2C2C2C;text-decoration:none;transition:all .2s;cursor:pointer}
+    .profile-dropdown .dd-link:hover{background:rgba(191,14,35,.04);color:#BF0E23}
+    .profile-dropdown .dd-link+.dd-link{border-top:1px solid rgba(229,221,211,.15)}
+    .profile-dropdown .dd-link svg{color:#B0ABAB;flex-shrink:0}
+    .profile-dropdown .dd-signout{display:flex;align-items:center;gap:12px;padding:13px 20px;font-size:13px;font-weight:500;color:#BF0E23;cursor:pointer;background:rgba(191,14,35,.03);border:none;width:100%;font-family:'Geom',sans-serif;transition:all .2s;border-top:1px solid rgba(229,221,211,.2)}
+    .profile-dropdown .dd-signout:hover{background:rgba(191,14,35,.08)}
+
+    .mobile-search{display:none}
+    @media(max-width:767px){
+      .mobile-search{display:flex;flex:1;min-width:0;margin:0 6px}
+      .mobile-search .search-wrap{width:100%}
+      .mobile-search .search-wrap input{padding:6px 8px 6px 30px;font-size:11px}
+      .mobile-search .search-placeholder{left:30px;font-size:11px;right:8px;max-width:calc(100% - 38px);overflow:hidden;text-overflow:ellipsis}
+      .mobile-only.flex{gap:8px !important}
+      .desktop-only{display:none !important}
+      .header-row-1{padding:8px 10px !important;gap:8px !important}
+    }
+    @media(min-width:768px){.mobile-only{display:none !important}}
+  
+  </style>
+</head>
+  <body>
+<header class="header-main" id="siteHeader">
+  <div class="header-row-1 max-w-7xl mx-auto flex items-center gap-4 px-4 sm:px-6 lg:px-8" style="height:54px">
+    <button class="hamburger mobile-only" id="hamburgerBtn" aria-label="Menu">
+      <span class="line"></span><span class="line"></span><span class="line"></span>
+    </button>
+    <a href="/" class="flex-shrink-0">
+      <img src="../Header/Logo.png" alt="Beyon" class="desktop-only" style="height:66px" />
+      <img src="../Header/Logo.png" alt="Beyon" class="mobile-only" style="height:53px" />
+    </a>
+    <div class="search-wrap desktop-only" style="flex:1;max-width:420px;margin-left:20px">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" placeholder=" " id="desktopSearch" autocomplete="off" />
+      <div class="search-placeholder" id="desktopPlaceholder"></div>
+    </div>
+    <div class="mobile-search mobile-only">
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" placeholder=" " id="mobileSearch" autocomplete="off" />
+        <div class="search-placeholder" id="mobilePlaceholder"></div>
+      </div>
+    </div>
+    <div class="desktop-only flex items-center gap-2 ml-auto">
+      <a href="#" class="header-cta cta-facts"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,3 18,9 12,21 6,9"/><path d="M6 9h12"/><path d="M9.5 3L6 9l6 12"/><path d="M14.5 3L18 9l-6 12"/></svg>Beyon Facts</a>
+      <a href="#" class="header-cta cta-gift"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8V21"/><path d="M3 13h18"/></svg>Gifting</a>
+      <a href="#" class="header-cta cta-store"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Find Store</a>
+    </div>
+    <div class="desktop-only flex items-center gap-5 ml-4">
+      <div class="relative" id="accountWrap">
+        <button class="icon-btn" id="accountBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Account</span></button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="dd-profile" id="ddProfileSection"><img src="../Header/Y.png" class="watermark" alt="" /><div class="dd-name">Priya Sharma</div><div class="dd-detail">+91 98765 43210</div><div class="dd-detail">priya.sharma@email.com</div></div>
+          <a href="#" class="dd-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Edit Profile</a>
+          <a href="#" class="dd-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Address</a>
+          <a href="#" class="dd-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Saved Cards</a>
+          <a href="#" class="dd-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>NeuPass</a>
+          <a href="#" class="dd-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 11h5"/></svg>Orders</a>
+          <button class="dd-signout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+        </div>
+      </div>
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span>Wishlist</span><span class="badge">2</span></button>
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span>Bag</span><span class="badge">1</span></button>
+    </div>
+    <div class="mobile-only flex items-center gap-3">
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="badge">2</span></button>
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="badge">1</span></button>
+    </div>
+  </div>
+
+  <!-- ROW 2 -->
+  <div class="desktop-only border-t" style="border-color:rgba(229,221,211,.3);position:relative">
+    <div class="nav-cat max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-6 overflow-x-auto" style="height:38px;scrollbar-width:none" id="navCat">
+      <a href="#" data-mega="rings">Rings</a>
+      <a href="#" data-mega="earrings">Earrings</a>
+      <a href="#" data-mega="bracelets">Bracelets & Bangles</a>
+      <a href="#" data-mega="solitaires">Solitaires</a>
+      <a href="#" data-mega="neckwear">Neckwear & Pendants</a>
+      <a href="#" data-mega="silver">Silver</a>
+      <a href="#" data-mega="gifting">Gifting</a>
+      <a href="#" data-mega="collections">Collections</a>
+      <a href="#" data-mega="more">More Jewellery</a>
+      <a href="#" data-mega="trending" style="color:#BF0E23;font-weight:600">Trending</a>
+    </div>
+
+    <!-- MEGA MENUS -->
+    <div class="mega-menu" id="mega-rings"><div class="mega-inner">
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Featured</div><a href="#" class="featured">Latest Designs</a><a href="#" class="featured">Bestsellers</a><a href="#" class="featured">Fast Delivery</a></div>
+      <div class="mega-col" style="min-width:150px"><div class="mega-col-title">By Style</div><a href="#">All Rings</a><a href="#">Engagement</a><a href="#">Dailywear</a><a href="#">Infinity</a><a href="#">Cocktail</a><a href="#">Solitaire</a><a href="#">Couple Rings</a><a href="#">Bands</a><a href="#">Promise Rings</a><a href="#">Silver By Shaya</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stone</div><a href="#">Diamond</a><a href="#">Pearl</a><a href="#">Navratna</a><a href="#">Gemstone</a><a href="#">Platinum</a><a href="#">Gold</a><a href="#">Rose Gold</a><a href="#">Yellow Gold</a><a href="#">White Gold</a><a href="#">22KT Gold</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">Under ₹ 10k</a><a href="#">₹ 10k - ₹ 20k</a><a href="#">₹ 20k - ₹ 30k</a><a href="#">₹ 30k - ₹ 50k</a><a href="#">₹ 40k - ₹ 50k</a><a href="#">₹ 50k - ₹ 75k</a><a href="#">₹ 75k & Above</a></div>
+      <div class="mega-col" style="min-width:280px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Shop Rings</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Bestsellers</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-earrings"><div class="mega-inner">
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Featured</div><a href="#" class="featured">Latest Designs</a><a href="#" class="featured">Bestsellers</a></div>
+      <div class="mega-col" style="min-width:140px"><div class="mega-col-title">By Style</div><a href="#">All Earrings</a><a href="#">Studs</a><a href="#">Hoops</a><a href="#">Drops</a><a href="#">Earcuffs</a><a href="#">Sui Dhagas</a><a href="#">Jhumkas</a><a href="#">Silver Earrings</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stone</div><a href="#">Diamond</a><a href="#">Pearl</a><a href="#">Navratna</a><a href="#">Gemstone</a><a href="#">Platinum</a><a href="#">Rose Gold</a><a href="#">Yellow Gold</a><a href="#">White Gold</a><a href="#">22kt Gold</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">Under ₹ 10k</a><a href="#">₹ 10k - ₹ 20k</a><a href="#">₹ 20k - ₹ 30k</a><a href="#">₹ 30k - ₹ 50k</a><a href="#">₹ 50k - ₹ 75k</a><a href="#">₹ 75K & Above</a></div>
+      <div class="mega-col" style="min-width:280px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Shop Earrings</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>New Arrivals</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-bracelets"><div class="mega-inner">
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Featured</div><a href="#" class="featured">Latest Designs</a><a href="#" class="featured">Bestsellers</a><a href="#" class="featured">Fast Delivery</a><a href="#" class="featured">Special Deals</a></div>
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">By Style</div><a href="#">All Bracelets & Bangles</a><a href="#">Adjustable Bracelets</a><a href="#">Chain Bracelets</a><a href="#">Flexible Bracelets</a><a href="#">Tennis Bracelets</a><a href="#">Bridal Bangles</a><a href="#">Lightweight Bangles</a><a href="#">Silver Bracelets</a><a href="#">Oval Bracelets</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stone</div><a href="#">Diamond</a><a href="#">Gemstone</a><a href="#">Rose Gold</a><a href="#">Platinum</a><a href="#">Pearl</a><a href="#">Navratna</a><a href="#">Yellow Gold</a><a href="#">White Gold</a><a href="#">22kt Gold</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">Under ₹ 10K</a><a href="#">₹ 10k - ₹ 20k</a><a href="#">₹ 20k - ₹ 30k</a><a href="#">₹ 30k - ₹ 50k</a><a href="#">₹ 50k - ₹ 75k</a><a href="#">Above ₹ 75k</a></div>
+      <div class="mega-col" style="min-width:250px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Bracelets</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Bangles</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-solitaires"><div class="mega-inner">
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Featured</div><a href="#" class="featured">Latest Designs</a><a href="#" class="featured">Bestsellers</a><a href="#" class="featured">Fast Delivery</a><a href="#" class="featured">Special Deals</a></div>
+      <div class="mega-col" style="min-width:140px"><div class="mega-col-title">By Style</div><a href="#">All Solitaires</a><a href="#">Rings</a><a href="#">Earrings</a><a href="#">Bridal Sets</a><a href="#">Mangalsutras</a><a href="#">Pendants</a><a href="#">Necklaces</a><a href="#">Bracelets</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stones</div><a href="#">Diamond</a><a href="#">Platinum</a><a href="#">Rose Gold</a><a href="#">White Gold</a><a href="#">Yellow Gold</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">₹ 30K to ₹ 50K</a><a href="#">₹ 50K to ₹ 75K</a><a href="#">₹ 75K to ₹ 1L</a><a href="#">₹ 1L to ₹ 1.5L</a><a href="#">₹ 1.5L to ₹ 2L</a></div>
+      <div class="mega-col" style="min-width:250px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Solitaires</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Bridal Sets</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-neckwear"><div class="mega-inner">
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Featured</div><a href="#" class="featured">Latest Designs</a><a href="#" class="featured">Bestsellers</a><a href="#" class="featured">Fast Delivery</a><a href="#" class="featured">Special Deals</a></div>
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">By Style</div><a href="#">Mangalsutra</a><a href="#">All Necklaces</a><a href="#">Lightweight</a><a href="#">Bridal</a><a href="#">Evil Eye</a><a href="#">Choker</a><a href="#">All Pendants</a><a href="#">Alphabet Pendants</a><a href="#">Heart Pendants</a><a href="#">Butterfly Pendants</a><a href="#">Silver Necklaces</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stone</div><a href="#">Gold</a><a href="#">Diamond</a><a href="#">Pearl</a><a href="#">Gemstone</a><a href="#">Yellow Gold</a><a href="#">Rose Gold</a><a href="#">White Gold</a><a href="#">22KT Gold</a><a href="#">Platinum</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">Under ₹ 10K</a><a href="#">₹ 10K to ₹ 20K</a><a href="#">₹ 20K to ₹ 30K</a><a href="#">₹ 30K to ₹ 50K</a><a href="#">₹ 50k to ₹ 75k</a><a href="#">₹ 75K & Above</a></div>
+      <div class="mega-col" style="min-width:250px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Necklaces</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Pendants</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-silver"><div class="mega-inner">
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">By Style</div><a href="#">Earrings</a><a href="#">Necklaces</a><a href="#">Bracelets</a><a href="#">Rings</a><a href="#">Coins & Articles</a><a href="#">More Styles</a></div>
+      <div class="mega-col" style="min-width:280px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Silver Collection</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>New In Silver</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-gifting"><div class="mega-inner">
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">By Occasions</div><a href="#">Anniversary Gifts</a><a href="#">Personalised</a><a href="#">Bracelet & Bangles</a><a href="#">Charms</a><a href="#">Earrings</a><a href="#">Necklaces & Pendants</a><a href="#">Rings</a><a href="#">Solitaires</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Price</div><a href="#">Under ₹ 10k</a><a href="#">₹ 10k to ₹ 20k</a><a href="#">₹ 20k to ₹ 30k</a><a href="#">₹ 30k to ₹ 50k</a><a href="#">₹ 50k to ₹ 75k</a><a href="#">₹ 75k & Above</a></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">Gifting</div><a href="#">Wife</a><a href="#">Daughter</a><a href="#">Kids</a><a href="#">Men</a><a href="#">Mother</a><a href="#">Self</a></div>
+      <div class="mega-col" style="min-width:250px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Gift Sets</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Gift Cards</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-collections"><div class="mega-inner">
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">Our Collections</div><a href="#">Evil Eye</a><a href="#">Celestial</a><a href="#">Forever Love</a><a href="#">Minimalist</a><a href="#">Nature</a><a href="#">Heritage</a></div>
+      <div class="mega-col" style="min-width:280px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Featured Collection</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>New Launch</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-more"><div class="mega-inner">
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">Shop For Women</div><a href="#">Nose Rings</a><a href="#">Nose Pins</a><a href="#">Watch Charms</a><a href="#">Charms</a><a href="#">22kt Jewellery</a><a href="#">Silver Jewellery</a><a href="#">Platinum Jewellery</a><a href="#">Gold Chains</a></div>
+      <div class="mega-col" style="min-width:140px"><div class="mega-col-title">Shop For Men</div><a href="#">Rings</a><a href="#">Studs</a><a href="#">Chains</a><a href="#">Pendants</a><a href="#">Bracelets</a><a href="#">Kadas</a><div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px"><a href="#" style="font-size:11px">Under ₹ 10k</a><a href="#" style="font-size:11px">₹ 10k to ₹ 20k</a><a href="#" style="font-size:11px">₹ 20k to ₹ 30k</a><a href="#" style="font-size:11px">₹ 30k to ₹ 50k</a><a href="#" style="font-size:11px">₹ 50k to ₹ 70k</a><a href="#" style="font-size:11px">₹ 75k & Above</a></div></div>
+      <div class="mega-col" style="min-width:140px"><div class="mega-col-title">Shop For Kids</div><a href="#">Earrings</a><a href="#">Rings</a><a href="#">Bracelets</a><a href="#">Necklaces</a><a href="#">Pendants</a><a href="#">Baby Bangles</a><div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px"><a href="#" style="font-size:11px">Under ₹10k</a><a href="#" style="font-size:11px">₹10k - ₹20k</a><a href="#" style="font-size:11px">₹20k - ₹30k</a><a href="#" style="font-size:11px">₹30k - ₹40k</a></div></div>
+      <div class="mega-col" style="min-width:130px"><div class="mega-col-title">By Metal & Stone</div><a href="#">Gold</a><a href="#">Diamond</a><a href="#">Pearl</a><a href="#">Gemstone</a><a href="#">Yellow Gold</a><a href="#">Rose Gold</a><a href="#">White Gold</a><a href="#">22kt Gold</a></div>
+      <div class="mega-col" style="min-width:220px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>For Him</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>For Kids</span></div></div></div>
+    </div></div>
+
+    <div class="mega-menu" id="mega-trending"><div class="mega-inner">
+      <div class="mega-col" style="min-width:160px"><div class="mega-col-title">What's Hot</div><a href="#" class="featured">Trending Now</a><a href="#" class="featured">New Arrivals</a><a href="#" class="featured">Most Wishlisted</a><a href="#" class="featured">Celebrity Picks</a><a href="#" class="featured">Flash Deals</a></div>
+      <div class="mega-col" style="min-width:280px;display:flex;gap:12px"><div style="flex:1"><div class="mega-img-slot"><span>Trending</span></div></div><div style="flex:1"><div class="mega-img-slot"><span>Editor's Pick</span></div></div></div>
+    </div></div>
+
+  </div>
+</header>
+
+<div class="mega-overlay" id="megaOverlay"></div>
+
+<!-- ═══ MOBILE MENU ═══ -->
+<nav class="mobile-menu mobile-only" id="mobileMenu">
+  <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <div class="profile-card" id="profileCard">
+    <img src="../Header/Y.png" class="watermark" alt="" />
+    <div class="profile-name">Priya Sharma</div>
+    <div class="profile-detail">+91 98765 43210</div>
+    <div class="profile-detail">priya.sharma@email.com</div>
+    <button class="view-profile-btn" onclick="toggleProfileSub()">View Profile <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" id="profileChevron" style="transition:transform .25s"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="profile-sub-menu" id="profileSubMenu">
+      <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Profile</a>
+      <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Address</a>
+      <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Saved Cards</a>
+      <a href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>NeuPass</a>
+    </div>
+  </div>
+  <button class="login-btn-mobile" id="loginBtn" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Login / Sign Up</button>
+
+  <div class="menu-section">
+    <a href="#" class="menu-link"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 11h5"/><path d="M8 15h3"/></svg></span>Orders<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-section-title">Our Selection</div>
+
+    <div class="menu-link" data-subpage="sp-rings"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></span>Rings<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-earrings"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M8 12v6a4 4 0 0 0 8 0v-6"/></svg></span>Earrings<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-bracelets"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><path d="M12 22c5.5 0 10-4.5 10-10h-4c0 3.3-2.7 6-6 6s-6-2.7-6-6H2c0 5.5 4.5 10 10 10z"/></svg></span>Bracelets & Bangles<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-solitaires"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Solitaires<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-neckwear"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><path d="M12 2v6l3-2"/><circle cx="12" cy="14" r="6"/></svg></span>Neckwear & Pendants<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-silver"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><path d="M20.2 7.8l-7.7 7.7-4-4-5.7 5.7"/><path d="M15 7h6v6"/></svg></span>Silver<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-gifting"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8V21"/><path d="M3 13h18"/></svg></span>Gifting<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-collections"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>Collections<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-trending" style="color:#BF0E23"><span class="menu-icon" style="background:rgba(191,14,35,.15)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>Trending<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+
+    <div class="menu-link" data-subpage="sp-more"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>More Jewellery<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></div>
+  </div>
+
+  <button class="sign-out-btn" id="signOutBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+</nav>
+
+<!-- ═══ MOBILE SUB-PAGES (slide from right) ═══ -->
+
+<div class="mobile-subpage" id="sp-rings">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Rings</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Featured</div>
+    <a href="#" class="sub-link featured">Latest Designs</a><a href="#" class="sub-link featured">Bestsellers</a><a href="#" class="sub-link featured">Fast Delivery</a>
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">All Rings</a><a href="#" class="sub-link">Engagement</a><a href="#" class="sub-link">Dailywear</a><a href="#" class="sub-link">Infinity</a><a href="#" class="sub-link">Cocktail</a><a href="#" class="sub-link">Solitaire</a><a href="#" class="sub-link">Couple Rings</a><a href="#" class="sub-link">Bands</a><a href="#" class="sub-link">Promise Rings</a><a href="#" class="sub-link">Silver By Shaya</a>
+    <div class="sub-section-title">By Metal & Stone</div>
+    <a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Navratna</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Platinum</a><a href="#" class="sub-link">Gold</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22KT Gold</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">Under ₹ 10k</a><a href="#" class="sub-link">₹ 10k - ₹ 20k</a><a href="#" class="sub-link">₹ 20k - ₹ 30k</a><a href="#" class="sub-link">₹ 30k - ₹ 50k</a><a href="#" class="sub-link">₹ 50k - ₹ 75k</a><a href="#" class="sub-link">₹ 75k & Above</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-earrings">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Earrings</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Featured</div>
+    <a href="#" class="sub-link featured">Latest Designs</a><a href="#" class="sub-link featured">Bestsellers</a>
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">All Earrings</a><a href="#" class="sub-link">Studs</a><a href="#" class="sub-link">Hoops</a><a href="#" class="sub-link">Drops</a><a href="#" class="sub-link">Earcuffs</a><a href="#" class="sub-link">Sui Dhagas</a><a href="#" class="sub-link">Jhumkas</a><a href="#" class="sub-link">Silver Earrings</a>
+    <div class="sub-section-title">By Metal & Stone</div>
+    <a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Navratna</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Platinum</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22kt Gold</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">Under ₹ 10k</a><a href="#" class="sub-link">₹ 10k - ₹ 20k</a><a href="#" class="sub-link">₹ 20k - ₹ 30k</a><a href="#" class="sub-link">₹ 30k - ₹ 50k</a><a href="#" class="sub-link">₹ 50k - ₹ 75k</a><a href="#" class="sub-link">₹ 75K & Above</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-bracelets">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Bracelets & Bangles</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Featured</div>
+    <a href="#" class="sub-link featured">Latest Designs</a><a href="#" class="sub-link featured">Bestsellers</a><a href="#" class="sub-link featured">Fast Delivery</a><a href="#" class="sub-link featured">Special Deals</a>
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">All Bracelets & Bangles</a><a href="#" class="sub-link">Adjustable Bracelets</a><a href="#" class="sub-link">Chain Bracelets</a><a href="#" class="sub-link">Flexible Bracelets</a><a href="#" class="sub-link">Tennis Bracelets</a><a href="#" class="sub-link">Bridal Bangles</a><a href="#" class="sub-link">Lightweight Bangles</a><a href="#" class="sub-link">Silver Bracelets</a><a href="#" class="sub-link">Oval Bracelets</a>
+    <div class="sub-section-title">By Metal & Stone</div>
+    <a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">Platinum</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Navratna</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22kt Gold</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">Under ₹ 10K</a><a href="#" class="sub-link">₹ 10k - ₹ 20k</a><a href="#" class="sub-link">₹ 20k - ₹ 30k</a><a href="#" class="sub-link">₹ 30k - ₹ 50k</a><a href="#" class="sub-link">₹ 50k - ₹ 75k</a><a href="#" class="sub-link">Above ₹ 75k</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-solitaires">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Solitaires</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Featured</div>
+    <a href="#" class="sub-link featured">Latest Designs</a><a href="#" class="sub-link featured">Bestsellers</a><a href="#" class="sub-link featured">Fast Delivery</a><a href="#" class="sub-link featured">Special Deals</a>
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">All Solitaires</a><a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Earrings</a><a href="#" class="sub-link">Bridal Sets</a><a href="#" class="sub-link">Mangalsutras</a><a href="#" class="sub-link">Pendants</a><a href="#" class="sub-link">Necklaces</a><a href="#" class="sub-link">Bracelets</a>
+    <div class="sub-section-title">By Metal & Stones</div>
+    <a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Platinum</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">Yellow Gold</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">₹ 30K to ₹ 50K</a><a href="#" class="sub-link">₹ 50K to ₹ 75K</a><a href="#" class="sub-link">₹ 75K to ₹ 1L</a><a href="#" class="sub-link">₹ 1L to ₹ 1.5L</a><a href="#" class="sub-link">₹ 1.5L to ₹ 2L</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-neckwear">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Neckwear & Pendants</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Featured</div>
+    <a href="#" class="sub-link featured">Latest Designs</a><a href="#" class="sub-link featured">Bestsellers</a><a href="#" class="sub-link featured">Fast Delivery</a><a href="#" class="sub-link featured">Special Deals</a>
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">Mangalsutra</a><a href="#" class="sub-link">All Necklaces</a><a href="#" class="sub-link">Lightweight</a><a href="#" class="sub-link">Bridal</a><a href="#" class="sub-link">Evil Eye</a><a href="#" class="sub-link">Choker</a><a href="#" class="sub-link">All Pendants</a><a href="#" class="sub-link">Alphabet Pendants</a><a href="#" class="sub-link">Heart Pendants</a><a href="#" class="sub-link">Butterfly Pendants</a><a href="#" class="sub-link">Silver Necklaces</a>
+    <div class="sub-section-title">By Metal & Stone</div>
+    <a href="#" class="sub-link">Gold</a><a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22KT Gold</a><a href="#" class="sub-link">Platinum</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">Under ₹ 10K</a><a href="#" class="sub-link">₹ 10K to ₹ 20K</a><a href="#" class="sub-link">₹ 20K to ₹ 30K</a><a href="#" class="sub-link">₹ 30K to ₹ 50K</a><a href="#" class="sub-link">₹ 50k to ₹ 75k</a><a href="#" class="sub-link">₹ 75K & Above</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-silver">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Silver</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">By Style</div>
+    <a href="#" class="sub-link">Earrings</a><a href="#" class="sub-link">Necklaces</a><a href="#" class="sub-link">Bracelets</a><a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Coins & Articles</a><a href="#" class="sub-link">More Styles</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-gifting">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Gifting</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">By Occasions</div>
+    <a href="#" class="sub-link">Anniversary Gifts</a><a href="#" class="sub-link">Personalised</a><a href="#" class="sub-link">Bracelet & Bangles</a><a href="#" class="sub-link">Charms</a><a href="#" class="sub-link">Earrings</a><a href="#" class="sub-link">Necklaces & Pendants</a><a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Solitaires</a>
+    <div class="sub-section-title">By Price</div>
+    <a href="#" class="sub-link">Under ₹ 10k</a><a href="#" class="sub-link">₹ 10k to ₹ 20k</a><a href="#" class="sub-link">₹ 20k to ₹ 30k</a><a href="#" class="sub-link">₹ 30k to ₹ 50k</a><a href="#" class="sub-link">₹ 50k to ₹ 75k</a><a href="#" class="sub-link">₹ 75k & Above</a>
+    <div class="sub-section-title">Gifting For</div>
+    <a href="#" class="sub-link">Wife</a><a href="#" class="sub-link">Daughter</a><a href="#" class="sub-link">Kids</a><a href="#" class="sub-link">Men</a><a href="#" class="sub-link">Mother</a><a href="#" class="sub-link">Self</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-collections">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Collections</div></div>
+  <div class="subpage-body">
+    <a href="#" class="sub-link">Evil Eye</a><a href="#" class="sub-link">Celestial</a><a href="#" class="sub-link">Forever Love</a><a href="#" class="sub-link">Minimalist</a><a href="#" class="sub-link">Nature</a><a href="#" class="sub-link">Heritage</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-trending">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">Trending</div></div>
+  <div class="subpage-body">
+    <a href="#" class="sub-link featured">Trending Now</a><a href="#" class="sub-link featured">New Arrivals</a><a href="#" class="sub-link featured">Most Wishlisted</a><a href="#" class="sub-link featured">Celebrity Picks</a><a href="#" class="sub-link featured">Flash Deals</a>
+  </div>
+</div>
+
+<div class="mobile-subpage" id="sp-more">
+  <div class="subpage-header"><button class="back-btn" data-back><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button><div class="subpage-title">More Jewellery</div></div>
+  <div class="subpage-body">
+    <div class="sub-section-title">Shop For Women</div>
+    <a href="#" class="sub-link">Nose Rings</a><a href="#" class="sub-link">Nose Pins</a><a href="#" class="sub-link">Watch Charms</a><a href="#" class="sub-link">Charms</a><a href="#" class="sub-link">22kt Jewellery</a><a href="#" class="sub-link">Silver Jewellery</a><a href="#" class="sub-link">Platinum Jewellery</a><a href="#" class="sub-link">Gold Chains</a>
+    <div class="sub-section-title">Shop For Men</div>
+    <a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Studs</a><a href="#" class="sub-link">Chains</a><a href="#" class="sub-link">Pendants</a><a href="#" class="sub-link">Bracelets</a><a href="#" class="sub-link">Kadas</a>
+    <div class="sub-section-title">Shop For Kids</div>
+    <a href="#" class="sub-link">Earrings</a><a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Bracelets</a><a href="#" class="sub-link">Necklaces</a><a href="#" class="sub-link">Pendants</a><a href="#" class="sub-link">Baby Bangles</a>
+    <div class="sub-section-title">By Metal & Stone</div>
+    <a href="#" class="sub-link">Gold</a><a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22kt Gold</a>
+  </div>
+</div>
+
+  <script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => { header.classList.toggle('scrolled', window.scrollY > 8); }, { passive: true });
+
+  // ── HAMBURGER + CLOSE ──
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+
+  function closeMobileMenu() {
+    hamburger.classList.remove('active');
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+    // Close any open subpage
+    document.querySelectorAll('.mobile-subpage.open').forEach(sp => sp.classList.remove('open'));
+  }
+  function toggleMobileMenu() {
+    if (mobileMenu.classList.contains('open')) {
+      closeMobileMenu();
+    } else {
+      hamburger.classList.add('active');
+      mobileMenu.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  hamburger.addEventListener('click', toggleMobileMenu);
+  mobileCloseBtn.addEventListener('click', closeMobileMenu);
+
+  // ── MOBILE SUB-PAGES (slide-in from right) ──
+  document.querySelectorAll('[data-subpage]').forEach(link => {
+    link.addEventListener('click', () => {
+      const target = document.getElementById(link.dataset.subpage);
+      if (target) { target.classList.add('open'); target.scrollTop = 0; }
+    });
+  });
+  document.querySelectorAll('[data-back]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.mobile-subpage').classList.remove('open');
+    });
+  });
+
+  // ── Profile sub-menu ──
+  function toggleProfileSub() {
+    const sub = document.getElementById('profileSubMenu');
+    const chev = document.getElementById('profileChevron');
+    sub.classList.toggle('open');
+    chev.style.transform = sub.classList.contains('open') ? 'rotate(180deg)' : '';
+  }
+
+  // ── Desktop profile dropdown ──
+  const accountBtn = document.getElementById('accountBtn');
+  const profileDropdown = document.getElementById('profileDropdown');
+  let ddOpen = false;
+  accountBtn.addEventListener('click', e => { e.stopPropagation(); ddOpen = !ddOpen; profileDropdown.classList.toggle('open', ddOpen); });
+  document.addEventListener('click', e => { if (ddOpen && !document.getElementById('accountWrap').contains(e.target)) { ddOpen = false; profileDropdown.classList.remove('open'); } });
+
+  // ── Mega menu hover ──
+  const navLinks = document.querySelectorAll('#navCat a[data-mega]');
+  const megaOverlay = document.getElementById('megaOverlay');
+  let activeMega = null, megaTimeout = null;
+  function openMega(id) {
+    clearTimeout(megaTimeout);
+    if (activeMega && activeMega !== id) { const p = document.getElementById('mega-' + activeMega); if (p) p.classList.remove('open'); navLinks.forEach(l => l.classList.remove('mega-active')); }
+    activeMega = id;
+    const el = document.getElementById('mega-' + id);
+    if (el) { el.classList.add('open'); megaOverlay.classList.add('active'); navLinks.forEach(l => l.classList.toggle('mega-active', l.dataset.mega === id)); }
+  }
+  function closeMega() {
+    megaTimeout = setTimeout(() => { if (activeMega) { const el = document.getElementById('mega-' + activeMega); if (el) el.classList.remove('open'); megaOverlay.classList.remove('active'); navLinks.forEach(l => l.classList.remove('mega-active')); activeMega = null; } }, 150);
+  }
+  navLinks.forEach(link => { link.addEventListener('mouseenter', () => openMega(link.dataset.mega)); link.addEventListener('mouseleave', closeMega); });
+  document.querySelectorAll('.mega-menu').forEach(mm => { mm.addEventListener('mouseenter', () => clearTimeout(megaTimeout)); mm.addEventListener('mouseleave', closeMega); });
+  megaOverlay.addEventListener('click', () => { clearTimeout(megaTimeout); if (activeMega) { document.getElementById('mega-' + activeMega).classList.remove('open'); megaOverlay.classList.remove('active'); navLinks.forEach(l => l.classList.remove('mega-active')); activeMega = null; } });
+
+  // ── Search placeholder ──
+  const suggestions = ['Search for "Solitaire Rings"','Search for "Gold Earrings"','Search for "Diamond Pendants"','Search for "Silver Bracelets"','Search for "Mangalsutra"','Search for "Wedding Bangles"'];
+  const suggestionsMobile = ['"Solitaire Rings"','"Gold Earrings"','"Diamond Pendants"','"Silver Bracelets"','"Mangalsutra"','"Wedding Bangles"'];
+  function animatePH(el, input, list) { let i = 0; function u() { el.innerHTML = '<span>' + list[i] + '</span>'; i = (i+1)%list.length; } u(); setInterval(u, 3000); input.addEventListener('input', () => { el.style.display = input.value ? 'none' : ''; }); }
+  const dp = document.getElementById('desktopPlaceholder'), ds = document.getElementById('desktopSearch');
+  if (dp && ds) animatePH(dp, ds, suggestions);
+  const mp2 = document.getElementById('mobilePlaceholder'), ms2 = document.getElementById('mobileSearch');
+  if (mp2 && ms2) animatePH(mp2, ms2, suggestionsMobile);
+
+  // ── Login toggle ──
+  const isLoggedIn = true;
+  if (!isLoggedIn) {
+    document.getElementById('profileCard').style.display = 'none';
+    document.getElementById('signOutBtn').style.display = 'none';
+    document.getElementById('loginBtn').style.display = 'flex';
+    document.getElementById('ddProfileSection').innerHTML = '<div style="text-align:center;padding:10px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div style="margin-top:8px;font-size:14px;font-weight:600;color:#2C2C2C">Welcome to Beyon</div><div style="font-size:11px;color:#B0ABAB;margin-top:4px">Login for a personalised experience</div><a href="#" style="display:inline-block;margin-top:12px;padding:10px 28px;background:linear-gradient(135deg,#BF0E23,#E8334A);color:#fff;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none">Login / Sign Up</a></div>';
+  }
+  </script>
+
+
+    <div id="pdpToast" class="pdp-toast"></div>
+    <div id="root"></div>
+    <div id="customisationRequestPopup"></div>
+    <div id="sheetRoot"></div>
+
+    <script>
+      const product = {
+        name: 'Cross My Lines Pendant With Chain',
+        shortDescription: 'Breaks rules, keeps the spotlight, with intersecting slim gold bars set with rows of round Laboratory-Grown Diamonds and textures, centred by an oval diamond in half bezel on 18 KT yellow gold Pendant with chain.',
+        designCode: 'SEBVGBZ',
+        grossWeight: '3.135 g',
+        gold: { metal: '18 KT YELLOW', weight: '3.075 g' },
+        diamond: { colour: 'FG', shape: 'Round', count: 7, weight: '0.3 Ct', clarity: 'VS' },
+        sizes: ['16 INCHES', '18 INCHES'],
+        defaultSize: '16 INCHES',
+        price: 49389,
+        mrp: 50219,
+        priceBreakup: {
+          grossWeight: '3.135 g',
+          goldValue: { amount: 36493, weight: '3.075g', rate: '\u20B911,868/g' },
+          stoneDetail: { spec: '0.300 ct \u00B7 VS-FG', amount: 5922 },
+          makingCharges: 5535,
+          gst: 1439,
+          grandTotal: 49389
+        },
+        images: ['assets/img/prd 1.webp', 'assets/img/pd 2.webp', 'assets/img/pd 3.webp', 'assets/img/pd 4.webp', 'assets/img/pd 5.webp'],
+        delivery: { estimate: 'Tomorrow, its yours! 1-day delivery for orders placed before 12pm for selected pincodes*' }
+      };
+
+      const recommendations = [
+        { id: 1, name: 'Lunar Arc Bangle', price: 38200, image: 'assets/img/prd 1.webp' },
+        { id: 2, name: 'Parallel Lines Ring', price: 22750, image: 'assets/img/pd 2.webp' },
+        { id: 3, name: 'Diamond Solitaire Stud', price: 31400, image: 'assets/img/pd 3.webp' },
+        { id: 4, name: 'Gold Hoop Earrings', price: 18900, image: 'assets/img/pd 4.webp' },
+        { id: 5, name: 'Constellation Pendant', price: 44600, image: 'assets/img/pd 5.webp' },
+        { id: 6, name: 'Twisted Band Ring', price: 19800, image: 'assets/img/prd 1.webp' },
+        { id: 7, name: 'Tennis Bracelet', price: 67500, image: 'assets/img/pd 2.webp' }
+      ];
+
+      const metalColours = [
+        { id: 'yellow', label: 'Yellow', gradient: 'radial-gradient(circle at 35% 30%, #fde98a, #d4a843 48%, #8a5e0a)', ring: '#d4a843' },
+        { id: 'rose', label: 'Rose', gradient: 'radial-gradient(circle at 35% 30%, #fdd5cc, #c47878 48%, #7a3030)', ring: '#c47878' },
+        { id: 'white', label: 'White', gradient: 'radial-gradient(circle at 35% 30%, #ffffff, #c8c8c8 48%, #787878)', ring: '#888' }
+      ];
+
+      const karatOptions = ['9KT', '14KT', '18KT'];
+      const diamondSizes = ['0.33 ct', '0.4 ct', '0.5 ct'];
+      const diamondShapes = [
+        { id: 'round', label: 'Round' },
+        { id: 'oval', label: 'Oval' },
+        { id: 'heart', label: 'Heart' },
+        { id: 'emerald', label: 'Emerald' },
+        { id: 'hexagon', label: 'Hexagon' }
+      ];
+
+      const trustBadges = [
+        { label: '7 Days Free Returns', icon: `<svg width="18" height="18" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15a15 15 0 0 1 22-9"/><path d="M39 33a15 15 0 0 1-22 9"/><path d="M27 4l4 2-2 4"/><path d="M21 44l-4-2 2-4"/><rect x="15" y="20" width="18" height="16" rx="2"/><path d="M15 25h18M20 18v4M28 18v4"/><text x="24" y="32" font-size="7" font-weight="700" text-anchor="middle" fill="#d30b39" stroke="none" font-family="Geom, sans-serif">7</text>${sparkSvg(8, 9, 4)}${sparkSvg(41, 40, 3)}</svg>` },
+        { label: 'Free Shipping in India', icon: `<svg width="18" height="18" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="14" width="24" height="18" rx="2"/><path d="M28 20h8l6 7v5H28z"/><circle cx="14" cy="36" r="4.5"/><circle cx="34" cy="36" r="4.5"/><path d="M4 20h18M4 26h14"/>${sparkSvg(39, 10, 4)}${sparkSvg(6, 8, 3)}</svg>` },
+        { label: 'From<br>HOUSE OF TITAN', icon: `<svg width="18" height="18" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 42h36M8 42V18l16-10 16 10v24"/><path d="M19 42V27h10v15"/><path d="M19 27l5-6 5 6"/>${sparkSvg(38, 9, 4)}${sparkSvg(8, 7, 3)}</svg>` },
+        { label: 'Lifetime Gold Exchange*', icon: `<svg width="18" height="18" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13,6 21,16 13,26 5,16"/><polygon points="28,18 42,18 42,30 28,30"/><path d="M18 12a16 16 0 0 1 16-3"/><path d="M14 8l4 1-1 4"/><path d="M30 36a16 16 0 0 1-16 3"/><path d="M34 40l-4-1 1-4"/>${sparkSvg(8, 8, 3.5)}${sparkSvg(40, 10, 3)}</svg>` },
+        { label: 'Secure Payments<br>TATA TRUST', icon: `<svg width="18" height="18" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4l16 6v12c0 12-7 19-16 22-9-3-16-10-16-22V10z"/><path d="M16 24l6 6 11-13"/>${sparkSvg(39, 8, 4)}${sparkSvg(6, 36, 3)}</svg>` }
+      ];
+
+      const tagVariants = ['selling fast'];
+
+      const state = {
+        selectedSize: product.defaultSize,
+        activeTab: 'Product Details',
+        currentImageIdx: 0,
+        lightboxOpen: false,
+        lightboxIdx: 0,
+        sizeChartOpen: false,
+        shared: false,
+        metalColour: 'yellow',
+        karat: '18KT',
+        diamondShape: 'round',
+        diamondSize: '0.33 ct',
+        pincode: '',
+        pincodeChecked: false,
+        pincodeOk: false,
+        pincodeDate: '',
+        appBannerDismissed: false,
+        addedToBag: false,
+        noOffer: false,
+        noCustomise: false,
+        selectedCountry: 'IN',
+        countryDropdownOpen: false
+      };
+
+      const DELIVERY_COUNTRIES = [
+        { code: 'IN', flag: '🇮🇳', name: 'India' },
+        { code: 'AE', flag: '🇦🇪', name: 'UAE' },
+        { code: 'DE', flag: '🇩🇪', name: 'Germany' },
+        { code: 'SA', flag: '🇸🇦', name: 'Saudi Arabia' },
+        { code: 'NL', flag: '🇳🇱', name: 'Netherlands' },
+        { code: 'MY', flag: '🇲🇾', name: 'Malaysia' },
+        { code: 'KE', flag: '🇰🇪', name: 'Kenya' },
+        { code: 'RO', flag: '🇷🇴', name: 'Romania' },
+        { code: 'ES', flag: '🇪🇸', name: 'Spain' },
+        { code: 'PT', flag: '🇵🇹', name: 'Portugal' },
+        { code: 'QA', flag: '🇶🇦', name: 'Qatar' },
+        { code: 'IT', flag: '🇮🇹', name: 'Italy' },
+        { code: 'OM', flag: '🇴🇲', name: 'Oman' },
+        { code: 'KW', flag: '🇰🇼', name: 'Kuwait' },
+        { code: 'BH', flag: '🇧🇭', name: 'Bahrain' },
+        { code: 'ZA', flag: '🇿🇦', name: 'South Africa' },
+        { code: 'CA', flag: '🇨🇦', name: 'Canada' },
+        { code: 'NZ', flag: '🇳🇿', name: 'New Zealand' },
+        { code: 'AU', flag: '🇦🇺', name: 'Australia' },
+        { code: 'SG', flag: '🇸🇬', name: 'Singapore' },
+        { code: 'US', flag: '🇺🇸', name: 'USA' },
+        { code: 'GB', flag: '🇬🇧', name: 'United Kingdom' }
+      ];
+
+      const PINCODE_DB={'110001':{ok:true,date:'27 Jun'},'400001':{ok:true,date:'26 Jun'},'560001':{ok:true,date:'28 Jun'},'700001':{ok:true,date:'29 Jun'},'600001':{ok:true,date:'25 Jun'},'500001':{ok:false},'999999':{ok:false}};
+
+
+      function spark(cx, cy, r) { return `M${cx} ${cy - r}L${cx + r * .3} ${cy - r * .3}L${cx + r} ${cy}L${cx + r * .3} ${cy + r * .3}L${cx} ${cy + r}L${cx - r * .3} ${cy + r * .3}L${cx - r} ${cy}L${cx - r * .3} ${cy - r * .3}Z`; }
+      function sparkSvg(cx, cy, r) { return `<path d="${spark(cx, cy, r)}" fill="#B91C1C" stroke="none"/>`; }
+
+      // Utils
+      const formatPrice = n => '\u20B9' + n.toLocaleString('en-IN');
+
+      function getMetalShineClass(metal) {
+        const t = (metal || '').toUpperCase();
+        if (t.includes('ROSE')) return 'metal-text-shine-rose';
+        if (t.includes('WHITE')) return 'metal-text-shine-silver';
+        return 'metal-text-shine-gold';
+      }
+
+      function pillClass(selected) {
+        return selected ? 'pill-selected' : 'pill-default';
+      }
+
+      function diamondShapeSvg(cut, selected) {
+        const c = selected ? '#fff' : '#8a6e3a';
+        const svgs = {
+          round: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="${c}" stroke-width="1.8"/><line x1="12" y1="3.5" x2="12" y2="7" stroke="${c}" stroke-width="1.2" opacity=".6"/><line x1="12" y1="17" x2="12" y2="20.5" stroke="${c}" stroke-width="1.2" opacity=".6"/><line x1="3.5" y1="12" x2="7" y2="12" stroke="${c}" stroke-width="1.2" opacity=".6"/><line x1="17" y1="12" x2="20.5" y2="12" stroke="${c}" stroke-width="1.2" opacity=".6"/></svg>`,
+          oval: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="6.5" ry="9.5" stroke="${c}" stroke-width="1.8"/><line x1="12" y1="2.5" x2="12" y2="5.5" stroke="${c}" stroke-width="1.2" opacity=".6"/><line x1="12" y1="18.5" x2="12" y2="21.5" stroke="${c}" stroke-width="1.2" opacity=".6"/></svg>`,
+          heart: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 20.5C12 20.5 3 14 3 8.5C3 6 5 4 7.5 4C9.5 4 11 5.5 12 7C13 5.5 14.5 4 16.5 4C19 4 21 6 21 8.5C21 14 12 20.5 12 20.5Z" stroke="${c}" stroke-width="1.8" stroke-linejoin="round"/></svg>`,
+          emerald: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="8,3 16,3 21,7 21,17 16,21 8,21 3,17 3,7" stroke="${c}" stroke-width="1.8" stroke-linejoin="round"/><line x1="3" y1="8.5" x2="21" y2="8.5" stroke="${c}" stroke-width="1" opacity=".5"/><line x1="3" y1="15.5" x2="21" y2="15.5" stroke="${c}" stroke-width="1" opacity=".5"/></svg>`,
+          hexagon: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="12,2 20,6.5 20,17.5 12,22 4,17.5 4,6.5" stroke="${c}" stroke-width="1.8" stroke-linejoin="round"/><line x1="12" y1="2" x2="12" y2="22" stroke="${c}" stroke-width="1" opacity=".5"/></svg>`
+        };
+        return svgs[cut] || '';
+      }
+
+      function renderTag(variant) {
+        if (!variant) return '';
+        const cls = variant === 'selling fast' ? 'ribbon-red' : variant === 'just dropped' ? 'ribbon-dark' : 'ribbon-gold';
+        return `<span class="ribbon ${cls}">${variant}</span>`;
+      }
+
+      function renderShareBtn() {
+        if (state.shared) {
+          return `<button aria-label="Shared" class="shrink-0 flex items-center justify-center rounded-full transition-all" style="width:32px;height:32px;background:#fff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>`;
+        }
+        return `<button onclick="doShare()" aria-label="Share" class="shrink-0 flex items-center justify-center rounded-full transition-all active:scale-90" style="width:32px;height:32px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="3" x2="9.2" y2="10.1"/><polygon points="22 3 15 21 9.2 10.1 2 8 22 3"/></svg></button>`;
+      }
+
+      function renderTabSwitcher() {
+        const tabs = ['Product Details', 'Price Breakup'];
+        return `<div class="flex p-[3px] rounded-full">${tabs.map(tab => {
+          const active = state.activeTab === tab;
+          return `<button onclick="switchTab('${tab}')" class="flex-1 py-1.5 px-3 rounded-full text-[10px] font-bold tracking-wide transition-all duration-200" style="${active ? 'background:#fff;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,0.08);border:1px solid rgba(0,0,0,0.08)' : 'color:#3c3c3c;border:1px solid transparent'}">${tab}</button>`;
+        }).join('')}</div>`;
+      }
+
+      function renderProductDetailsTab() {
+        const d = product.diamond;
+        return `<div class="pt-1 px-1">
+          <div>
+            <div class="grid py-3.5 pd-grid">
+              <span class="text-[11px] font-bold ${getMetalShineClass(product.gold.metal)}" style="grid-column:1/3">18 KT YELLOW GOLD</span>
+              <span class="text-[11px] text-gray-400 pl-2">Weight</span>
+              <span class="text-[11px] font-bold text-[#2a2a2a] text-right">${product.gold.weight}</span>
+            </div>
+          </div>
+          <div style="border-top:1px solid rgba(0,0,0,0.06)">
+            <div class="flex items-center gap-3 mt-5 mb-2"><p class="text-[11px] font-bold tracking-[0.18em] uppercase" style="color:#d30b39">Laboratory-Grown Diamond/s</p><a onclick="var els=document.querySelectorAll('.lgd-faq-section');var el=els[window.innerWidth>=1024?1:0];if(el)el.scrollIntoView({behavior:'smooth',block:'start'})" class="text-[9px] font-semibold tracking-wide cursor-pointer inline-flex items-center gap-1 px-3 py-[4px] rounded-full transition-all shrink-0 whitespace-nowrap" style="background:linear-gradient(135deg,#fff 0%,#fdf8f2 100%);color:#d30b39;border:1.2px solid rgba(211,11,57,0.2);box-shadow:0 1px 4px rgba(211,11,57,0.08);text-decoration:none"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg> LGD Facts</a></div>
+            <div class="pd-grid">
+              ${[['Count', d.count], ['Shape', d.shape], ['Clarity & Colour', d.clarity + ' & ' + d.colour], ['Weight', d.weight]].map(([label, val], i) => `
+                <span class="text-[11px] text-gray-400 py-3.5 ${i % 2 ? 'pl-2' : ''}">${label}</span>
+                <span class="text-[11px] font-bold text-[#2a2a2a] py-3.5 ${i % 2 ? 'text-right' : ''}">${val}</span>
+              `).join('')}
+            </div>
+          </div>
+          <div style="border-top:1px solid rgba(0,0,0,0.06)">
+            <div class="grid py-2.5 pd-grid">
+              <span class="text-[11px] text-gray-400">Design Code</span>
+              <span class="text-[11px] font-bold text-[#2a2a2a]">${product.designCode}</span>
+              <span class="text-[11px] text-gray-400 pl-2">Gross Weight</span>
+              <span class="text-[11px] font-bold text-[#2a2a2a] text-right">${product.grossWeight}</span>
+            </div>
+          </div>
+          <p class="text-[11px] text-gray-400 leading-relaxed pb-2" style="border-top:1px solid rgba(0,0,0,0.06);padding-top:10px">${product.shortDescription}</p>
+        </div>`;
+      }
+
+      function renderPriceBreakupTab() {
+        const b = product.priceBreakup;
+        return `<div class="pt-2 px-1">
+          <div class="flex items-start justify-between py-3.5 border-b border-gray-100">
+            <p class="text-[11px] text-[#3c3c3c]">Gross Weight</p>
+            <p class="text-[11px] font-bold text-[#2a2a2a] ml-4 shrink-0">${b.grossWeight}</p>
+          </div>
+          <div class="flex items-start justify-between py-3.5 border-b border-gray-100">
+            <div>
+              <p class="text-[11px] text-[#3c3c3c]">Total Gold Value</p>
+              <p class="text-[10px] text-[#3c3c3c] mt-0.5 leading-snug">Weight · ${b.goldValue.weight}</p>
+              <p class="text-[10px] text-[#3c3c3c] mt-0.5 leading-snug">Rate · ${b.goldValue.rate}</p>
+            </div>
+            <p class="text-[11px] font-bold text-[#2a2a2a] ml-4 shrink-0">${formatPrice(b.goldValue.amount)}</p>
+          </div>
+          <div class="flex items-start justify-between py-3.5 border-b border-gray-100">
+            <div>
+              <p class="text-[11px] text-[#3c3c3c]">Stone Detail</p>
+              <p class="text-[10px] text-[#3c3c3c] mt-0.5">${b.stoneDetail.spec}</p>
+            </div>
+            <p class="text-[11px] font-bold text-[#2a2a2a] ml-4 shrink-0 mt-5">${formatPrice(b.stoneDetail.amount)}</p>
+          </div>
+          <div class="flex items-start justify-between py-3.5 border-b border-gray-100">
+            <p class="text-[11px] text-[#3c3c3c]">Making Charges</p>
+            <p class="text-[11px] font-bold text-[#2a2a2a] ml-4 shrink-0">${formatPrice(b.makingCharges)}</p>
+          </div>
+          <div class="flex items-start justify-between py-3.5">
+            <p class="text-[11px] text-[#3c3c3c]">GST</p>
+            <p class="text-[11px] font-bold text-[#2a2a2a] ml-4 shrink-0">${formatPrice(b.gst)}</p>
+          </div>
+          <div class="mt-1 pt-1 border-t-2 border-gray-200">
+            <div class="flex items-start justify-between py-3.5">
+              <div><p class="text-[11px] font-bold text-[#1a1a1a]">Grand Total</p><p class="text-[10px] text-[#3c3c3c] mt-0.5">Inclusive of all taxes*</p></div>
+              <p class="text-[13px] font-bold text-[#1a1a1a] ml-4 shrink-0">${formatPrice(b.grandTotal)}</p>
+            </div>
+          </div>
+          <p class="text-[11px] font-semibold text-[#d30b39] text-center leading-5 tracking-wide mt-4 pb-2">100% EXCHANGE ON GOLD AT PREVAILING RATE* | NO EXCHANGE ON LABORATORY-GROWN DIAMONDS</p>
+        </div>`;
+      }
+
+      function renderProductHeader() {
+        return `<div class="px-4 pt-3 pb-1">
+          <div class="flex items-start justify-between gap-2">
+            <h1 class="font-semibold text-[#1a1a1a] leading-snug tracking-tight" style="font-size:14px">${product.name}</h1>
+            <button onclick="toggleWishlist(this)" class="hidden lg:flex shrink-0 w-6 h-6 rounded-full items-center justify-center active:scale-90 transition-transform" style="background:rgba(0,0,0,0.04)" aria-label="Wishlist">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+          <div class="hidden lg:flex items-baseline gap-3 mt-0 leading-none">
+            <span class="price-shine font-bold tracking-tight" style="font-size:20px">${formatPrice(product.price)}</span>
+            ${state.noOffer ? '' : `<span class="text-[13px] text-gray-400 line-through">${formatPrice(product.mrp)}</span>`}
+            <span class="text-[10px] text-gray-400 tracking-wide">Inclusive of all taxes*</span>
+          </div>
+          ${state.noOffer ? '' : `<div class="hidden lg:flex items-center gap-1 mt-1 py-0.5 px-2 rounded-md w-fit" style="background:rgba(211,11,57,0.08)">
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <span class="text-[9px] font-semibold text-[#d30b39] tracking-wide">15% OFF ON MAKING CHARGES</span>
+            <span class="text-[8px] font-medium text-[#d30b39]" style="opacity:0.75">· You save ${formatPrice(product.mrp - product.price)}</span>
+          </div>`}
+        </div>`;
+      }
+
+      function renderProductInfo() {
+        return `<div class="px-5 pt-4 pb-2">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex-1">${renderTabSwitcher()}</div>
+            ${renderShareBtn()}
+          </div>
+          ${state.activeTab === 'Product Details' ? renderProductDetailsTab() : renderPriceBreakupTab()}
+        </div>`;
+      }
+
+      function renderCustomisation() {
+        return `<div class="px-4 py-4 section-gold-bg">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-0.5 h-3.5 rounded-full shrink-0" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
+            <span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Customise</span>
+            <span class="ml-auto text-[8px] font-semibold tracking-wide px-1.5 py-0.5 rounded-full" style="background:rgba(211,11,57,0.06);color:#b8860b;border:1px solid rgba(184,134,11,0.15)">PERSONALISE YOUR PIECE</span>
+          </div>
+          <div class="mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-[8px] font-bold tracking-[0.14em] uppercase" style="color:#b8a080">Size</p>
+              <button onclick="openGuide('ring')" class="flex items-center gap-0.5 text-[8px] font-semibold text-[#8a6e3a] underline underline-offset-2 tracking-wide">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                Size Chart
+              </button>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              ${product.sizes.map(s => `<button onclick="state.selectedSize='${s}';render()" class="px-3.5 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 active:scale-95 ${pillClass(state.selectedSize === s)}">${s}</button>`).join('')}
+            </div>
+          </div>
+          <div class="mb-4">
+            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Gross Weight</p>
+            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-semibold pill-selected">${product.grossWeight}</span>
+          </div>
+          ${state.noCustomise ? '' : `
+          <div class="mb-4">
+            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Metal Colour</p>
+            <div class="flex items-center gap-4">
+              ${metalColours.map(c => {
+                const sel = state.metalColour === c.id;
+                return `<button onclick="state.metalColour='${c.id}';render()" class="flex flex-col items-center gap-1 transition-all duration-200">
+                  <div class="rounded-full" style="width:28px;height:28px;background:${c.gradient};box-shadow:${sel ? `0 0 0 2px #fdfcf8, 0 0 0 3.5px ${c.ring}` : '0 1px 4px rgba(0,0,0,0.15)'};transform:${sel ? 'scale(1.08)' : 'scale(1)'}"></div>
+                  <span class="text-[8px] font-semibold" style="color:${sel ? '#3c3c3c' : '#b8a080'}">${c.label}</span>
+                </button>`;
+              }).join('')}
+            </div>
+          </div>
+          <div class="mb-4">
+            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Gold Finish</p>
+            <div class="flex items-center gap-1.5">
+              ${karatOptions.map(k => `<button onclick="state.karat='${k}';render()" class="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide transition-all duration-200 ${pillClass(state.karat === k)}">${k}</button>`).join('')}
+            </div>
+          </div>
+          <div class="mb-4">
+            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Diamond Shape</p>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              ${diamondShapes.map(s => {
+                const sel = state.diamondShape === s.id;
+                return `<button onclick="state.diamondShape='${s.id}';render()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 ${pillClass(sel)}">${diamondShapeSvg(s.id, sel)} ${s.label}</button>`;
+              }).join('')}
+            </div>
+          </div>
+          <div class="mb-4">
+            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Diamond Size</p>
+            <div class="flex items-center gap-1.5">
+              ${diamondSizes.map(d => `<button onclick="state.diamondSize='${d}';render()" class="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide transition-all duration-200 ${pillClass(state.diamondSize === d)}">${d}</button>`).join('')}
+            </div>
+          </div>
+          `}
+
+          <button onclick="openCustomisationPopup()" class="group w-full mt-4 flex items-center gap-3 px-3.5 py-3 rounded-2xl active:scale-[0.98] transition-all duration-200" style="background:linear-gradient(135deg,rgba(255,255,255,0.85),rgba(253,232,236,0.75));border:1px solid rgba(185,28,28,0.18);box-shadow:0 8px 22px -14px rgba(153,27,27,0.45), inset 0 1px 0 rgba(255,255,255,0.9)">
+            <span class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background:rgba(185,28,28,0.08);border:1px solid rgba(185,28,28,0.15)">
+              <svg width="18" height="18" viewBox="0 0 48 48" fill="none" stroke="#B91C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 23l-9-9h18z"/><path d="M8 14l9 9-9 9"/><path d="M30 15h8l4 8-4 8h-8l-4-8z" fill="none"/>${sparkSvg(38, 36, 3.5)}${sparkSvg(8, 32, 3)}</svg>
+            </span>
+            <span class="flex flex-col items-start text-left">
+              <span class="text-[12px] font-semibold tracking-wide text-[#2C2C2C]">Personalise this piece</span>
+              <span class="text-[10px] text-[#71717A]">Customise colour, size, purity, cut, carat &amp; more</span>
+            </span>
+            <svg class="ml-auto shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+
+        </div>`;
+      }
+
+      function renderDelivery() {
+        const canCheck = state.pincode.length === 6;
+        const selCountry = DELIVERY_COUNTRIES.find(c=>c.code===state.selectedCountry);
+        return `<div class="px-5 py-5 section-delivery-bg">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-1 h-4 rounded-full shrink-0" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
+            <div class="delivery-heading-anim">
+              <span class="truck-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="24" height="22" rx="2"/><path d="M28 16h9l7 9v5H28z"/><circle cx="14" cy="38" r="5"/><circle cx="37" cy="38" r="5"/>${sparkSvg(39, 10, 4)}${sparkSvg(6, 6, 3)}</svg></span>
+              <span class="truck-text text-[10px] font-bold tracking-[0.18em] uppercase" style="color:#d30b39">Delivery Details</span>
+            </div>
+          </div>
+          <div class="flex items-center rounded-2xl mb-3" style="background:rgba(255,255,255,0.85);border:1px solid rgba(211,11,57,0.15);box-shadow:0 2px 12px rgba(211,11,57,0.06);backdrop-filter:blur(8px);overflow:visible;position:relative;z-index:10">
+            <div class="relative shrink-0">
+              <button onclick="state.countryDropdownOpen=!state.countryDropdownOpen;render()" class="flex items-center gap-1.5 pl-4 pr-3 py-3.5" style="border-right:1px solid rgba(211,11,57,0.12)">
+                <span class="text-lg leading-none">${selCountry.flag}</span>
+                <span class="text-sm font-semibold" style="color:#3c3c3c">${state.selectedCountry}</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform .2s;transform:${state.countryDropdownOpen ? 'rotate(180deg)' : 'rotate(0)'}"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              ${state.countryDropdownOpen ? `<div class="absolute top-full left-0 mt-1 z-50 bg-white rounded-xl shadow-xl overflow-y-auto" style="max-height:240px;min-width:200px;border:1px solid rgba(0,0,0,0.08)">
+                ${DELIVERY_COUNTRIES.map(c => `<button onclick="state.selectedCountry='${c.code}';state.countryDropdownOpen=false;state.pincodeChecked=false;render()" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-left hover:bg-gray-50 transition-colors" style="${state.selectedCountry === c.code ? 'background:rgba(211,11,57,0.04)' : ''}">
+                  <span class="text-base leading-none">${c.flag}</span>
+                  <span class="text-[12px] font-medium text-[#3c3c3c]">${c.name}</span>
+                  <span class="text-[10px] text-gray-400 ml-auto">${c.code}</span>
+                  ${state.selectedCountry === c.code ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+                </button>`).join('')}
+              </div>` : ''}
+            </div>
+            <input type="tel" maxlength="6" value="${state.pincode}" oninput="handlePincodeInput(this)" placeholder="Enter pincode" class="flex-1 px-4 py-3.5 text-sm font-medium outline-none bg-transparent placeholder-gray-400" style="color:#3c3c3c" id="pincodeInput" />
+            <div class="pr-2.5 shrink-0">
+              <button onclick="checkPdpPincode()" class="text-[10px] font-bold whitespace-nowrap rounded-lg transition-all duration-200" style="padding:6px 10px;${canCheck ? 'background:#d30b39;color:#fff;border:none' : 'background:transparent;color:#ccc;border:1px solid #e0e0e0'}">CHECK</button>
+            </div>
+          </div>
+          ${state.pincodeChecked && state.pincodeOk ? `<div class="flex items-center gap-2 mb-4 px-3 py-2.5 rounded-xl bg-green-50" style="border:1px solid rgba(46,125,50,0.2)">
+            <svg width="14" height="14" fill="none" stroke="#2E7D32" stroke-width="2.5" stroke-linecap="round"><path d="M3 7l3.5 3.5L13 4"/></svg>
+            <p class="text-[11px] font-semibold text-green-700">Delivery to <strong>${selCountry.flag} ${selCountry.name}</strong> — Expected by <strong>${state.pincodeDate}</strong></p>
+          </div>` : ''}
+          ${state.pincodeChecked && !state.pincodeOk ? `<div class="flex items-center gap-2 mb-4 px-3 py-2.5 rounded-xl bg-red-50" style="border:1px solid rgba(191,14,35,0.15)">
+            <svg width="14" height="14" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="6"/><line x1="5" y1="5" x2="9" y2="9"/><line x1="9" y1="5" x2="5" y2="9"/></svg>
+            <p class="text-[11px] font-semibold text-primary">Sorry, delivery is not available to <strong>${state.pincode}</strong></p>
+          </div>` : ''}
+          ${!state.pincodeChecked ? `<div class="flex items-start gap-2.5 p-3 rounded-2xl" style="background:rgba(255,255,255,0.6);border:1px solid rgba(211,11,57,0.1)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#d30b39" stroke="none" class="shrink-0 mt-0.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <p class="text-[11px] text-gray-600 leading-relaxed">${product.delivery.estimate}</p>
+          </div>` : ''}
+          <div class="mt-4 grid grid-cols-5 gap-1.5">
+              ${trustBadges.map((b, i) => `<div class="flex flex-col items-center gap-1.5 py-2.5 rounded-xl text-center" style="background:rgba(0,0,0,0.03)"><span class="w-6 h-6 rounded-full flex items-center justify-center trust-anim-${i}" style="background:rgba(211,11,57,0.08)">${b.icon}</span><span class="text-[7px] font-bold leading-tight px-0.5" style="color:#555">${b.label}</span></div>`).join('')}
+          </div>
+        </div>`;
+      }
+
+      function renderBrandImage() {
+        return `<div class="relative w-full overflow-hidden" style="aspect-ratio:2866/1170;max-height:60vh"><img src="assets/Horizontalbanner.png" alt="Beyon brand" class="w-full h-full object-cover block" loading="lazy" /></div>`;
+      }
+
+      function renderRecommendationCard(item) {
+        return `<div class="flex flex-col gap-2">
+          <div class="relative overflow-hidden rounded-2xl" style="aspect-ratio:1/1;background:#fff;border:1px solid #ECEBE8">
+            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" draggable="false" loading="lazy" />
+            <button onclick="toggleWishlist(this)" class="absolute top-2.5 right-2.5 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-transform active:scale-90" aria-label="Wishlist">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+          <div class="px-0.5">
+            <p class="text-[11px] font-medium text-[#1a1a1a] leading-tight truncate">${item.name}</p>
+            <p class="text-[12px] font-bold text-[#3c3c3c] mt-0.5">${formatPrice(item.price)}</p>
+          </div>
+        </div>`;
+      }
+
+      function scrollToStack() {
+        const sections = document.querySelectorAll('.stack-it-section');
+        for (const el of sections) { if (el.offsetParent !== null) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); break; } }
+      }
+
+      function renderStackIt() {
+        return `<div class="stack-it-section w-full py-8 px-4">
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="w-1 h-5 rounded-full" style="background:linear-gradient(to bottom, #f05060, #DE2438)"></div>
+            <h2 class="text-[11px] font-bold tracking-[0.2em] uppercase" style="color:#DE2438">Stack It With Below Products</h2>
+          </div>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-5">${recommendations.map(renderRecommendationCard).join('')}</div>
+        </div>`;
+      }
+
+      function renderFAQ() {
+        const faqs = [
+          { tag: 'IS IT REAL?', q: 'Are laboratory-grown diamonds real?', a: 'Yes. Laboratory‑grown diamonds are pure carbon diamonds with the same brilliance, hardness and structure as mined diamonds—only the origin is different.' },
+          { tag: 'NEXT DAY DELIVERY', q: 'How long does delivery take?', a: 'Orders placed before 12PM from metros are delivered by the next day. Standard delivery for other locations takes 2-7 business days.' },
+          { tag: 'CERTIFICATION', q: 'What is your authenticity certificate?', a: "Authenticity certificate by Titan Company confirms your jewellery's key specs like laboratory-grown diamond details and a unique SKU ID, so you know exactly what you purchased." },
+          { tag: 'BIS/HUID HALLMARK - GOLD', q: 'What does gold hallmark mean?', a: 'Hallmarking verifies gold purity and identification (like BIS/HUID where applicable). It confirms the metal, not the diamond. Laboratory-grown diamond details are covered in the authenticity certificate by Titan Company.' },
+          { tag: 'LGD IS NOT CZ', q: 'Is it the same as CZ?', a: 'No. Cubic zirconia and moissanite are simulants. Laboratory‑grown diamonds are real diamonds made of carbon and test like mined diamonds for hardness and sparkle.' },
+          { tag: 'NO FADING', q: 'Do LGDs fade over time?', a: 'No. Their color and sparkle are intrinsic to the crystal, not a coating. With normal wear and cleaning, they retain brilliance like mined diamonds.' },
+          { tag: 'INCLUSIONS', q: 'Are laboratory-grown diamonds always flawless?', a: 'Not always. Like mined diamonds, laboratory‑grown diamonds can have inclusions from the growth process. Quality details are shared so you know the exact grade.' },
+          { tag: 'GOLD KARAT', q: 'What does 14kt vs 18kt mean?', a: "It's gold purity: 14kt is 58.5% gold, 18kt is 75%. Choose 18kt for richer colour, 14kt for stronger daily wear." },
+          { tag: 'RETURNS & EXCHANGES', q: 'What is the return policy for jewellery?', a: 'Returns are accepted within 7 days for unworn items in their original packaging. Custom and engraved pieces are non-returnable.' }
+        ];
+        return `<div class="lgd-faq-section w-full py-8 px-4">
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="w-1 h-5 rounded-full" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
+            <h2 class="text-[11px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Frequently Asked Questions</h2>
+          </div>
+          <div class="space-y-2">
+            ${faqs.map((f, i) => `<div class="rounded-2xl overflow-hidden" style="border:1px solid rgba(0,0,0,0.06)">
+              <button onclick="toggleFaq(${i}, this)" class="w-full flex items-center justify-between px-4 py-3.5 text-left transition-colors" style="background:rgba(211,11,57,0.02)">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="text-[8px] font-bold tracking-[0.12em] uppercase px-2 py-0.5 rounded-full shrink-0" style="background:rgba(211,11,57,0.08);color:#d30b39">${f.tag}</span>
+                  <span class="text-[11px] font-semibold text-[#2a2a2a] truncate">${f.q}</span>
+                </div>
+                <svg class="shrink-0 ml-2 transition-transform duration-200" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="faq-body hidden px-4 pb-3.5 pt-1" style="background:rgba(211,11,57,0.02)">
+                <p class="text-[11px] text-gray-500 leading-relaxed">${f.a}</p>
+              </div>
+            </div>`).join('')}
+          </div>
+        </div>`;
+      }
+
+      function renderMobileGallery() {
+        return `<div class="relative w-full select-none">
+          <div class="hidden md:flex flex-col gap-2.5 absolute left-4 top-4 z-10">
+            ${product.images.map((img, i) => `<button onclick="state.currentImageIdx=${i};render()" class="w-16 h-16 rounded-2xl overflow-hidden border-2 transition-all duration-200 ${i === state.currentImageIdx ? 'border-[#3c3c3c] scale-105 shadow-md' : 'border-white/80 opacity-55 hover:opacity-80'}"><img src="${img}" alt="" class="w-full h-full object-cover" /></button>`).join('')}
+          </div>
+          <div class="relative overflow-hidden bg-white cursor-zoom-in" style="aspect-ratio:1/1;border:1px solid #ECEBE8" onclick="openLightbox(state.currentImageIdx)" id="mobileGallerySwipe">
+            ${product.images.map((img, i) => `<img src="${img}" alt="Product view ${i+1}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500" style="opacity:${i === state.currentImageIdx ? 1 : 0}" draggable="false" />`).join('')}
+            ${tagVariants[state.currentImageIdx] ? `<div onclick="event.stopPropagation()">${renderTag(tagVariants[state.currentImageIdx])}</div>` : ''}
+            <button onclick="event.stopPropagation();state.currentImageIdx=(state.currentImageIdx-1+product.images.length)%product.images.length;render()" class="hidden md:flex absolute left-24 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full items-center justify-center shadow-lg backdrop-blur-sm active:scale-95" aria-label="Previous"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button onclick="event.stopPropagation();state.currentImageIdx=(state.currentImageIdx+1)%product.images.length;render()" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full items-center justify-center shadow-lg backdrop-blur-sm active:scale-95" aria-label="Next"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+            <button onclick="event.stopPropagation();toggleWishlist(this)" class="absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center active:scale-90" style="background:rgba(255,255,255,0.9);backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.1)" aria-label="Wishlist">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+            <button onclick="event.stopPropagation();scrollToStack()" class="md:hidden absolute bottom-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1.5 rounded-full active:scale-95" style="background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.1);border:1px solid #ECEBE8">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              <span class="text-[9px] font-bold tracking-wider uppercase text-[#3c3c3c]">Stack It</span>
+            </button>
+            <div class="md:hidden absolute bottom-3 left-3 z-10 flex items-center gap-[5px]">
+              ${product.images.map((_, i) => `<button onclick="event.stopPropagation();state.currentImageIdx=${i};render()" class="rounded-full transition-all duration-300" style="width:${i === state.currentImageIdx ? '14px' : '5px'};height:5px;background:${i === state.currentImageIdx ? 'rgba(60,60,60,0.7)' : 'rgba(60,60,60,0.2)'}"></button>`).join('')}
+            </div>
+          </div>
+        </div>`;
+      }
+
+      function renderDesktopGrid() {
+        return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          ${product.images.slice(0, 4).map((img, i) => `<div class="relative overflow-hidden rounded-2xl cursor-zoom-in group" style="aspect-ratio:1/1;background:#fff;border:1px solid #ECEBE8" onclick="openLightbox(${i})">
+            <img src="${img}" alt="Product view ${i+1}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" draggable="false" loading="lazy" />
+            ${tagVariants[i] ? renderTag(tagVariants[i]) : ''}
+            ${i === 1 ? `<button onclick="event.stopPropagation();scrollToStack()" class="absolute bottom-3 left-3 z-10 flex items-center gap-1 px-2.5 py-1.5 rounded-full active:scale-95 hover:scale-105" style="background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.1);border:1px solid #ECEBE8"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><span class="text-[9px] font-bold tracking-wider uppercase text-[#3c3c3c]">Stack It</span></button>` : ''}
+            <div class="absolute bottom-3 right-3 w-8 h-8 bg-white/85 backdrop-blur-sm rounded-full flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+          </div>`).join('')}
+        </div>`;
+      }
+
+      function renderAppBanner() {
+        if (state.appBannerDismissed) return '';
+        return `<div class="lg:hidden app-banner w-full py-1.5 px-3 flex items-center gap-2.5">
+          <button onclick="dismissAppBanner()" class="shrink-0 flex items-center justify-center w-4 h-4 rounded-full" style="background:rgba(0,0,0,0.05)">
+            <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <img src="assets/img/app icon.png" alt="beYon" class="w-7 h-7 rounded-lg shrink-0 object-contain" style="border:1px solid rgba(0,0,0,0.06)" />
+          <div class="flex flex-col min-w-0">
+            <span class="text-[10px] font-bold text-[#1a1a1a] tracking-tight">Get the beYon App</span>
+            <span class="text-[8px] text-gray-400 tracking-wide">Exclusive Coupons & Early Access</span>
+          </div>
+          <button class="ml-auto shrink-0 px-3 py-1 rounded-full text-[8px] font-bold tracking-wider uppercase" style="background:#d30b39;color:#fff">Install</button>
+        </div>`;
+      }
+
+      function renderMobileBottomBar() {
+        return `<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 pt-1" style="background:linear-gradient(to top, rgba(247,247,247,1) 70%, rgba(247,247,247,0))">
+          <div class="md:max-w-[640px] md:mx-auto">
+            ${state.noOffer ? '' : `<div class="flex items-center justify-center gap-1.5 mb-1.5 py-1 px-3 rounded-lg" style="background:rgba(211,11,57,0.12)">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              <span class="text-[10px] font-bold text-[#d30b39] tracking-wide">15% OFF ON MAKING CHARGES</span>
+              <span class="text-[9px] font-semibold text-[#d30b39]" style="opacity:0.75">· You save ${formatPrice(product.mrp - product.price)}</span>
+            </div>`}
+            <button onclick="${state.addedToBag ? '' : 'addToBag()'}" class="w-full flex items-center justify-between px-5 py-2.5 rounded-xl text-white font-bold text-[14px] active:scale-[0.98] transition-transform ${state.addedToBag ? 'btn-go-to-bag' : 'btn-add-to-bag'}" style="box-shadow:${state.addedToBag ? '0 8px 28px rgba(17,178,106,0.38)' : '0 8px 28px rgba(211,11,57,0.38)'}">
+              <span class="flex items-center gap-2">
+                <span>${formatPrice(product.price)}</span>
+                ${state.noOffer ? '' : `<span class="text-[11px] font-medium line-through opacity-50">${formatPrice(product.mrp)}</span>`}
+              </span>
+              <span class="flex items-center gap-1.5">
+                ${state.addedToBag ? 'Go to Bag' : 'Add to Bag'}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              </span>
+            </button>
+          </div>
+        </div>`;
+      }
+
+      function renderDesktopBottomBar() {
+        const logos = '<span class="flex items-center gap-1.5 pl-2 pr-1.5 h-[26px] rounded-full bg-white"><img src="assets/upi_logo_icon_170312.webp" alt="UPI" class="h-[13px] w-auto" /><img src="assets/Visa_Inc.-Logo.wine.png" alt="Visa" class="h-[21px] w-auto -mx-1.5" /><img src="assets/Mastercard_2019_logo.svg.webp" alt="Mastercard" class="h-[13px] w-auto" /></span>';
+        const bag = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>';
+        const btn = 'flex items-center justify-center gap-2 rounded-full h-10 px-6 text-[13px] font-bold active:scale-[0.97] transition-transform whitespace-nowrap';
+        return `<div class="hidden lg:block fixed bottom-4 left-0 right-0 z-50 px-6 pointer-events-none">
+          <div class="mx-auto flex items-center gap-3 rounded-full pointer-events-auto" style="max-width:min(100% - 2rem, 1180px);padding:8px 8px 8px 24px;background:rgba(255,255,255,0.7);backdrop-filter:blur(30px) saturate(1.4);-webkit-backdrop-filter:blur(30px) saturate(1.4);border:1px solid rgba(255,255,255,0.7);box-shadow:0 20px 50px -18px rgba(44,44,44,0.35), inset 0 1px 0 rgba(255,255,255,0.8)">
+            <div class="min-w-0 mr-auto">
+              <p class="text-[11px] text-gray-500 truncate leading-tight">${product.name}</p>
+              <p class="flex items-baseline gap-2 leading-tight"><span class="text-[19px] font-bold text-[#2C2C2C]">${formatPrice(product.price)}</span>${state.noOffer ? '' : `<span class="text-[11px] text-gray-400 line-through">${formatPrice(product.mrp)}</span><span class="text-[9px] font-bold tracking-wide uppercase" style="color:#B91C1C">15% off making</span>`}</p>
+            </div>
+            <button onclick="${state.addedToBag ? '' : 'addToBag()'}" class="${btn} text-white" style="background:${state.addedToBag ? 'linear-gradient(65deg,#11b26a,#1dde88)' : 'linear-gradient(180deg,#3A3A3A,#2C2C2C)'};box-shadow:0 8px 20px -8px rgba(44,44,44,0.6)">${bag}${state.addedToBag ? 'Go to Bag' : 'Add to Bag'}</button>
+            <span class="flex items-center"><button onclick="showPdpToast('Taking you to checkout')" class="${btn} text-white" style="min-width:234px;justify-content:space-between;padding:0 6px 0 24px;gap:14px;letter-spacing:.02em;background:linear-gradient(135deg,#C62828,#991B1B);box-shadow:0 8px 20px -8px rgba(153,27,27,0.7)">Buy Now${logos}</button></span>
+          </div>
+        </div>`;
+      }
+
+      const REVIEWS = [
+        ['Sanjana Sahu', 'October 12, 2025', 'So tbh, for a very long time, I wanted to purchase dainty jewellery from BEYON from my first salary because the pieces felt so personal. The packaging, the sparkle and the certificate made it a day I will never forget.'],
+        ['Drswati Mishra', 'October 12, 2025', 'BEYON, to me, represents timeless elegance with a modern touch. I love jewellery that feels classic yet effortless enough to wear every single day, and this pendant does exactly that.'],
+        ['Blessy Sherline', 'October 12, 2025', 'My husband gifted me my first BEYON jewellery for our wedding anniversary after my second delivery, and I felt so special. The diamonds are brilliant and the finish is flawless.'],
+        ['Priyadarshini', 'October 12, 2025', 'It means an opportunity to return the love I have received. I want to gift my mom a diamond earring, she does not own one. The delivery was quick and the team helped me pick the perfect size.'],
+        ['Neha Gajendra', 'November 12, 2025', 'It means a lot to me. Tata hai toh trust hai. I bought my first gold jewellery from BEYON, and I was also the first in my family to choose a laboratory-grown diamond. Absolutely love it.']
+      ];
+      function renderReviews() {
+        const star = '<svg width="12" height="12" viewBox="0 0 24 24" fill="#C5A575"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>';
+        const quote = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#B91C1C" opacity=".18"><path d="M3 21h7l2-8V3H3v10h4zM14 21h7l2-8V3h-9v10h4z" transform="scale(.9) translate(-1 0)"/></svg>';
+        return `<div class="reviews-section w-full py-8 px-4">
+          <div class="flex items-center gap-2.5 mb-1">
+            <div class="w-1 h-5 rounded-full" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
+            <h2 class="text-[11px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Loved by Thousands</h2>
+            <span class="ml-auto flex items-center gap-1 text-[11px] font-semibold text-[#3c3c3c]">${star}4.9<span class="text-gray-400 font-normal">· 10,000+ reviews</span></span>
+          </div>
+          <p class="text-[11px] text-gray-400 mb-5 pl-[14px]">Real stories from real BEYON lovers</p>
+          <div class="flex gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-5 lg:gap-4 lg:overflow-visible" style="scroll-snap-type:x mandatory;scrollbar-width:none">
+            ${REVIEWS.map(([n, d, t]) => `<div class="shrink-0 lg:shrink flex flex-col rounded-2xl bg-white p-4" style="width:min(260px,75vw);scroll-snap-align:start;border:1px solid #ECEBE8" >
+              <div class="flex items-center justify-between">${quote}<span class="flex gap-0.5">${star.repeat(5)}</span></div>
+              <p class="text-[12px] text-gray-600 leading-relaxed mt-3 flex-1" style="display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden">${t}</p>
+              <button onclick="const p=this.previousElementSibling;const o=p.style.webkitLineClamp==='unset';p.style.webkitLineClamp=o?'4':'unset';this.textContent=o?'Read more':'Show less'" class="mt-2 self-start text-[11px] font-bold" style="color:#d30b39">Read more</button>
+              <div class="flex items-center justify-between mt-3 pt-3" style="border-top:1px solid rgba(0,0,0,0.06)">
+                <div class="min-w-0"><p class="text-[12px] font-bold text-[#1a1a1a] truncate">${n}</p><p class="text-[10px] text-gray-400">${d}</p></div>
+                <span class="text-[8px] font-bold tracking-[0.12em] uppercase px-2 py-0.5 rounded-full shrink-0" style="background:rgba(211,11,57,0.08);color:#d30b39">Verified</span>
+              </div>
+            </div>`).join('')}
+          </div>
+        </div>`;
+      }
+
+      function renderSizeChartModal() {
+        if (!state.sizeChartOpen) return '';
+        const sizes = [
+          ['16 INCHES', '40.6 cm', 'Choker / Collar'],
+          ['18 INCHES', '45.7 cm', 'Princess (most popular)'],
+          ['20 INCHES', '50.8 cm', 'Matinee'],
+          ['22 INCHES', '55.9 cm', 'Opera']
+        ];
+        return `<div class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center" style="background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)" onclick="state.sizeChartOpen=false;render()">
+          <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h3 class="text-sm font-bold text-[#1a1a1a] tracking-wide uppercase">Size Chart</h3>
+              <button onclick="state.sizeChartOpen=false;render()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            <div class="px-6 py-4">
+              <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-3">Chain Length Guide</p>
+              <table class="w-full text-sm">
+                <thead><tr class="border-b border-gray-100"><th class="text-left py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Size</th><th class="text-left py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Length</th><th class="text-left py-2 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Fits</th></tr></thead>
+                <tbody>${sizes.map(([size, len, fit]) => `<tr class="border-b border-gray-50"><td class="py-3 font-semibold text-[#3c3c3c] text-[12px]">${size}</td><td class="py-3 text-gray-500 text-[12px]">${len}</td><td class="py-3 text-gray-500 text-[12px]">${fit}</td></tr>`).join('')}</tbody>
+              </table>
+              <div class="mt-4 p-3 rounded-xl bg-gray-50">
+                <p class="text-[11px] text-gray-500 leading-relaxed">For pendants, <strong>18 inches</strong> (Princess length) is the most popular choice. If you prefer a snug fit at the collarbone, go with <strong>16 inches</strong>.</p>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }
+
+      function renderLightbox() {
+        if (!state.lightboxOpen) return '';
+        const idx = state.lightboxIdx;
+        return `<div class="fixed inset-0 z-[300] flex items-center justify-center" style="background:#000" onclick="closeLightbox()">
+          <div class="relative" style="width:min(100svh, 100svw);height:min(100svh, 100svw)" onclick="event.stopPropagation()" id="lightboxContainer">
+            <img src="${product.images[idx]}" alt="Product view ${idx+1}" class="w-full h-full object-cover select-none" style="animation:lbFadeIn 0.2s ease" draggable="false" />
+            <button class="absolute top-3 right-3 z-20 w-9 h-9 rounded-full flex items-center justify-center" style="background:rgba(0,0,0,0.45);backdrop-filter:blur(8px)" onclick="event.stopPropagation();closeLightbox()" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            <div class="absolute top-3 left-1/2 -translate-x-1/2 z-20"><span class="text-white text-[11px] font-semibold tracking-widest px-3 py-1 rounded-full" style="background:rgba(0,0,0,0.4);backdrop-filter:blur(6px)">${idx + 1} / ${product.images.length}</span></div>
+            <button class="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full flex items-center justify-center active:scale-90" style="background:rgba(0,0,0,0.4);backdrop-filter:blur(6px)" onclick="event.stopPropagation();lightboxPrev()" aria-label="Previous"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button class="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full flex items-center justify-center active:scale-90" style="background:rgba(0,0,0,0.4);backdrop-filter:blur(6px)" onclick="event.stopPropagation();lightboxNext()" aria-label="Next"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5">
+              ${product.images.map((_, i) => `<button onclick="event.stopPropagation();state.lightboxIdx=${i};render()" class="rounded-full transition-all duration-300" style="width:${i === idx ? '20px' : '6px'};height:6px;background:${i === idx ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.35)'}"></button>`).join('')}
+            </div>
+          </div>
+        </div>`;
+      }
+
+      function render() {
+        document.getElementById('root').innerHTML = `
+          <div class="min-h-screen" style="background:#f7f7f7">
+            <div class="lg:hidden">
+              ${renderAppBanner()}
+              <div class="md:max-w-[680px] md:mx-auto">
+                ${renderMobileGallery()}
+                <div class="mt-2 mx-3 sm:mx-4">${renderProductHeader()}</div>
+                <div class="mt-1 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm bg-white">${renderProductInfo()}</div>
+                <div class="mt-3 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderDelivery()}</div>
+                <div class="mt-3 mx-3 sm:mx-4">${renderCoupons()}</div>
+                <div class="mt-3 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderCustomisation()}</div>
+                <div class="mt-3 mx-3 sm:mx-4 space-y-3">${renderExtras(true)}</div>
+                <div class="mt-3 overflow-hidden">${renderBrandImage()}</div>
+                ${renderReviews()}
+                ${renderStackIt()}
+                ${renderFAQ()}
+                <div class="h-28"></div>
+              </div>
+            </div>
+            <div class="hidden lg:block">
+              <div class="mx-auto pt-6" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px);display:grid;grid-template-columns:minmax(0, 1fr) clamp(360px, 30%, 440px);gap:clamp(20px, 2.5vw, 40px)">
+                <div class="pb-8 min-w-0">${renderDesktopGrid()}</div>
+                <div class="sticky self-start space-y-4 pb-24" style="top:73px">
+                  <div>${renderProductHeader()}</div>
+                  <div class="bg-white rounded-3xl shadow-sm overflow-hidden">${renderProductInfo()}</div>
+                  <div>${renderCoupons()}</div>
+                  <div class="rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderDelivery()}</div>
+                  <div class="rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderCustomisation()}</div>
+                  <div class="space-y-3">${renderExtras()}</div>
+                </div>
+              </div>
+              <div class="w-full">${renderBrandImage()}</div>
+              <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderReviews()}</div>
+              <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderStackIt()}</div>
+              <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderFAQ()}</div>
+              <div class="h-24"></div>
+            </div>
+            ${renderMobileBottomBar()}
+            ${renderDesktopBottomBar()}
+            ${renderLightbox()}
+            ${renderSizeChartModal()}
+          </div>`;
+        initSwipe();
+      }
+
+      // Actions
+      function toggleFaq(idx, btn) {
+        const wrapper = btn.parentElement;
+        const body = wrapper.querySelector('.faq-body');
+        const chevron = btn.querySelector('svg');
+        if (body.classList.contains('hidden')) { body.classList.remove('hidden'); chevron.style.transform = 'rotate(180deg)'; }
+        else { body.classList.add('hidden'); chevron.style.transform = ''; }
+      }
+      function switchTab(tab) { state.activeTab = tab; render(); }
+      function dismissAppBanner() { state.appBannerDismissed = true; render(); }
+      function openLightbox(idx) { state.lightboxOpen = true; state.lightboxIdx = idx; document.body.style.overflow = 'hidden'; render(); }
+      function closeLightbox() { state.lightboxOpen = false; document.body.style.overflow = ''; render(); }
+      function lightboxPrev() { state.lightboxIdx = (state.lightboxIdx - 1 + product.images.length) % product.images.length; render(); }
+      function lightboxNext() { state.lightboxIdx = (state.lightboxIdx + 1) % product.images.length; render(); }
+
+      function toggleWishlist(btn) {
+        const svg = btn.querySelector('svg');
+        const isFilled = svg.getAttribute('fill') !== 'none';
+        const wishlisted = !isFilled;
+        svg.setAttribute('fill', wishlisted ? '#d30b39' : 'none');
+        svg.setAttribute('stroke', wishlisted ? '#d30b39' : '#3c3c3c');
+        btn.classList.remove('wishlist-pop'); void btn.offsetWidth; btn.classList.add('wishlist-pop');
+        btn.addEventListener('animationend', () => btn.classList.remove('wishlist-pop'), {once:true});
+        if (wishlisted) spawnHeartParticles(btn);
+      }
+
+      function spawnHeartParticles(btn) {
+        const rect = btn.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        for (let i = 0; i < 6; i++) {
+          const dot = document.createElement('div');
+          const angle = (Math.PI * 2 / 6) * i;
+          const dist = 18 + Math.random() * 10;
+          const dx = Math.cos(angle) * dist;
+          const dy = Math.sin(angle) * dist;
+          Object.assign(dot.style, {
+            position: 'fixed', left: cx + 'px', top: cy + 'px', width: '5px', height: '5px',
+            borderRadius: '50%', background: i % 2 ? '#d30b39' : '#C5A575', zIndex: '99',
+            pointerEvents: 'none'
+          });
+          dot.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${dx}px,${dy}px) scale(0)`,opacity:0}],{duration:450,easing:'ease-out'});
+          document.body.appendChild(dot);
+          setTimeout(() => dot.remove(), 500);
+        }
+      }
+
+      function handlePincodeInput(el) {
+        el.value = el.value.replace(/\D/g, '');
+        state.pincode = el.value;
+        state.pincodeChecked = false;
+        const checkBtn = el.parentElement.querySelector('.pr-2\\.5 button') || el.nextElementSibling?.querySelector('button');
+        const canCheck = state.pincode.length === 6;
+        if (checkBtn) {
+          checkBtn.style.background = canCheck ? '#d30b39' : 'transparent';
+          checkBtn.style.color = canCheck ? '#fff' : '#ccc';
+          checkBtn.style.border = canCheck ? 'none' : '1px solid #e0e0e0';
+        }
+      }
+
+      function checkPdpPincode() {
+        if (state.pincode.length !== 6) return;
+        const entry = PINCODE_DB[state.pincode];
+        if (entry) {
+          state.pincodeChecked = true;
+          state.pincodeOk = entry.ok;
+          state.pincodeDate = entry.date || '';
+        } else {
+          const ok = Math.random() > 0.25;
+          const d = new Date(); d.setDate(d.getDate() + Math.floor(Math.random() * 8) + 3);
+          state.pincodeChecked = true;
+          state.pincodeOk = ok;
+          state.pincodeDate = d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+        }
+        render();
+      }
+
+      async function doShare() {
+        if (navigator.share && window.innerWidth < 1024) {
+          try { await navigator.share({ title: document.title, url: location.href }); } catch {}
+        } else {
+          await navigator.clipboard.writeText(location.href);
+          showPdpToast('Link Copied');
+          state.shared = true; render();
+          setTimeout(() => { state.shared = false; render(); }, 1800);
+        }
+      }
+
+      function addToBag() {
+        if (state.addedToBag) return;
+        state.addedToBag = true;
+        showPdpToast('Added to Bag');
+        render();
+      }
+
+      function showPdpToast(msg) {
+        const t = document.getElementById('pdpToast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2200);
+      }
+
+      // ─── Customisation Request Popup ───
+      const CR_COUNTRY_CODES = [
+        { code: '+91', flag: '🇮🇳', name: 'India' },
+        { code: '+1', flag: '🇺🇸', name: 'USA' },
+        { code: '+44', flag: '🇬🇧', name: 'UK' },
+        { code: '+971', flag: '🇦🇪', name: 'UAE' },
+        { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
+        { code: '+49', flag: '🇩🇪', name: 'Germany' },
+        { code: '+65', flag: '🇸🇬', name: 'Singapore' },
+        { code: '+61', flag: '🇦🇺', name: 'Australia' },
+        { code: '+60', flag: '🇲🇾', name: 'Malaysia' },
+        { code: '+974', flag: '🇶🇦', name: 'Qatar' },
+        { code: '+968', flag: '🇴🇲', name: 'Oman' },
+        { code: '+965', flag: '🇰🇼', name: 'Kuwait' },
+      ];
+
+      function openCustomisationPopup() {
+        document.body.style.overflow = 'hidden';
+        renderCustomisationPopup();
+      }
+
+      function closeCustomisationPopup() {
+        document.body.style.overflow = '';
+        document.getElementById('customisationRequestPopup').innerHTML = '';
+      }
+
+      function renderCustomisationPopup() {
+        const crCountryOpts = CR_COUNTRY_CODES.map(c => '<option value="'+c.code+'">'+c.flag+' '+c.code+'</option>').join('');
+        document.getElementById('customisationRequestPopup').innerHTML = `
+          <div class="cr-overlay" onclick="closeCustomisationPopup()">
+            <div class="cr-modal" onclick="event.stopPropagation()">
+              <div class="flex items-center justify-between mb-6">
+                <div>
+                  <h3 class="text-base font-bold text-[#1a1a1a]">Customisation Request</h3>
+                  <p class="text-xs text-gray-400 mt-0.5">Fill in your details and we'll get back to you in 24hrs</p>
+                </div>
+                <button onclick="closeCustomisationPopup()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+              <form id="customisationForm" onsubmit="submitCustomisationForm(event)" novalidate>
+                <div class="space-y-4">
+                  <div>
+                    <input type="text" id="crName" class="cr-input" placeholder="Full Name *" autocomplete="name" />
+                    <p class="cr-error" id="crErrName">Please enter your full name</p>
+                  </div>
+                  <div>
+                    <input type="email" id="crEmail" class="cr-input" placeholder="Email ID *" autocomplete="email" />
+                    <p class="cr-error" id="crErrEmail">Please enter a valid email</p>
+                  </div>
+                  <div>
+                    <div class="flex gap-2">
+                      <select id="crCountryCode" class="cr-input" style="width:110px;flex-shrink:0;padding-right:8px">
+                        ${crCountryOpts}
+                      </select>
+                      <div class="flex-1">
+                        <input type="tel" id="crPhone" class="cr-input" placeholder="Phone Number *" maxlength="10" autocomplete="tel" />
+                      </div>
+                    </div>
+                    <p class="cr-error" id="crErrPhone">Please enter a valid phone number</p>
+                  </div>
+                  <div>
+                    <input type="text" id="crCity" class="cr-input" placeholder="Enter City *" autocomplete="address-level2" />
+                    <p class="cr-error" id="crErrCity">Please enter your city</p>
+                  </div>
+                  <div>
+                    <textarea id="crType" class="cr-input" rows="3" placeholder="Type your request e.g: Need 18KT, Rose gold, 16.44mm, princess cut 0.55 carat in same design"></textarea>
+                  </div>
+                </div>
+                <button type="submit" class="w-full mt-6 py-3.5 rounded-xl text-white font-bold text-sm btn-customisation-request active:scale-[0.98] transition-transform" style="box-shadow:0 4px 16px rgba(44,44,44,0.2)">
+                  Submit Request
+                </button>
+              </form>
+              <p class="text-[10px] text-gray-400 text-center mt-4 leading-relaxed">By submitting, you agree to be contacted regarding this customisation request.</p>
+            </div>
+          </div>`;
+      }
+
+      function submitCustomisationForm(e) {
+        e.preventDefault();
+        let valid = true;
+        const name = document.getElementById('crName').value.trim();
+        const email = document.getElementById('crEmail').value.trim();
+        const phone = document.getElementById('crPhone').value.trim();
+        const city = document.getElementById('crCity').value.trim();
+
+        document.querySelectorAll('.cr-input').forEach(el => el.classList.remove('error'));
+        document.querySelectorAll('.cr-error').forEach(el => el.classList.remove('show'));
+
+        if (!name) { document.getElementById('crName').classList.add('error'); document.getElementById('crErrName').classList.add('show'); valid = false; }
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('crEmail').classList.add('error'); document.getElementById('crErrEmail').classList.add('show'); valid = false; }
+        if (!phone || !/^\d{7,10}$/.test(phone)) { document.getElementById('crPhone').classList.add('error'); document.getElementById('crErrPhone').classList.add('show'); valid = false; }
+        if (!city) { document.getElementById('crCity').classList.add('error'); document.getElementById('crErrCity').classList.add('show'); valid = false; }
+
+        if (!valid) return;
+
+        closeCustomisationPopup();
+        showPdpToast('Customisation request submitted successfully!');
+      }
+
+
+      // ─── Gold exchange, store availability, size guides ───
+      const sheet = () => document.getElementById('sheetRoot');
+      function closeSheet() { sheet().innerHTML = ''; document.body.style.overflow = ''; }
+      function openSheet(inner) {
+        document.body.style.overflow = 'hidden';
+        sheet().innerHTML = `<div class="cr-overlay" onclick="closeSheet()"><div class="cr-modal" style="max-width:480px" onclick="event.stopPropagation()">${inner}</div></div>`;
+      }
+      const closeBtn = '<button onclick="closeSheet()" aria-label="Close" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+      const sheetHead = (t, sub) => `<div class="flex items-start justify-between mb-5"><div><h3 class="text-base font-bold text-[#1a1a1a]">${t}</h3><p class="text-xs text-gray-400 mt-0.5">${sub}</p></div>${closeBtn}</div>`;
+
+      function renderExtras(reverse) {
+        const gold = `<div class="rounded-3xl p-4 section-gold-bg" style="border:1px solid rgba(184,134,11,0.18)">
+            <div class="flex items-center gap-2 mb-2"><svg width="20" height="20" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><polygon points="13,6 21,16 13,26 5,16"/><polygon points="28,18 42,18 42,30 28,30"/><path d="M18 12a16 16 0 0 1 16-3"/><path d="M14 8l4 1-1 4"/><path d="M30 36a16 16 0 0 1-16 3"/><path d="M34 40l-4-1 1-4"/>${sparkSvg(39, 8, 3.5)}${sparkSvg(6, 36, 3)}</svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Gold Exchange</span></div>
+            <p class="text-[11px] text-gray-500 leading-relaxed">Get value on your old gold jewellery · <strong class="text-[#8a6e3a]">${formatPrice(goldRate(22))}/gm (22Kt)</strong></p>
+            <button onclick="openExchange()" class="w-full mt-3 py-2.5 rounded-xl text-[11px] font-bold tracking-wide cta-customise active:scale-[0.98] transition-transform" style="color:#8a6e3a">Check Exchange Value</button>
+          </div>`;
+        const store = `<div class="rounded-3xl p-4 section-delivery-bg" style="border:1px solid rgba(211,11,57,0.12)">
+            <div class="flex items-center gap-2 mb-2"><svg width="20" height="20" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M24 4C15 4 9 11 9 19c0 12 15 25 15 25s15-13 15-25c0-8-6-15-15-15z"/><circle cx="24" cy="19" r="6"/>${sparkSvg(38, 8, 3.5)}${sparkSvg(8, 36, 3)}</svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Store Availability</span></div>
+            <p class="text-[11px] text-gray-500 leading-relaxed">See if this piece is available at a store near you.</p>
+            <button onclick="openStores()" class="w-full mt-3 py-2.5 rounded-xl text-white text-[11px] font-bold tracking-wide btn-add-to-bag active:scale-[0.98] transition-transform">Check Store Availability</button>
+          </div>`;
+        return reverse ? store + gold : gold + store;
+      }
+
+      const goldRate = k => Math.round(13991 * k / 24);
+      const exState = { k: 22, w: '' };
+      function openExchange() { renderExchange(); }
+      function renderExchange(result) {
+        openSheet(`${sheetHead('Gold Exchange Calculator', 'Calculate the exchange value of your old gold jewellery.')}
+          <p class="text-[9px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Karatage</p>
+          <div class="flex flex-wrap gap-1.5">${[9,14,18,22,24].map(k => `<button onclick="exState.k=${k};renderExchange()" class="px-3.5 py-1.5 rounded-full text-[10px] font-semibold ${pillClass(exState.k === k)}">${k} KT</button>`).join('')}</div>
+          <p class="text-[11px] mt-2" style="color:#8a6e3a">Today's ${exState.k} KT rate: ${formatPrice(goldRate(exState.k))}/gm</p>
+          <p class="text-[9px] font-bold tracking-[0.14em] uppercase mt-4 mb-2" style="color:#b8a080">Weight (grams)</p>
+          <div class="flex items-center gap-2">
+            <button onclick="stepWeight(-0.5)" aria-label="Decrease" class="w-9 h-9 rounded-full bg-gray-100 font-bold">-</button>
+            <input id="exW" type="number" min="0" step="0.1" inputmode="decimal" value="${exState.w}" placeholder="Type here" oninput="exState.w=this.value" class="cr-input" style="text-align:center" />
+            <button onclick="stepWeight(0.5)" aria-label="Increase" class="w-9 h-9 rounded-full bg-gray-100 font-bold">+</button>
+          </div>
+          ${result ? `<div class="mt-4 p-3 rounded-xl text-center" style="background:rgba(211,11,57,0.05);border:1px solid rgba(211,11,57,0.12)"><p class="text-[10px] text-gray-500">Estimated exchange value</p><p class="text-xl font-bold" style="color:#d30b39">${result}</p><p class="text-[9px] text-gray-400 mt-1">Indicative. Final value after purity check at store.</p></div>` : ''}
+          <button onclick="calcExchange()" class="w-full mt-5 py-3.5 rounded-xl text-white font-bold text-sm btn-add-to-bag active:scale-[0.98] transition-transform">Calculate Exchange Value</button>`);
+      }
+      function stepWeight(d) { exState.w = Math.max(0, (parseFloat(exState.w) || 0) + d).toFixed(1); renderExchange(); }
+      function calcExchange() {
+        const w = parseFloat(exState.w);
+        renderExchange(w > 0 ? formatPrice(Math.round(w * goldRate(exState.k))) : 'Enter a valid weight');
+      }
+
+      const STORES = [
+        { n: 'BEYON · Indiranagar', d: '2.4 km', s: 'In stock · try on today' },
+        { n: 'BEYON · Koramangala', d: '5.1 km', s: 'In stock · try on today' },
+        { n: 'BEYON · Phoenix Marketcity', d: '11.8 km', s: 'Available in 2 days' }
+      ];
+      function openStores(res) {
+        openSheet(`${sheetHead('Store Availability', 'Check if ' + product.name + ' is at a store near you.')}
+          <div class="flex gap-2"><input id="stPin" type="tel" maxlength="6" placeholder="Enter pincode" class="cr-input" oninput="this.value=this.value.replace(/\\D/g,'')" /><button onclick="checkStores()" class="px-5 rounded-xl text-white text-xs font-bold btn-add-to-bag">CHECK</button></div>
+          <p class="cr-error ${res === 'bad' ? 'show' : ''}">Enter a valid 6-digit pincode</p>
+          ${res === 'ok' ? `<div class="mt-4 space-y-2">${STORES.map(t => `<div class="flex items-center justify-between p-3 rounded-xl" style="background:#fdf5f6;border:1px solid rgba(211,11,57,0.1)"><div><p class="text-[12px] font-semibold text-[#2a2a2a]">${t.n}</p><p class="text-[10px] text-green-700 mt-0.5">${t.s}</p></div><span class="text-[11px] text-gray-400">${t.d}</span></div>`).join('')}</div>` : ''}`);
+      }
+      function checkStores() { openStores(/^\d{6}$/.test(document.getElementById('stPin').value) ? 'ok' : 'bad'); }
+
+      const GUIDES = {
+        ring: { t: 'Ring Size', sub: 'Inner diameter by ring stick (mm)', head: ['Inner Dia', 'Circumference', 'Category'],
+          rows: [[12.4,39,'K'],[12.8,40,'K'],[13.2,41,'K'],[13.6,43,'L'],[14,44,'L'],[14.4,45,'L'],[14.8,47,'L'],[15.2,48,'L'],[15.6,49,'L'],[16,50,'L'],[16.4,52,'L'],[16.8,53,'L'],[17.2,54,'L'],[17.6,55,'L'],[18,57,'U'],[18.4,58,'U'],[18.8,59,'G'],[19.1,60,'G'],[19.5,61,'G'],[19.9,63,'G'],[20.3,64,'G'],[20.7,65,'G'],[21.1,66,'G'],[21.5,68,'G'],[21.9,69,'G']] },
+        bangle: { t: 'Round Bangle Size', sub: 'Measure the inner diameter of a bangle you own.', head: ['Size (Anna)', 'Circumference (mm)', 'Diameter (mm)', 'Titan Code'],
+          rows: [['2-0',159.59,50.8,'N'],['2-1',164.62,52.4,'O'],['2-2',169.4,54,'P'],['2-3',174.67,55.6,'P'],['2-4',179.6,57.2,'Q'],['2-5',184.41,58.7,'Q'],['2-6',189.5,60.3,'R'],['2-7',194.46,61.9,'S'],['2-8',199.4,63.5,'S'],['2-9',204.52,65.1,'T'],['2-10',209.3,66.7,'U'],['2-11',214.57,68.3,'U'],['2-12',219.5,69.87,'V'],['3',239.3,76.17,'X']] },
+        bracelet: { t: 'Bracelet Length', sub: 'In CM', head: ['Length (CM)', 'Category'],
+          rows: Array.from({ length: 25 }, (_, i) => { const l = 12 + i / 2; return [l, l <= 15 ? 'K' : l < 20 ? 'L' : 'G']; }) },
+        chain: { t: 'Chain Size', sub: 'Length in inches & CM', head: ['In Inches', 'In CM'],
+          rows: [38,41,44,46,49,51,54,56,59,61,64,66,69,72,74,77,80,82,84,87,90,92,95].map((c, i) => [15 + i, c]) }
+      };
+      const CAT = { L: 'Ladies', G: 'Gents', K: 'Kids', U: 'Unisex' };
+      function openGuide(type) {
+        const g = GUIDES[type];
+        const cell = (v, i, r) => type !== 'bangle' && i === r.length - 1 && CAT[v] ? `<span class="cat cat-${v}">${CAT[v]}</span>` : v;
+        openSheet(`${sheetHead(g.t, g.sub)}<div class="sheet-scroll"><table class="size-table"><thead><tr>${g.head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${g.rows.map(r => `<tr>${r.map((v, i) => `<td class="${i ? '' : 'font-semibold'}">${cell(v, i, r)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`);
+      }
+
+
+      // ─── Coupons ───
+      const COUPONS = [
+        { tag: 'BEYON 500', title: 'Flat ₹500/- Off', sub: 'Applicable for your first purchase', code: 'BEYON500', terms: 'Valid on your first order above ₹10,000.' },
+        { tag: 'ANNIVERSARY', title: 'Flat ₹1,000/- Off', sub: 'On orders above ₹25,000', code: 'LOVE1000', terms: 'Valid till month end on diamond jewellery.' },
+        { tag: 'MAKING CHARGES', title: '15% Off Making', sub: 'On select gold and diamond pieces', code: 'MAKE15', terms: 'Not combinable with other making-charge offers.' }
+      ];
+      let cpIdx = 0;
+      function setCoupon(i) {
+        cpIdx = (i + COUPONS.length) % COUPONS.length;
+        document.querySelectorAll('.cp-slide').forEach(el => el.classList.toggle('on', +el.dataset.i === cpIdx));
+        document.querySelectorAll('.cp-dot').forEach(el => { const on = +el.dataset.i === cpIdx; el.style.width = on ? '16px' : '5px'; el.style.background = on ? '#fff' : 'rgba(255,255,255,0.45)'; });
+      }
+      let cpTimer;
+      function cpAuto() { clearInterval(cpTimer); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) cpTimer = setInterval(() => setCoupon(cpIdx + 1), 4500); }
+      function renderCoupons() {
+        const copyIcon = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>';
+        const dots = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1.5' cy='1.5' r='1.5' fill='%23B8956A' opacity='.16'/%3E%3C/svg%3E";
+        const arrow = (dir, p) => `<button onclick="setCoupon(cpIdx+${dir});cpAuto()" aria-label="${dir < 0 ? 'Previous' : 'Next'} coupon" class="w-6 h-6 rounded-full flex items-center justify-center active:scale-90 transition-transform" style="background:#fff;border:1px solid rgba(197,165,117,.35)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="${p}"/></svg></button>`;
+        return `<div class="cp-section relative overflow-hidden rounded-2xl" onmouseenter="clearInterval(cpTimer)" onmouseleave="cpAuto()" style="background:#FFFDF9 url('${dots}');border:1px solid rgba(197,165,117,.35);box-shadow:0 10px 26px -18px rgba(185,28,28,0.3), inset 0 1px 0 #fff">
+          <span class="absolute left-0 top-0 bottom-0 w-1" style="background:linear-gradient(to bottom,#C5A575,#B91C1C)"></span>
+          <div class="absolute top-3 right-3.5 z-10 flex gap-1.5">${arrow(-1, '15 18 9 12 15 6')}${arrow(1, '9 18 15 12 9 6')}</div>
+          <div class="relative grid pl-5 pr-4 pt-3.5 pb-3">
+            ${COUPONS.map((c, i) => `<div class="cp-slide ${i === cpIdx ? 'on' : ''}" data-i="${i}" style="grid-area:1/1;padding-right:60px">
+              <p class="flex items-center gap-1.5 uppercase text-[9px] font-bold tracking-[0.22em]" style="color:#B91C1C"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/></svg>${c.tag}</p>
+              <p class="text-[28px] leading-tight -mt-0.5" style="font-family:'Oooh Baby',cursive;color:#B91C1C">${c.title}</p>
+              <div class="flex items-center gap-2.5 mt-1">
+                <p class="text-[10.5px] text-gray-500 leading-tight flex-1 min-w-0">${c.sub}</p>
+                <span class="shrink-0 self-stretch" style="width:0;border-left:1.5px dashed rgba(197,165,117,.5)"></span>
+                <button onclick="copyCoupon('${c.code}')" aria-label="Copy code ${c.code}" class="flex items-center gap-1 px-2.5 h-6 rounded-full text-[10px] font-bold tracking-wide active:scale-95 transition-transform shrink-0" style="color:#8A6D45;background:linear-gradient(135deg,#fff,#fdf8ee);border:1px dashed #C5A575">${c.code}${copyIcon}</button>
+              </div>
+            </div>`).join('')}
+          </div>
+          <div class="relative flex items-center justify-center pb-2.5 -mt-0.5">
+            <span class="flex gap-1">${COUPONS.map((_, i) => `<button onclick="setCoupon(${i});cpAuto()" aria-label="Coupon ${i + 1}" data-i="${i}" class="cp-dot h-[5px] rounded-full transition-all duration-300" style="width:${i === cpIdx ? 16 : 5}px;background:${i === cpIdx ? '#B91C1C' : 'rgba(197,165,117,.35)'}"></button>`).join('')}</span>
+          </div>
+        </div>`;
+      }
+      function copyCoupon(code) { navigator.clipboard?.writeText(code); showPdpToast('Code ' + code + ' copied'); }
+
+      // Swipe handling (gallery + lightbox unified)
+      let swipeStartX = 0, swipeStartY = 0, swipeTarget = null;
+
+      function initSwipe() {
+        const el = document.getElementById('mobileGallerySwipe');
+        if (!el || el._swipe) return;
+        el._swipe = true;
+        el.addEventListener('touchstart', e => { swipeStartX = e.touches[0].clientX; swipeTarget = 'gallery'; }, { passive: true });
+        el.addEventListener('touchend', e => {
+          if (swipeTarget !== 'gallery') return;
+          const dx = e.changedTouches[0].clientX - swipeStartX;
+          if (Math.abs(dx) > 40) {
+            state.currentImageIdx = (state.currentImageIdx + (dx > 0 ? -1 : 1) + product.images.length) % product.images.length;
+            render();
+          }
+        });
+      }
+
+      document.addEventListener('click', e => {
+        if (state.countryDropdownOpen && !e.target.closest('.relative.shrink-0')) {
+          state.countryDropdownOpen = false;
+          render();
+        }
+      });
+
+      document.addEventListener('touchstart', e => {
+        if (!state.lightboxOpen) return;
+        swipeStartX = e.touches[0].clientX;
+        swipeStartY = e.touches[0].clientY;
+        swipeTarget = 'lightbox';
+      }, { passive: true });
+
+      document.addEventListener('touchend', e => {
+        if (swipeTarget !== 'lightbox') return;
+        const dx = e.changedTouches[0].clientX - swipeStartX;
+        const dy = e.changedTouches[0].clientY - swipeStartY;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+          dx > 0 ? lightboxPrev() : lightboxNext();
+        }
+        swipeTarget = null;
+      });
+
+      window.addEventListener('keydown', e => {
+        if (!state.lightboxOpen) return;
+        if (e.key === 'ArrowLeft') lightboxPrev();
+        else if (e.key === 'ArrowRight') lightboxNext();
+        else if (e.key === 'Escape') closeLightbox();
+      });
+
+      render();
+      cpAuto();
+    </script>
+    <script src="shared/edge-cases.js"></script>
+    <script>
+      EdgeCases.init({
+        reset: () => { closeSheet(); state.pincode = ''; state.pincodeChecked = false; state.noOffer = false; if (state.noCustomise) state.noCustomise = false; render(); },
+        cases: [
+          { id: 'default', group: 'PDP', label: 'In stock (default)', desc: 'Standard PDP.', run: () => {} },
+          { id: 'oos', group: 'PDP', label: 'Out of stock', desc: 'No price / Add to Bag; Request Design instead.', run: () => location.href = 'oos.html' },
+          { id: 'nocustom', group: 'PDP', label: 'No customisation', desc: 'Customise card shows only size, size chart, gross weight and the Personalise CTA.', run: () => { state.noCustomise = true; render(); } },
+          { id: 'ring', group: 'Size guides', label: 'Ring size', desc: 'Ring size chart popup.', run: () => openGuide('ring') },
+          { id: 'bangle', group: 'Size guides', label: 'Bangle size', desc: 'Bangle size chart popup.', run: () => openGuide('bangle') },
+          { id: 'bracelet', group: 'Size guides', label: 'Bracelet size', desc: 'Bracelet length popup.', run: () => openGuide('bracelet') },
+          { id: 'chain', group: 'Size guides', label: 'Chain size', desc: 'Chain length popup.', run: () => openGuide('chain') },
+          { id: 'exchange', group: 'Features', label: 'Gold exchange calculator', desc: 'Exchange value popup.', run: () => openExchange() },
+          { id: 'stores', group: 'Features', label: 'Store availability', desc: 'Pincode store check popup.', run: () => openStores() },
+          { id: 'pin-ok', group: 'Delivery check', label: 'Delivery check success', desc: 'Pincode entered, deliverable with an ETA.', run: () => { state.pincode = '560001'; state.pincodeChecked = true; state.pincodeOk = true; state.pincodeDate = '28 Jun'; render(); } },
+          { id: 'pin-fail', group: 'Delivery check', label: 'Delivery check error', desc: 'Pincode entered, not deliverable.', run: () => { state.pincode = '500001'; state.pincodeChecked = true; state.pincodeOk = false; render(); } },
+          { id: 'nooffer', group: 'PDP', label: 'No offer', desc: 'Removes the strikethrough MRP and the 15% off making-charges badge.', run: () => { state.noOffer = true; render(); } }
+        ]
+      });
+    </script>
+  </body>
+</html>

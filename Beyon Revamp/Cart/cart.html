@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BAG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oooh+Baby&family=Didact+Gothic&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/geom.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#BF0E23', 'primary-dark': '#9B0B1C',
+            dark: '#2C2C2C', 'warm-grey': '#B0ABAB',
+            cream: '#EFEAE3', gold: '#C5A575', 'soft-grey': '#F6F6F6',
+          },
+          fontFamily: { sans: ['Geom', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="shared/edge-cases.css" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Geom',sans-serif;background:#EFEAE3;color:#2C2C2C;-webkit-font-smoothing:antialiased}
+    h1,h2,h3{font-family:'Oooh Baby',cursive}
+    .uppercase{font-family:'Didact Gothic',sans-serif}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#D5D5D5;border-radius:10px}
+
+    .overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+    .overlay.active{opacity:1;pointer-events:auto}
+    .drawer{position:fixed;z-index:50;background:#fff;overflow-y:auto;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .35s}
+    @media(max-width:767px){.drawer{bottom:0;left:0;right:0;border-radius:28px 28px 0 0;transform:translateY(100%);max-height:90vh}.drawer.open{transform:translateY(0)}}
+    @media(min-width:768px){.drawer{top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);border-radius:28px;width:500px;max-height:82vh;opacity:0;pointer-events:none;box-shadow:0 32px 80px rgba(0,0,0,.2)}.drawer.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto}}
+
+    .toast{position:fixed;top:28px;left:50%;transform:translateX(-50%) translateY(-160%);z-index:100;padding:14px 28px;border-radius:16px;font-weight:500;font-size:14px;box-shadow:0 12px 40px rgba(0,0,0,.12);transition:transform .45s cubic-bezier(.4,0,.2,1);white-space:nowrap;backdrop-filter:blur(8px)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.success{background:rgba(232,245,233,.95);color:#2E7D32}.toast.error{background:rgba(255,240,240,.95);color:#BF0E23}
+    .banner-dot{width:5px;height:5px;border-radius:999px;background:rgba(255,255,255,.4);transition:all .25s ease}
+    .banner-dot.on{width:14px;background:#fff}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes slideInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes confetti-fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(20px) rotate(360deg);opacity:0}}
+    @keyframes badgeTicker{0%{transform:translate(0)}to{transform:translate(-50%)}}
+    .badge-ticker-track{align-items:center;width:max-content;animation:27s linear infinite badgeTicker;display:flex}
+    .badge-ticker-track:hover{animation-play-state:paused}
+    .anim{animation:fadeUp .5s ease forwards;opacity:0}
+    .anim-slide{animation:slideInRight .5s ease forwards;opacity:0}
+    .anim-scale{animation:scaleIn .4s ease forwards;opacity:0}
+    .float{animation:float 3s ease-in-out infinite}
+
+    /* ── HEADER ── */
+    .header-bar{
+      background:#ffffff;
+      border-bottom:1px solid rgba(197,165,117,.15);
+      position:sticky;top:0;z-index:30;
+    }
+    .header-bar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(197,165,117,.3),transparent)}
+    .brand-text{
+      background:linear-gradient(135deg,#2C2C2C,#555,#2C2C2C);background-size:200% 200%;
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      animation:gradient-shift 4s ease infinite;
+    }
+    .header-icon{
+      width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+      border:1.5px solid rgba(197,165,117,.2);transition:all .3s;cursor:pointer;
+    }
+    .header-icon:hover{border-color:#BF0E23;background:rgba(191,14,35,.04);transform:scale(1.05)}
+    .header-icon svg{transition:all .3s}
+    .header-icon:hover svg{stroke:#BF0E23}
+
+    .card{background:#fff;border:1px solid #E5DDD3;border-radius:16px;transition:all .3s ease;box-shadow:0 2px 8px rgba(197,165,117,.06)}
+    .card:hover{box-shadow:0 8px 32px rgba(197,165,117,.12);transform:translateY(-1px)}
+
+    /* ── METALLIC CTAs ── */
+    .btn-cta{
+      background:linear-gradient(135deg,#BF0E23 0%,#D4162E 40%,#E8334A 60%,#BF0E23 100%);
+      background-size:200% 200%;animation:gradient-shift 3s ease infinite;
+      color:#fff;font-weight:700;border:none;cursor:pointer;border-radius:16px;
+      transition:all .3s;letter-spacing:1px;
+      box-shadow:0 4px 20px rgba(191,14,35,.3),inset 0 1px 0 rgba(255,255,255,.2),0 0 0 1px rgba(191,14,35,.1);
+      position:relative;overflow:hidden;
+    }
+    .btn-cta::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .6s}
+    .btn-cta:hover::before{left:100%}
+    .btn-cta:hover{box-shadow:0 8px 32px rgba(191,14,35,.4),0 0 0 1px rgba(191,14,35,.2);transform:translateY(-2px)}
+    .btn-cta:active{transform:scale(.97) translateY(0)}
+
+    .btn-metallic{
+      background:linear-gradient(135deg,#C5A575 0%,#DCC9A8 30%,#E8D8BE 50%,#C5A575 70%,#A88D60 100%);
+      background-size:200% 200%;animation:gradient-shift 4s ease infinite;
+      color:#fff;font-weight:600;border:none;cursor:pointer;border-radius:14px;
+      transition:all .3s;letter-spacing:.5px;
+      box-shadow:0 4px 16px rgba(197,165,117,.3),inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1px rgba(197,165,117,.2);
+      text-shadow:0 1px 2px rgba(0,0,0,.15);position:relative;overflow:hidden;
+    }
+    .btn-metallic::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transition:left .5s}
+    .btn-metallic:hover::before{left:100%}
+    .btn-metallic:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(197,165,117,.4)}
+
+    .btn-outline-metal{
+      border:2px solid transparent;border-radius:14px;
+      background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#C5A575,#E8D8BE,#C5A575) border-box;
+      color:#2C2C2C;font-weight:600;cursor:pointer;transition:all .3s;
+    }
+    .btn-outline-metal:hover{background:linear-gradient(#FFFBF5,#FFFBF5) padding-box,linear-gradient(135deg,#BF0E23,#E8334A,#BF0E23) border-box;transform:translateY(-1px)}
+
+    /* ── METAL BADGES ── */
+    .metal-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:600;letter-spacing:.3px;position:relative;overflow:hidden}
+    .metal-badge::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:shimmer 3s infinite}
+    .metal-rose{background:linear-gradient(135deg,#E8B4B8,#F5D0D3,#DDA0A6);color:#8B4049;border:1px solid rgba(232,180,184,.5)}
+    .metal-white{background:linear-gradient(135deg,#E8E8E8,#F8F8F8,#D8D8D8);color:#555;border:1px solid rgba(200,200,200,.5)}
+    .metal-yellow{background:linear-gradient(135deg,#D4A84B,#F0D080,#C9952C);color:#6B4E0A;border:1px solid rgba(212,168,75,.5)}
+    .metal-platinum{background:linear-gradient(135deg,#C0C0C0,#E8E8E8,#A0A0A0);color:#444;border:1px solid rgba(180,180,180,.5)}
+    .metal-silver{background:linear-gradient(135deg,#D8D8D8,#F0F0F0,#C4C4C4);color:#4a4a4a;border:1px solid rgba(196,196,196,.5)}
+
+    .product-img{border-radius:18px;overflow:hidden;position:relative;background:#f5f0eb}
+    .product-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+    .product-img:hover img{transform:scale(1.08)}
+
+    /* ── COUPON SECTION ── */
+    .coupon-card{
+      position:relative;overflow:hidden;
+      background:#fff;border:1px solid #E5DDD3;border-radius:16px;
+      animation:fadeUp .5s ease forwards;opacity:0;
+      transition:all .3s;box-shadow:0 2px 8px rgba(197,165,117,.06);
+    }
+    .coupon-card:hover{box-shadow:0 8px 32px rgba(197,165,117,.12);transform:translateY(-1px)}
+    .coupon-chip{display:inline-flex;align-items:center;padding:5px 12px;border-radius:8px;background:#F8F5F0;font-size:12px;font-weight:700;letter-spacing:1.5px;color:#2C2C2C;font-family:'Outfit',monospace}
+    .coupon-available{transition:all .25s ease;border:1px solid #E5DDD3;border-radius:16px;background:#fff}
+    .coupon-available:hover{border-color:#D5CABC;box-shadow:0 4px 16px rgba(197,165,117,.1)}
+
+    .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99;overflow:hidden}
+    .confetti-piece{position:absolute;width:10px;height:10px;top:-10px;border-radius:2px}
+
+    input:focus,select:focus{outline:none;border-color:#C5A575 !important;box-shadow:0 0 0 3px rgba(197,165,117,.12)}
+    .input-field{width:100%;padding:12px 16px;border:1.5px solid #E0D8CE;border-radius:14px;font-size:14px;font-family:inherit;color:#2C2C2C;transition:all .3s;background:#fff}
+    .input-field::placeholder{color:#B0ABAB}
+    .country-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' fill='none' stroke='%23B0ABAB' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
+
+    .sticky-cta{box-shadow:0 -6px 32px rgba(197,165,117,.12)}
+    .cart-item{transition:all .45s cubic-bezier(.4,0,.2,1);overflow:hidden}
+    .cart-item.removing{opacity:0;transform:translateX(60px) scale(.95);max-height:0 !important;padding:0 !important;margin:0 !important;border:none !important}
+
+    /* ── MOBILE: reduce all fonts by 2px ── */
+    @media(max-width:767px){
+      body{font-size:12px}
+      h1,h2,h3,.text-lg{font-size:14px !important}
+      .text-base{font-size:13px !important}
+      .text-sm{font-size:11px !important}
+      .text-xs{font-size:10px !important}
+      .text-\[11px\]{font-size:9px !important}
+      .text-\[10px\]{font-size:8px !important}
+      .text-\[9px\]{font-size:8px !important}
+      p.text-lg.sm\:text-xl{font-size:15px !important}
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-20 lg:pb-0">
+
+  <div id="toast" class="toast" style="display:none"></div>
+  <div id="confettiContainer" class="confetti-container"></div>
+
+  <!-- ═══ PREMIUM HEADER ═══ -->
+  <nav class="header-bar backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative">
+      <!-- Back + Logo -->
+      <div class="flex items-center gap-2.5 z-10">
+        <button onclick="history.back()" class="header-icon" title="Go Back">
+          <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9H4M8 5l-4 4 4 4"/></svg>
+        </button>
+        <img src="BEYON LOGO BREAKFREE RED.png" alt="Beyon" class="h-[52px] sm:h-[63px] object-contain" />
+      </div>
+      <!-- Title (truly centered) -->
+      <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div class="flex items-center gap-3 pointer-events-auto">
+          <div class="relative">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/><path d="M20 1.8L20.66 3.34L22.2 4L20.66 4.66L20 6.2L19.34 4.66L17.8 4L19.34 3.34Z" fill="#BF0E23" stroke="none"/>
+            </svg>
+            <span class="absolute -top-1 -right-1.5 w-4 h-4 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center" id="headerCount">3</span>
+          </div>
+          <h1 class="text-lg font-bold tracking-[.2em] brand-text">MY BAG</h1>
+        </div>
+      </div>
+      <!-- Wishlist -->
+      <div class="header-icon z-10" title="Wishlist">
+        <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 lg:pt-3 pb-6 lg:pb-10">
+    <div class="lg:grid lg:grid-cols-5 lg:gap-8">
+      <!-- LEFT -->
+      <div class="lg:col-span-3 space-y-4">
+
+        <!-- ═══ PROMO BANNER ═══ -->
+        <div class="relative overflow-hidden rounded-2xl w-full anim" style="height:85px;background:linear-gradient(120deg,#2C2C2C 0%,#1a1a1a 60%,#2C2C2C 100%)">
+          <img src="product 1.webp" alt="" class="absolute right-0 top-0 h-full w-auto object-cover opacity-80" style="mask-image:linear-gradient(to left, black 50%, transparent 100%)" />
+          <div id="bannerContent" class="relative h-full flex flex-col justify-center px-6 sm:px-10"></div>
+          <div id="bannerDots" class="absolute bottom-2 right-3 z-10 flex items-center gap-1 px-1.5 py-1 rounded-full" style="background:rgba(0,0,0,.45)"></div>
+        </div>
+
+        <!-- ═══ PINCODE CHECKER ═══ -->
+        <div class="card p-4 sm:p-5 anim" id="pincodeSection">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center flex-shrink-0">
+              <!-- Lightning bolt icon - speed -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10"/><path d="M20 1.8L20.66 3.34L22.2 4L20.66 4.66L20 6.2L19.34 4.66L17.8 4L19.34 3.34Z" fill="#BF0E23" stroke="none"/></svg>
+            </div>
+            <div>
+              <p class="font-semibold text-sm">Express Delivery Check</p>
+              <p class="text-xs text-warm-grey">Verify delivery speed to your location</p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <div class="relative flex-shrink-0">
+              <select id="countrySelect" class="input-field country-select !pr-7 !w-[80px] sm:!w-56 text-xs sm:text-sm" onchange="onCountryChange()" style="height:42px"></select>
+            </div>
+            <input type="text" inputmode="numeric" maxlength="10" placeholder="Pincode" id="pincodeInput" class="input-field flex-1 min-w-0" style="height:42px" onkeydown="if(event.key==='Enter')checkPincode()" />
+            <button onclick="checkPincode()" class="px-4 sm:px-5 btn-metallic text-xs tracking-wider flex-shrink-0" style="height:42px">CHECK</button>
+          </div>
+        </div>
+
+        <!-- ═══ CART ITEMS ═══ -->
+        <div id="cartItems" class="space-y-4"></div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-20 anim">
+          <div class="w-24 h-24 mx-auto mb-5 rounded-full bg-cream flex items-center justify-center float">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/><path d="M20 1.8L20.66 3.34L22.2 4L20.66 4.66L20 6.2L19.34 4.66L17.8 4L19.34 3.34Z" fill="#BF0E23" stroke="none"/></svg>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Your bag is empty</h3>
+          <p class="text-sm text-warm-grey mb-8 max-w-xs mx-auto">Explore our exquisite collection and find pieces that speak to you.</p>
+          <a href="#" class="inline-block px-10 py-3.5 btn-cta text-sm">EXPLORE COLLECTION</a>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="lg:col-span-2 mt-5 lg:mt-0" id="sidebarWrap">
+        <div class="lg:sticky lg:top-20 space-y-4">
+
+          <!-- ═══ COUPON ═══ -->
+          <div id="couponSection" class="coupon-card p-4 sm:p-5 cursor-pointer" style="animation-delay:100ms" onclick="openCouponDrawer()">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/><path d="M20 1.8L20.66 3.34L22.2 4L20.66 4.66L20 6.2L19.34 4.66L17.8 4L19.34 3.34Z" fill="#BF0E23" stroke="none"/></svg>
+                </div>
+                <div>
+                  <p class="font-semibold text-sm">Apply Coupon</p>
+                  <p class="text-xs text-warm-grey mt-0.5" id="couponStatus">Save more on your order</p>
+                </div>
+              </div>
+              <div id="couponAction">
+                <svg width="18" height="18" fill="none" stroke="#B0ABAB" stroke-width="2" stroke-linecap="round"><path d="M7 4l5 5-5 5"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ ORDER SUMMARY ═══ -->
+          <div id="orderSummary" class="card p-5 sm:p-6 anim" style="animation-delay:200ms">
+            <h2 class="text-base font-semibold mb-5 flex items-center gap-2">
+              <!-- Receipt icon red -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h14a2 2 0 012 2v16l-3.5-2-3.5 2-3.5-2-3.5 2-3.5-2L1 22V4a2 2 0 012-2z"/><path d="M8 8h8"/><path d="M8 12h6"/><path d="M20 1.8L20.66 3.34L22.2 4L20.66 4.66L20 6.2L19.34 4.66L17.8 4L19.34 3.34Z" fill="#BF0E23" stroke="none"/></svg>
+              Order Summary
+            </h2>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between"><span class="text-warm-grey">Subtotal</span><span class="font-medium" id="summarySubtotal">₹0</span></div>
+              <div class="flex justify-between" id="discountRow" style="display:none">
+                <span class="text-green-600 flex items-center gap-1"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 6l3.5 3.5L11 3"/></svg>Coupon Discount</span>
+                <span class="font-semibold text-green-600" id="summaryDiscount">-₹0</span>
+              </div>
+              <div class="flex justify-between"><span class="text-warm-grey">Delivery</span><span class="font-medium text-green-600">FREE</span></div>
+              <div class="flex justify-between"><span class="text-warm-grey">Taxes</span><span class="font-medium text-warm-grey">Included</span></div>
+              <div class="border-t border-dashed border-gray-200 pt-4 mt-4 flex justify-between items-center">
+                <span class="font-semibold text-base">Grand Total</span>
+                <span class="font-bold text-lg" id="summaryTotal">₹0</span>
+              </div>
+            </div>
+            <button onclick="continueToCheckout()" class="hidden lg:flex w-full mt-6 btn-cta py-4 text-sm items-center justify-center gap-2">
+              CONTINUE TO CHECKOUT
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 8h6M8 5l3 3-3 3"/></svg>
+            </button>
+          </div>
+
+          <!-- Trust Promises -->
+          <div class="py-3 overflow-hidden border-t border-[#E5DDD3]">
+            <div class="badge-ticker-track" style="gap:16px">
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">30 Days Free Returns</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">Free Shipping in India</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">From HOUSE OF TITAN</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">Lifetime Gold Exchange*</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">100% Secure Payments<span class="font-normal text-[#9a8a6a]"> · TATA Trust</span></span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">30 Days Free Returns</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">Free Shipping in India</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">From HOUSE OF TITAN</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">Lifetime Gold Exchange*</span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+              <span class="flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style="background:rgba(184,134,11,0.1)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span class="text-[9px] font-semibold text-[#5a4a2a] whitespace-nowrap">100% Secure Payments<span class="font-normal text-[#9a8a6a]"> · TATA Trust</span></span><span style="color:#d4c5a4;font-size:6px;margin:0 3px">◆</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MOBILE STICKY CTA -->
+  <div id="stickyCTA" class="fixed bottom-0 left-0 right-0 bg-[#FAF7F2]/95 backdrop-blur-md sticky-cta z-30 lg:hidden">
+    <div class="px-4 py-3 flex items-center gap-4">
+      <div class="flex-shrink-0">
+        <p class="text-[11px] text-warm-grey uppercase tracking-wide">Total</p>
+        <p class="text-lg font-bold" id="ctaTotal">₹0</p>
+      </div>
+      <button onclick="continueToCheckout()" class="flex-1 btn-cta py-3.5 text-sm flex items-center justify-center gap-2">
+        CHECKOUT
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 7h4M7 5l2 2-2 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ COUPON DRAWER ═══ -->
+  <div id="couponOverlay" class="overlay" onclick="closeCouponDrawer()"></div>
+  <div id="couponDrawer" class="drawer">
+    <div class="p-5 sm:p-6">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden"></div>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold flex items-center gap-2">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/><path d="M20 1.8L20.66 3.34L22.2 4L20.66 4.66L20 6.2L19.34 4.66L17.8 4L19.34 3.34Z" fill="#BF0E23" stroke="none"/></svg>
+          Apply Coupon
+        </h3>
+        <button onclick="closeCouponDrawer()" class="p-2 rounded-full hover:bg-soft-grey transition-colors">
+          <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/></svg>
+        </button>
+      </div>
+      <div class="flex gap-2 mb-6">
+        <input type="text" id="couponInput" placeholder="Enter coupon code" maxlength="20" class="flex-1 input-field !font-semibold uppercase tracking-widest" />
+        <button onclick="applyCouponFromInput()" class="px-6 py-3 btn-cta text-sm">Apply</button>
+      </div>
+      <div id="couponMessage" class="mb-5 hidden"></div>
+      <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase mb-3 flex items-center gap-1">
+        <svg width="12" height="12" fill="none" stroke="#BF0E23" stroke-width="2.5" stroke-linecap="round"><path d="M1 6l3.5 3.5L11 3"/></svg>
+        Available Coupons
+      </p>
+      <div class="space-y-3" id="couponList"></div>
+    </div>
+  </div>
+
+  <!-- ═══ REMOVE CONFIRM ═══ -->
+  <div id="removeOverlay" class="overlay" onclick="closeRemoveConfirm()"></div>
+  <div id="removeDrawer" class="drawer">
+    <div class="p-6 text-center">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden"></div>
+      <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
+        <svg width="28" height="28" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/><path d="M20 1.8L20.66 3.34L22.2 4L20.66 4.66L20 6.2L19.34 4.66L17.8 4L19.34 3.34Z" fill="#BF0E23" stroke="none"/></svg>
+      </div>
+      <h3 class="text-lg font-semibold mb-1">Remove Item?</h3>
+      <p class="text-sm text-warm-grey mb-6">This item will be removed from your bag.</p>
+      <div class="flex gap-3">
+        <button onclick="closeRemoveConfirm()" class="flex-1 py-3.5 btn-outline-metal text-sm">Cancel</button>
+        <button onclick="confirmRemoveItem()" class="flex-1 py-3.5 btn-cta text-sm">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const COUNTRIES=[
+      {name:'India',flag:'🇮🇳',code:'IN'},{name:'UAE',flag:'🇦🇪',code:'AE'},{name:'Germany',flag:'🇩🇪',code:'DE'},
+      {name:'Saudi Arabia',flag:'🇸🇦',code:'SA'},{name:'Netherlands',flag:'🇳🇱',code:'NL'},{name:'Malaysia',flag:'🇲🇾',code:'MY'},
+      {name:'Kenya',flag:'🇰🇪',code:'KE'},{name:'Romania',flag:'🇷🇴',code:'RO'},{name:'Spain',flag:'🇪🇸',code:'ES'},
+      {name:'Portugal',flag:'🇵🇹',code:'PT'},{name:'Qatar',flag:'🇶🇦',code:'QA'},{name:'Italy',flag:'🇮🇹',code:'IT'},
+      {name:'Oman',flag:'🇴🇲',code:'OM'},{name:'Kuwait',flag:'🇰🇼',code:'KW'},{name:'Bahrain',flag:'🇧🇭',code:'BH'},
+      {name:'South Africa',flag:'🇿🇦',code:'ZA'},{name:'Canada',flag:'🇨🇦',code:'CA'},{name:'New Zealand',flag:'🇳🇿',code:'NZ'},
+      {name:'Australia',flag:'🇦🇺',code:'AU'},{name:'Singapore',flag:'🇸🇬',code:'SG'},{name:'USA',flag:'🇺🇸',code:'US'},
+      {name:'United Kingdom',flag:'🇬🇧',code:'GB'},
+    ];
+    const cs=document.getElementById('countrySelect');
+    COUNTRIES.forEach(c=>{const o=document.createElement('option');o.value=c.code;o.textContent=c.flag+'  '+c.name;cs.appendChild(o)});
+
+    function metalClass(m){m=m.toLowerCase();if(m.includes('rose'))return'metal-rose';if(m.includes('silver'))return'metal-silver';if(m.includes('white'))return'metal-white';if(m.includes('yellow'))return'metal-yellow';if(m.includes('platinum'))return'metal-platinum';return'metal-yellow'}
+
+    // Banner carousel — same pattern as PLP, auto-rotate every 2s
+    const BANNERS=[
+      {title:'the cut',sub:'Handcrafted Brilliance × Laboratory-Grown Diamonds'},
+      {title:'the festive edit',sub:'18 KT gold finishes for the celebration season'},
+      {title:'stack & style',sub:'Layer your favourite pieces, your way'}
+    ];
+    let bannerIdx=0;
+    function renderBanner(){
+      const b=BANNERS[bannerIdx];
+      document.getElementById('bannerContent').innerHTML=`
+        <p class="text-white text-sm sm:text-lg font-semibold tracking-tight">beYon <em class="not-italic" style="font-family:'Oooh Baby',cursive;color:#C5A575">${b.title}</em></p>
+        <p class="text-white/70 text-[8px] sm:text-[10px] uppercase tracking-[0.2em] mt-0.5">${b.sub}</p>`;
+      document.getElementById('bannerDots').innerHTML=BANNERS.map((_,i)=>`<span class="banner-dot ${i===bannerIdx?'on':''}"></span>`).join('');
+    }
+    renderBanner();
+    setInterval(()=>{bannerIdx=(bannerIdx+1)%BANNERS.length;renderBanner()},2000);
+
+    const PRODUCTS=[
+      {id:'p1',name:'Cross My Lines Pendant With Chain',price:28450,size:'18 inches',weight:'3.52 gm',quantity:1,metal:'18KT Rose Gold',img:'product 1.webp',outOfStock:false},
+      {id:'p2',name:'Split Love Diamond Ring',price:40771,size:'16.40 MM',weight:'2.215 gm',quantity:1,metal:'14KT White Gold',img:'product 2.webp',outOfStock:false},
+      {id:'p3',name:'Golden Harmony Bracelet',price:35200,size:'Free Size',weight:'8.10 gm',quantity:1,metal:'22KT Yellow Gold',img:'product 3.webp',outOfStock:true},
+      {id:'p4',name:'Minimal Chain Bracelet',price:6450,size:'Free Size',weight:'4.80 gm',quantity:1,metal:'925 Silver',img:'product 1.webp',outOfStock:false},
+    ];
+    const COUPONS=[
+      {code:'WELCOME10',discount:10,type:'percent',max:5000,desc:'10% off on your first order',icon:'🎉'},
+      {code:'GOLD500',discount:500,type:'flat',max:500,desc:'Flat ₹500 off on gold jewellery',icon:'💎'},
+      {code:'FIRSTORDER',discount:15,type:'percent',max:8000,desc:'15% off — new customer special',icon:'⭐'},
+    ];
+    const PINCODE_DB={'110001':{ok:true,date:'20 Jun'},'400001':{ok:true,date:'19 Jun'},'560001':{ok:true,date:'21 Jun'},'700001':{ok:true,date:'22 Jun'},'600001':{ok:true,date:'18 Jun'},'500001':{ok:false}};
+
+    let S={items:PRODUCTS.map(p=>({...p})),coupon:null,discount:0,removeId:null,pincodeChecked:false,pincodeOk:false,pincodeCountry:null,pincodeDate:null,pincodeInput:''};
+    const fmt=n=>'₹'+n.toLocaleString('en-IN');
+    const subtotal=()=>S.items.filter(i=>!i.outOfStock).reduce((s,i)=>s+i.price*i.quantity,0);
+    const total=()=>Math.max(0,subtotal()-S.discount);
+
+    function getItemDeliveryDate(idx){
+      const base=S.pincodeDate||'25 Jun';
+      const parts=base.split(' ');
+      const day=parseInt(parts[0])+idx;
+      return day+' '+parts[1];
+    }
+
+    function showToast(m,t='success'){const e=document.getElementById('toast');e.style.display='';e.textContent=m;e.className='toast '+t;requestAnimationFrame(()=>e.classList.add('show'));setTimeout(()=>{e.classList.remove('show');setTimeout(()=>e.style.display='none',500)},2800)}
+
+    function fireConfetti(){const c=document.getElementById('confettiContainer');const colors=['#BF0E23','#C5A575','#E8D8BE','#2E7D32','#4A90D9','#FFD700','#FF6B9D'];for(let i=0;i<40;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.left=Math.random()*100+'%';p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.width=(Math.random()*8+4)+'px';p.style.height=(Math.random()*8+4)+'px';p.style.borderRadius=Math.random()>.5?'50%':'2px';p.style.animation=`confetti-fall ${Math.random()*2+1.5}s ease-out forwards`;p.style.animationDelay=Math.random()*.5+'s';c.appendChild(p)}setTimeout(()=>c.innerHTML='',3500)}
+
+    function render(){
+      renderItems();renderSummary();renderCouponStatus();renderCouponList();
+      const empty=!S.items.length;
+      document.getElementById('emptyState').classList.toggle('hidden',!empty);
+      document.getElementById('pincodeSection').classList.toggle('hidden',empty);
+      document.getElementById('couponSection').classList.toggle('hidden',empty);
+      document.getElementById('orderSummary').classList.toggle('hidden',empty);
+      document.getElementById('stickyCTA').classList.toggle('hidden',empty);
+      document.getElementById('headerCount').textContent=S.items.length;
+
+    }
+
+    function renderItems(){
+      const c=document.getElementById('cartItems');if(!S.items.length){c.innerHTML='';return}
+      c.innerHTML=S.items.map((item,i)=>`
+        <div class="cart-item card anim-slide" data-id="${item.id}" style="animation-delay:${i*80+100}ms">
+          <div class="p-4 sm:p-5 flex gap-4 sm:gap-5">
+            <div class="w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0 product-img" ${item.outOfStock?'style="opacity:.5"':''}>
+              <img src="${item.img}" alt="${item.name}" loading="lazy" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <h3 class="text-sm sm:text-base font-semibold leading-snug truncate">${item.name}</h3>
+                <button onclick="requestRemove('${item.id}')" class="p-1.5 -mt-1 -mr-1 rounded-lg hover:bg-red-50 transition-all hover:rotate-90 duration-300 flex-shrink-0" title="Remove">
+                  <svg width="16" height="16" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
+                </button>
+              </div>
+              <p class="text-lg sm:text-xl font-bold mt-1">${item.outOfStock?'<span class="text-primary text-sm font-semibold">Out of Stock</span>':fmt(item.price)}</p>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
+                <span class="text-xs font-medium text-dark bg-soft-grey px-2.5 py-0.5 rounded-md">Qty: ${item.quantity}</span>
+                ${i===1?'':`<span class="text-xs text-warm-grey">Size: ${item.size}</span>`}
+                <span class="text-xs text-warm-grey">Wt: ${item.weight}</span>
+              </div>
+              <div class="flex items-center justify-between mt-2">
+                <span class="metal-badge ${metalClass(item.metal)}">${item.metal}</span>
+                <button onclick="moveWishlist('${item.id}')" class="text-xs text-gold font-medium hover:text-primary transition-colors flex items-center gap-1 group">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:scale-125"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+                  Wishlist
+                </button>
+              </div>
+              ${S.pincodeChecked && S.pincodeOk && !item.outOfStock ? `<div class="mt-3 p-2.5 rounded-xl anim-scale" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:1px solid rgba(46,125,50,.15)">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-green-600 flex items-center justify-center flex-shrink-0">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-[11px] font-bold text-green-800">Delivery by ${getItemDeliveryDate(i)}</p>
+                    <p class="text-[9px] text-green-600 mt-0.5">${S.pincodeCountry?S.pincodeCountry.flag+' ':''} Free express shipping</p>
+                  </div>
+                  <svg width="16" height="16" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><path d="M3 8l4 4L13 4"/></svg>
+                </div>
+              </div>` : ''}
+              ${S.pincodeChecked && !S.pincodeOk && !item.outOfStock ? `<div class="mt-3 px-3 py-2.5 rounded-xl anim-scale bg-red-50" style="border:1px solid rgba(191,14,35,0.15)">
+                <div class="flex items-center gap-2">
+                  <svg width="14" height="14" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="6"/><line x1="5" y1="5" x2="9" y2="9"/><line x1="9" y1="5" x2="5" y2="9"/></svg>
+                  <p class="text-[11px] font-semibold text-primary">Sorry, delivery is not available to <strong>${S.pincodeInput}</strong></p>
+                </div>
+              </div>` : ''}
+              ${item.outOfStock && S.pincodeChecked ? `<div class="mt-3 px-3 py-2.5 rounded-xl anim-scale bg-red-50" style="border:1px solid rgba(191,14,35,0.15)">
+                <div class="flex items-center gap-2">
+                  <svg width="14" height="14" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="6"/><line x1="5" y1="5" x2="9" y2="9"/><line x1="9" y1="5" x2="5" y2="9"/></svg>
+                  <p class="text-[11px] font-semibold text-primary">Not available for delivery — Out of stock</p>
+                </div>
+              </div>` : ''}
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    function renderSummary(){const s=subtotal(),t=total();document.getElementById('summarySubtotal').textContent=fmt(s);document.getElementById('summaryTotal').textContent=fmt(t);document.getElementById('ctaTotal').textContent=fmt(t);const dr=document.getElementById('discountRow');if(S.discount>0){dr.style.display='flex';document.getElementById('summaryDiscount').textContent='-'+fmt(S.discount)}else dr.style.display='none'}
+
+    function renderCouponStatus(){
+      const st=document.getElementById('couponStatus'),ac=document.getElementById('couponAction');
+      if(S.coupon){st.innerHTML=`<span class="text-green-600 font-medium">${S.coupon.code}</span> — saving ${fmt(S.discount)}`;ac.innerHTML=`<button onclick="event.stopPropagation();removeCoupon()" class="text-xs text-primary font-semibold hover:underline">Remove</button>`}
+      else{st.textContent='Save more on your order';ac.innerHTML=`<svg width="18" height="18" fill="none" stroke="#B0ABAB" stroke-width="2" stroke-linecap="round"><path d="M7 4l5 5-5 5"/></svg>`}
+    }
+
+    function renderCouponList(){
+      document.getElementById('couponList').innerHTML=COUPONS.map((c,i)=>{
+        const a=S.coupon&&S.coupon.code===c.code;
+        return `<div class="coupon-available p-4 anim-scale" style="animation-delay:${i*80}ms;${a?'border-color:#A5D6A7;background:#F6FFF6':''}">
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col gap-1">
+              <span class="coupon-chip">${c.code}</span>
+              <p class="text-xs text-dark mt-1">${c.desc}</p>
+              <p class="text-[11px] text-warm-grey">${c.type==='percent'?`Up to ${fmt(c.max)} off`:`Flat ${fmt(c.discount)} off`}</p>
+            </div>
+            <button onclick="applyCoupon('${c.code}')" class="text-xs font-semibold ${a?'text-green-600':'text-primary'} px-4 py-2 rounded-xl ${a?'bg-green-50':'bg-primary/5 hover:bg-primary/10'} transition-colors flex-shrink-0">${a?'✓ Applied':'APPLY'}</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function onCountryChange(){S.pincodeChecked=false;S.pincodeOk=false;render()}
+    function checkPincode(){
+      const v=document.getElementById('pincodeInput').value.trim();if(!v||v.length<3){showToast('Enter a valid postal code','error');return}
+      const country=COUNTRIES.find(c=>c.code===cs.value);let result;
+      if(cs.value==='IN'&&PINCODE_DB[v])result=PINCODE_DB[v];
+      else{const ok=Math.random()>.25;const d=new Date();d.setDate(d.getDate()+Math.floor(Math.random()*8)+3);result={ok,date:d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}}
+      S.pincodeChecked=true;S.pincodeOk=result.ok;S.pincodeCountry=country;S.pincodeDate=result.date;S.pincodeInput=v;
+      if(result.ok){showToast(`Delivery available to ${country.flag} ${country.name}`)}else{showToast(`Not available in ${country.flag} ${country.name}`,'error')}
+      render();
+    }
+
+    function requestRemove(id){S.removeId=id;document.getElementById('removeOverlay').classList.add('active');document.getElementById('removeDrawer').classList.add('open')}
+    function closeRemoveConfirm(){S.removeId=null;document.getElementById('removeOverlay').classList.remove('active');document.getElementById('removeDrawer').classList.remove('open')}
+    function confirmRemoveItem(){const id=S.removeId;closeRemoveConfirm();if(!id)return;const el=document.querySelector(`.cart-item[data-id="${id}"]`);if(el){el.classList.add('removing');setTimeout(()=>removeItem(id),420)}else removeItem(id)}
+    function removeItem(id){S.items=S.items.filter(i=>i.id!==id);recalc();render();showToast('Item removed')}
+    function moveWishlist(id){showToast('Moved to wishlist ❤️');S.items=S.items.filter(i=>i.id!==id);recalc();render()}
+
+    function openCouponDrawer(){document.getElementById('couponOverlay').classList.add('active');document.getElementById('couponDrawer').classList.add('open');document.getElementById('couponInput').value='';document.getElementById('couponMessage').classList.add('hidden')}
+    function closeCouponDrawer(){document.getElementById('couponOverlay').classList.remove('active');document.getElementById('couponDrawer').classList.remove('open')}
+    function applyCouponFromInput(){const c=document.getElementById('couponInput').value.trim().toUpperCase();if(!c){showToast('Enter a code','error');return}applyCoupon(c)}
+    function applyCoupon(code){const c=COUPONS.find(x=>x.code===code);if(!c){showCouponMsg('Invalid coupon code.',false);return}if(S.coupon&&S.coupon.code===code){showCouponMsg('Already applied!',false);return}S.coupon=c;recalc();showCouponMsg(`${c.icon} Coupon applied! You save ${fmt(S.discount)}`,true);fireConfetti();render();setTimeout(closeCouponDrawer,1400)}
+    function removeCoupon(){S.coupon=null;S.discount=0;render();showToast('Coupon removed')}
+    function recalc(){if(!S.coupon){S.discount=0;return}const s=subtotal(),c=S.coupon;S.discount=c.type==='percent'?Math.min(Math.round(s*c.discount/100),c.max):Math.min(c.discount,s)}
+    function showCouponMsg(m,ok){const el=document.getElementById('couponMessage');el.classList.remove('hidden');el.innerHTML=`<div class="flex items-center gap-2 p-3 rounded-xl text-sm font-medium anim-scale ${ok?'bg-green-50 text-green-700':'bg-red-50 text-primary'}">${ok?'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l4 4L15 5"/></svg>':'<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="9" r="7"/><line x1="9" y1="5.5" x2="9" y2="9.5"/><circle cx="9" cy="12" r=".5" fill="currentColor"/></svg>'}<span>${m}</span></div>`}
+
+    function continueToCheckout(){if(!S.items.length){showToast('Your bag is empty','error');return}localStorage.setItem('beyon_cart',JSON.stringify(S));window.location.href='checkout.html'}
+
+    render();
+  </script>
+  <script src="shared/edge-cases.js"></script>
+  <script>
+    EdgeCases.init({
+      reset: () => {},
+      cases: [
+        { id:'cart', group:'Pages', label:'Cart (default)', desc:'Default bag view with items in stock.', run:()=>{} },
+        { id:'checkout', group:'Pages', label:'Checkout', desc:'Address, delivery & payment flow.', run:()=>location.href='checkout.html' },
+        { id:'no-address', group:'Pages', label:'No Address', desc:'Checkout state with no saved address.', run:()=>location.href='NoAddress.html' },
+        { id:'intl-alert', group:'Edge Cases', label:'International Delivery Alert', desc:'PAN card, custom duty & return policy notice.', run:()=>location.href='edge%20cases.html?case=intl-alert' },
+        { id:'oos-items', group:'Edge Cases', label:'Items Are Out Of Stock', desc:'Move to wishlist or explore similar items.', run:()=>location.href='edge%20cases.html?case=oos-items' },
+        { id:'cant-ship', group:'Edge Cases', label:"Can't Ship Internationally", desc:'Change address or remove items from cart.', run:()=>location.href='edge%20cases.html?case=cant-ship' },
+        { id:'oos-remove', group:'Edge Cases', label:'Some Items OOS — Remove & Continue', desc:'Remove out of stock items and proceed.', run:()=>location.href='edge%20cases.html?case=oos-remove' },
+      ]
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>No Address — Beyon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oooh+Baby&family=Didact+Gothic&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/geom.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#BF0E23', 'primary-dark': '#9B0B1C',
+            dark: '#2C2C2C', 'warm-grey': '#B0ABAB',
+            cream: '#EFEAE3', gold: '#C5A575', 'soft-grey': '#F6F6F6',
+          },
+          fontFamily: { sans: ['Geom', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <link rel="stylesheet" href="shared/edge-cases.css" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Geom',sans-serif;background:#EFEAE3;color:#2C2C2C;-webkit-font-smoothing:antialiased}
+    h1,h2,h3{font-family:'Oooh Baby',cursive}
+    .uppercase{font-family:'Didact Gothic',sans-serif}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#D5D5D5;border-radius:10px}
+
+    .overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.4);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+    .overlay.active{opacity:1;pointer-events:auto}
+    .drawer{position:fixed;z-index:50;background:#fff;overflow-y:auto;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .35s}
+    @media(max-width:767px){.drawer{bottom:0;left:0;right:0;border-radius:28px 28px 0 0;transform:translateY(100%);max-height:92vh}.drawer.open{transform:translateY(0)}}
+    @media(min-width:768px){.drawer{top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);border-radius:28px;width:540px;max-height:85vh;opacity:0;pointer-events:none;box-shadow:0 32px 80px rgba(0,0,0,.2)}.drawer.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto}}
+
+    .toast{position:fixed;top:28px;left:50%;transform:translateX(-50%) translateY(-160%);z-index:100;padding:14px 28px;border-radius:16px;font-weight:500;font-size:14px;box-shadow:0 12px 40px rgba(0,0,0,.12);transition:transform .45s cubic-bezier(.4,0,.2,1);white-space:nowrap;backdrop-filter:blur(8px)}
+    .toast.show{transform:translateX(-50%) translateY(0)}.toast.success{background:rgba(232,245,233,.95);color:#2E7D32}.toast.error{background:rgba(255,240,240,.95);color:#BF0E23}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+    @keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    .anim{animation:fadeUp .5s ease forwards;opacity:0}
+    .anim-scale{animation:scaleIn .4s ease forwards;opacity:0}
+
+    .header-bar{background:linear-gradient(135deg,#FDFAF5 0%,#F8F3EC 50%,#FDFAF5 100%);border-bottom:1px solid rgba(197,165,117,.15);position:sticky;top:0;z-index:30}
+    .header-bar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(197,165,117,.3),transparent)}
+    .brand-text{background:linear-gradient(135deg,#2C2C2C,#555,#2C2C2C);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradient-shift 4s ease infinite}
+    .header-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1.5px solid rgba(197,165,117,.2);transition:all .3s;cursor:pointer}
+    .header-icon:hover{border-color:#BF0E23;background:rgba(191,14,35,.04);transform:scale(1.05)}
+    .header-icon:hover svg{stroke:#BF0E23}
+
+    .card{background:#fff;border:1px solid #E5DDD3;border-radius:16px;transition:all .3s;box-shadow:0 2px 8px rgba(197,165,117,.06)}
+    .card:hover{box-shadow:0 8px 32px rgba(197,165,117,.12);transform:translateY(-1px)}
+
+    .btn-cta{background:linear-gradient(135deg,#BF0E23 0%,#D4162E 40%,#E8334A 60%,#BF0E23 100%);background-size:200% 200%;animation:gradient-shift 3s ease infinite;color:#fff;font-weight:700;border:none;cursor:pointer;border-radius:16px;transition:all .3s;letter-spacing:1px;box-shadow:0 4px 20px rgba(191,14,35,.3),inset 0 1px 0 rgba(255,255,255,.2),0 0 0 1px rgba(191,14,35,.1);position:relative;overflow:hidden}
+    .btn-cta::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .6s}
+    .btn-cta:hover::before{left:100%}
+    .btn-cta:hover{box-shadow:0 8px 32px rgba(191,14,35,.4);transform:translateY(-2px)}
+    .btn-cta:active{transform:scale(.97)}
+
+    .btn-outline-metal{border:2px solid transparent;border-radius:14px;background:linear-gradient(#fff,#fff) padding-box,linear-gradient(135deg,#C5A575,#E8D8BE,#C5A575) border-box;color:#2C2C2C;font-weight:600;cursor:pointer;transition:all .3s}
+    .btn-outline-metal:hover{background:linear-gradient(#FFFBF5,#FFFBF5) padding-box,linear-gradient(135deg,#BF0E23,#E8334A,#BF0E23) border-box;transform:translateY(-1px)}
+
+    input:focus,select:focus,textarea:focus{outline:none;border-color:#C5A575 !important;box-shadow:0 0 0 3px rgba(197,165,117,.12)}
+    .input-field{width:100%;padding:12px 16px;border:1.5px solid #E0D8CE;border-radius:14px;font-size:14px;font-family:inherit;color:#2C2C2C;transition:all .3s;background:#fff}
+    .input-field::placeholder{color:#B0ABAB}
+    .input-error{border-color:#BF0E23 !important}
+    .error-text{color:#BF0E23;font-size:12px;margin-top:4px;font-weight:500}
+
+    .sticky-cta{box-shadow:0 -6px 32px rgba(197,165,117,.12)}
+
+    .addr-tab{padding:8px 20px;border-radius:12px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #E0D8CE;transition:all .2s;letter-spacing:.5px}
+    .addr-tab.active{background:#BF0E23;color:#fff;border-color:#BF0E23}
+    .addr-tab:not(.active):hover{border-color:#C5A575;background:#FFFBF5}
+
+    .section-title{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+
+    .step-done{background:#E8F5E9;color:#2E7D32;border:2px solid #A5D6A7}
+    .step-active{background:linear-gradient(135deg,#BF0E23,#D4162E);color:#fff;border:2px solid #BF0E23;box-shadow:0 0 0 4px rgba(191,14,35,.15)}
+    .step-pending{background:#F0F0F0;color:#B0ABAB;border:2px solid #E0E0E0}
+    .step-line-done{background:#A5D6A7}
+    .step-line-pending{background:#E0E0E0}
+
+    .toggle{position:relative;width:48px;height:26px;border-radius:13px;background:#E0E0E0;cursor:pointer;transition:background .3s}
+    .toggle.on{background:#BF0E23}
+    .toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .3s;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+    .toggle.on::after{transform:translateX(22px)}
+
+    @media(max-width:767px){
+      body{font-size:12px}
+      h1,h2,h3,.text-lg{font-size:14px !important}
+      .text-base{font-size:13px !important}
+      .text-sm{font-size:11px !important}
+      .text-xs{font-size:10px !important}
+      .text-\[11px\]{font-size:9px !important}
+      .text-\[10px\]{font-size:8px !important}
+      .text-\[9px\]{font-size:8px !important}
+      .section-title{font-size:14px}
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-24 lg:pb-0">
+
+  <div id="toast" class="toast"></div>
+
+  <!-- ═══ HEADER ═══ -->
+  <nav class="header-bar backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="header-icon" onclick="window.location.href='cart.html'" title="Back to Bag">
+        <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9H4M8 5l-4 4 4 4"/></svg>
+      </div>
+      <div class="flex items-center gap-3">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="3"/><path d="M1 10h22"/><path d="M6 15h4"/>
+        </svg>
+        <h1 class="text-lg font-bold tracking-[.2em] brand-text">CHECKOUT</h1>
+      </div>
+      <div class="header-icon" title="Wishlist">
+        <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+
+    <!-- Progress: Bag → Checkout → Pay -->
+    <div class="flex items-center justify-center gap-0 mb-8 anim">
+      <div class="flex items-center gap-2">
+        <span class="w-7 h-7 rounded-full step-done flex items-center justify-center"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 7l2.5 2.5L11 4"/></svg></span>
+        <span class="text-xs font-semibold text-green-600">Bag</span>
+      </div>
+      <div class="w-10 sm:w-16 h-0.5 step-line-done mx-1"></div>
+      <div class="flex items-center gap-2">
+        <span class="w-7 h-7 rounded-full step-active flex items-center justify-center text-[11px] font-bold">2</span>
+        <span class="text-xs font-semibold text-primary">Checkout</span>
+      </div>
+      <div class="w-10 sm:w-16 h-0.5 step-line-pending mx-1"></div>
+      <div class="flex items-center gap-2">
+        <span class="w-7 h-7 rounded-full step-pending flex items-center justify-center text-[11px] font-bold">3</span>
+        <span class="text-xs font-semibold text-warm-grey">Pay</span>
+      </div>
+    </div>
+
+    <div class="lg:grid lg:grid-cols-5 lg:gap-8">
+      <!-- LEFT -->
+      <div class="lg:col-span-3 space-y-5">
+
+        <!-- ═══ ADDRESS — No saved addresses ═══ -->
+        <div class="card p-5 sm:p-6 anim">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="section-title mb-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/><path d="M20 1.8L20.66 3.34L22.2 4L20.66 4.66L20 6.2L19.34 4.66L17.8 4L19.34 3.34Z" fill="#BF0E23" stroke="none"/></svg>
+              Deliver To
+            </h2>
+          </div>
+          <!-- Empty state -->
+          <div class="flex flex-col items-center py-8 text-center">
+            <div class="w-16 h-16 rounded-full bg-soft-grey flex items-center justify-center mb-4">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <p class="text-sm font-medium text-dark mb-1">No saved addresses</p>
+            <p class="text-xs text-warm-grey mb-5">Add a delivery address to continue with checkout</p>
+            <button onclick="openAddressDrawer()" class="btn-cta px-8 py-3 text-sm flex items-center gap-2">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg>
+              ADD NEW ADDRESS
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Sidebar -->
+      <div class="lg:col-span-2 mt-5 lg:mt-0">
+        <div class="lg:sticky lg:top-20 space-y-4">
+          <!-- Order items -->
+          <div class="card p-5 sm:p-6">
+            <h2 class="section-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/><path d="M20 1.8L20.66 3.34L22.2 4L20.66 4.66L20 6.2L19.34 4.66L17.8 4L19.34 3.34Z" fill="#BF0E23" stroke="none"/></svg>
+              Order Items
+            </h2>
+            <div id="checkoutItems" class="space-y-3 max-h-48 overflow-y-auto"></div>
+          </div>
+
+          <!-- Price -->
+          <div class="card p-5 sm:p-6">
+            <h2 class="section-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h14a2 2 0 012 2v16l-3.5-2-3.5 2-3.5-2L8 20l-3.5-2L1 22V4a2 2 0 012-2z"/><path d="M8 8h8"/><path d="M8 12h6"/><path d="M20 1.8L20.66 3.34L22.2 4L20.66 4.66L20 6.2L19.34 4.66L17.8 4L19.34 3.34Z" fill="#BF0E23" stroke="none"/></svg>
+              Price Details
+            </h2>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between"><span class="text-warm-grey">Subtotal</span><span class="font-medium" id="ckSubtotal">₹0</span></div>
+              <div class="flex justify-between"><span class="text-warm-grey">Delivery</span><span class="font-medium text-green-600">FREE</span></div>
+              <div class="border-t border-dashed border-gray-200 pt-4 mt-4 flex justify-between items-center">
+                <span class="font-semibold text-base">Amount to Pay</span>
+                <span class="font-bold text-lg text-primary" id="ckTotal">₹0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trust -->
+          <div class="hidden lg:flex items-center justify-center gap-6 py-4 text-xs text-warm-grey">
+            <span class="flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>256-bit SSL</span>
+            <span class="flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Certified</span>
+            <span class="flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>30-Day Returns</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MOBILE STICKY CTA (disabled — needs address) -->
+  <div class="fixed bottom-0 left-0 right-0 bg-[#FAF7F2]/95 backdrop-blur-md sticky-cta z-30 lg:hidden">
+    <div class="px-4 py-3 flex items-center gap-4">
+      <div class="flex-shrink-0">
+        <p class="text-[11px] text-warm-grey uppercase tracking-wide">Pay</p>
+        <p class="text-lg font-bold" id="ctaTotal">₹0</p>
+      </div>
+      <button onclick="showToast('Please add a delivery address first','error')" class="flex-1 btn-cta py-3.5 text-sm flex items-center justify-center gap-2 opacity-60 cursor-not-allowed">
+        ADD ADDRESS TO CONTINUE
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ ADD ADDRESS DRAWER ═══ -->
+  <div id="addrOverlay" class="overlay" onclick="closeAddressDrawer()"></div>
+  <div id="addrDrawer" class="drawer">
+    <div class="p-5 sm:p-6">
+      <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 md:hidden"></div>
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold">Add Address</h3>
+        <button onclick="closeAddressDrawer()" class="p-2 rounded-full hover:bg-soft-grey transition-colors">
+          <svg width="18" height="18" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/></svg>
+        </button>
+      </div>
+      <div class="flex gap-2 mb-5">
+        <button class="addr-tab active" onclick="setAddrType(this,'HOME')">HOME</button>
+        <button class="addr-tab" onclick="setAddrType(this,'WORK')">WORK</button>
+        <button class="addr-tab" onclick="setAddrType(this,'OTHER')">OTHER</button>
+      </div>
+      <form id="addrForm" onsubmit="saveAddress(event)" novalidate>
+        <input type="hidden" id="addrType" value="HOME" />
+        <p class="text-xs text-warm-grey font-semibold tracking-widest uppercase mb-3">Personal Information</p>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div><input type="text" id="addrFirst" placeholder="First Name *" class="input-field" required /><p class="error-text hidden" id="errFirst">Required</p></div>
+          <div><input type="text" id="addrLast" placeholder="Last Name *" class="input-field" required /><p class="error-text hidden" id="errLast">Required</p></div>
+        </div>
+        <div class="flex gap-2 mb-5">
+          <select class="input-field !w-24 flex-shrink-0"><option>+91</option><option>+1</option><option>+44</option><option>+971</option></select>
+          <div class="flex-1"><input type="tel" id="addrPhone" placeholder="Phone *" maxlength="10" class="input-field" required /><p class="error-text hidden" id="errPhone">Enter valid phone</p></div>
+        </div>
+        <p class="text-xs text-warm-grey font-semibold tracking-widest uppercase mb-3">Location</p>
+        <div class="mb-3"><select id="addrCountry" class="input-field"><option>India</option><option>UAE</option><option>USA</option><option>UK</option></select></div>
+        <div class="grid grid-cols-3 gap-3 mb-5">
+          <div><input type="text" id="addrPin" placeholder="Pincode *" maxlength="6" class="input-field" required oninput="autoFillLocation()" /><p class="error-text hidden" id="errPin">Required</p></div>
+          <div><input type="text" id="addrState" placeholder="State *" class="input-field" required /><p class="error-text hidden" id="errState">Required</p></div>
+          <div><input type="text" id="addrCity" placeholder="City *" class="input-field" required /><p class="error-text hidden" id="errCity">Required</p></div>
+        </div>
+        <p class="text-xs text-warm-grey font-semibold tracking-widest uppercase mb-3">Delivery Address</p>
+        <div class="space-y-3 mb-5">
+          <div><input type="text" id="addrBuilding" placeholder="Building / Flat No *" class="input-field" required /><p class="error-text hidden" id="errBuilding">Required</p></div>
+          <div><input type="text" id="addrStreet" placeholder="Colony / Street *" class="input-field" required /><p class="error-text hidden" id="errStreet">Required</p></div>
+          <input type="text" id="addrLandmark" placeholder="Landmark (Optional)" class="input-field" />
+        </div>
+        <div class="flex items-center justify-between p-4 bg-soft-grey rounded-2xl mb-6">
+          <div><p class="text-sm font-semibold">Set As Default</p><p class="text-xs text-warm-grey">Use this address for all deliveries</p></div>
+          <div class="toggle" id="defaultToggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <button type="submit" class="w-full py-4 btn-cta text-sm">SAVE ADDRESS</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let cart = null;
+    try { cart = JSON.parse(localStorage.getItem('beyon_cart')); } catch(e) {}
+    if (!cart || !cart.items || !cart.items.length) {
+      cart = {
+        items: [
+          { id:'p1', name:'Cross My Lines Pendant With Chain', price:28450, size:'18 inches', weight:'3.52 gm', quantity:1, metal:'18KT Rose Gold', img:'product 1.webp' },
+          { id:'p2', name:'Split Love Diamond Ring', price:40771, size:'16.40 MM', weight:'2.215 gm', quantity:1, metal:'14KT White Gold', img:'product 2.webp' }
+        ],
+        coupon: null,
+        discount: 0
+      };
+    }
+
+    const fmt = n => '₹' + n.toLocaleString('en-IN');
+    const cartSubtotal = () => cart.items.reduce((s, i) => s + i.price * i.quantity, 0);
+
+    function showToast(m, t = 'success') {
+      const e = document.getElementById('toast');
+      e.textContent = m;
+      e.className = 'toast ' + t;
+      requestAnimationFrame(() => e.classList.add('show'));
+      setTimeout(() => e.classList.remove('show'), 2800);
+    }
+
+    function renderItems() {
+      document.getElementById('checkoutItems').innerHTML = cart.items.map(it => `
+        <div class="flex items-center gap-3 py-2">
+          <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-cream">
+            ${it.img ? `<img src="${it.img}" class="w-full h-full object-cover" />` : `<span class="flex items-center justify-center h-full text-sm font-bold text-gold/50">${it.name.split(' ').map(w => w[0]).join('').slice(0, 2)}</span>`}
+          </div>
+          <div class="flex-1 min-w-0"><p class="text-sm font-medium truncate">${it.name}</p><p class="text-xs text-warm-grey">Qty: ${it.quantity}</p></div>
+          <span class="text-sm font-semibold">${fmt(it.price * it.quantity)}</span>
+        </div>`).join('');
+    }
+
+    function renderSummary() {
+      const sub = cartSubtotal();
+      document.getElementById('ckSubtotal').textContent = fmt(sub);
+      document.getElementById('ckTotal').textContent = fmt(sub);
+      document.getElementById('ctaTotal').textContent = fmt(sub);
+    }
+
+    function openAddressDrawer() {
+      document.getElementById('addrForm').reset();
+      document.querySelectorAll('.error-text').forEach(e => e.classList.add('hidden'));
+      document.querySelectorAll('.input-error').forEach(e => e.classList.remove('input-error'));
+      document.getElementById('addrOverlay').classList.add('active');
+      document.getElementById('addrDrawer').classList.add('open');
+    }
+
+    function closeAddressDrawer() {
+      document.getElementById('addrOverlay').classList.remove('active');
+      document.getElementById('addrDrawer').classList.remove('open');
+    }
+
+    function setAddrType(btn, type) {
+      document.querySelectorAll('.addr-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('addrType').value = type;
+    }
+
+    function autoFillLocation() {
+      const pin = document.getElementById('addrPin').value.trim();
+      if (pin.length !== 6) return;
+      const map = { '110001': ['Delhi', 'New Delhi'], '400001': ['Maharashtra', 'Mumbai'], '560001': ['Karnataka', 'Bengaluru'], '700001': ['West Bengal', 'Kolkata'], '600001': ['Tamil Nadu', 'Chennai'] };
+      const r = map[pin];
+      if (r) { document.getElementById('addrState').value = r[0]; document.getElementById('addrCity').value = r[1]; }
+    }
+
+    function saveAddress(e) {
+      e.preventDefault();
+      let valid = true;
+      [{ id: 'addrFirst', err: 'errFirst' }, { id: 'addrLast', err: 'errLast' }, { id: 'addrPhone', err: 'errPhone' }, { id: 'addrPin', err: 'errPin' }, { id: 'addrState', err: 'errState' }, { id: 'addrCity', err: 'errCity' }, { id: 'addrBuilding', err: 'errBuilding' }, { id: 'addrStreet', err: 'errStreet' }].forEach(f => {
+        const el = document.getElementById(f.id), errEl = document.getElementById(f.err);
+        if (!el.value.trim()) { el.classList.add('input-error'); errEl.classList.remove('hidden'); valid = false; }
+        else { el.classList.remove('input-error'); errEl.classList.add('hidden'); }
+      });
+      const phone = document.getElementById('addrPhone').value.trim();
+      if (phone && !/^\d{10}$/.test(phone)) { document.getElementById('addrPhone').classList.add('input-error'); document.getElementById('errPhone').classList.remove('hidden'); valid = false; }
+      if (!valid) return;
+
+      closeAddressDrawer();
+      showToast('Address saved! Redirecting to checkout...');
+      setTimeout(() => { window.location.href = 'checkout.html'; }, 1500);
+    }
+
+    // Init
+    renderItems();
+    renderSummary();
+  </script>
+  <script src="shared/edge-cases.js"></script>
+  <script>
+    EdgeCases.init({
+      reset: () => {},
+      cases: [
+        { id:'no-address', group:'Pages', label:'No Address (default)', desc:'Checkout state with no saved address.', run:()=>{} },
+        { id:'cart', group:'Pages', label:'Cart', desc:'Default bag view with items in stock.', run:()=>location.href='cart.html' },
+        { id:'checkout', group:'Pages', label:'Checkout', desc:'Address, delivery & payment flow.', run:()=>location.href='checkout.html' },
+        { id:'intl-alert', group:'Edge Cases', label:'International Delivery Alert', desc:'PAN card, custom duty & return policy notice.', run:()=>location.href='edge%20cases.html?case=intl-alert' },
+        { id:'oos-items', group:'Edge Cases', label:'Items Are Out Of Stock', desc:'Move to wishlist or explore similar items.', run:()=>location.href='edge%20cases.html?case=oos-items' },
+        { id:'cant-ship', group:'Edge Cases', label:"Can't Ship Internationally", desc:'Change address or remove items from cart.', run:()=>location.href='edge%20cases.html?case=cant-ship' },
+        { id:'oos-remove', group:'Edge Cases', label:'Some Items OOS — Remove & Continue', desc:'Remove out of stock items and proceed.', run:()=>location.href='edge%20cases.html?case=oos-remove' },
+      ]
+    });
+  </script>
+</body>
+</html>
