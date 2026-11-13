@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Oooh+Baby&family=Didact+Gothic&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="shared/geom.css" />
+  <link rel="stylesheet" href="shared/edge-cases.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -224,12 +225,12 @@
           <button class="dd-signout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
         </div>
       </div>
-      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span>Wishlist</span><span class="badge">2</span></button>
-      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span>Bag</span><span class="badge">1</span></button>
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span>Wishlist</span><span class="badge" id="wishlistBadge">2</span></button>
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span>Bag</span><span class="badge" id="cartBadge">1</span></button>
     </div>
     <div class="mobile-only flex items-center gap-3">
-      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="badge">2</span></button>
-      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="badge">1</span></button>
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="badge" id="wishlistBadgeM">2</span></button>
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="badge" id="cartBadgeM">1</span></button>
     </div>
   </div>
 
@@ -344,6 +345,12 @@
     </div>
   </div>
   <button class="login-btn-mobile" id="loginBtn" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Login / Sign Up</button>
+
+  <div class="menu-section">
+    <a href="#" class="menu-link"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4.5"/><circle cx="12" cy="8" r="0.9" fill="rgba(255,255,255,.7)" stroke="none"/></svg></span>beYon Facts<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+    <a href="#" class="menu-link"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8V21"/><path d="M3 13h18"/></svg></span>Gifting<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+    <a href="https://www.beyon.co.in/en_IN/stores" target="_blank" rel="noopener" class="menu-link"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>Find Store<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+  </div>
 
   <div class="menu-section">
     <a href="#" class="menu-link"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 11h5"/><path d="M8 15h3"/></svg></span>Orders<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
@@ -489,8 +496,12 @@
     <a href="#" class="sub-link">Nose Rings</a><a href="#" class="sub-link">Nose Pins</a><a href="#" class="sub-link">Watch Charms</a><a href="#" class="sub-link">Charms</a><a href="#" class="sub-link">22kt Jewellery</a><a href="#" class="sub-link">Silver Jewellery</a><a href="#" class="sub-link">Platinum Jewellery</a><a href="#" class="sub-link">Gold Chains</a>
     <div class="sub-section-title">Shop For Men</div>
     <a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Studs</a><a href="#" class="sub-link">Chains</a><a href="#" class="sub-link">Pendants</a><a href="#" class="sub-link">Bracelets</a><a href="#" class="sub-link">Kadas</a>
+    <div class="sub-section-title">By Price (Men)</div>
+    <a href="#" class="sub-link">Under ₹ 10k</a><a href="#" class="sub-link">₹ 10k to ₹ 20k</a><a href="#" class="sub-link">₹ 20k to ₹ 30k</a><a href="#" class="sub-link">₹ 30k to ₹ 50k</a><a href="#" class="sub-link">₹ 50k to ₹ 70k</a><a href="#" class="sub-link">₹ 75k & Above</a>
     <div class="sub-section-title">Shop For Kids</div>
     <a href="#" class="sub-link">Earrings</a><a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Bracelets</a><a href="#" class="sub-link">Necklaces</a><a href="#" class="sub-link">Pendants</a><a href="#" class="sub-link">Baby Bangles</a>
+    <div class="sub-section-title">By Price (Kids)</div>
+    <a href="#" class="sub-link">Under ₹10k</a><a href="#" class="sub-link">₹10k - ₹20k</a><a href="#" class="sub-link">₹20k - ₹30k</a><a href="#" class="sub-link">₹30k - ₹40k</a>
     <div class="sub-section-title">By Metal & Stone</div>
     <a href="#" class="sub-link">Gold</a><a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22kt Gold</a>
   </div>
@@ -609,13 +620,36 @@
   if (mp2 && ms2) animatePH(mp2, ms2, suggestionsMobile);
 
   // ── Login toggle ──
-  const isLoggedIn = true;
-  if (!isLoggedIn) {
-    document.getElementById('profileCard').style.display = 'none';
-    document.getElementById('signOutBtn').style.display = 'none';
-    document.getElementById('loginBtn').style.display = 'flex';
-    document.getElementById('ddProfileSection').innerHTML = '<div style="text-align:center;padding:10px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div style="margin-top:8px;font-size:14px;font-weight:600;color:#2C2C2C">Welcome to beYon</div><div style="font-size:11px;color:#B0ABAB;margin-top:4px">Login for a personalised experience</div><a href="#" style="display:inline-block;margin-top:12px;padding:10px 28px;background:linear-gradient(135deg,#BF0E23,#E8334A);color:#fff;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none">Login / Sign Up</a></div>';
+  function applyLoginState(loggedIn) {
+    document.getElementById('profileCard').style.display = loggedIn ? '' : 'none';
+    document.getElementById('signOutBtn').style.display = loggedIn ? '' : 'none';
+    document.getElementById('loginBtn').style.display = loggedIn ? 'none' : 'flex';
+    document.getElementById('ddProfileSection').innerHTML = loggedIn
+      ? '<img src="Y.png" class="watermark" alt="" /><div class="dd-name">Priya Sharma</div><div class="dd-detail">+91 98765 43210</div><div class="dd-detail">priya.sharma@email.com</div>'
+      : '<div style="text-align:center;padding:10px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div style="margin-top:8px;font-size:14px;font-weight:600;color:#2C2C2C">Welcome to beYon</div><div style="font-size:11px;color:#B0ABAB;margin-top:4px">Login for a personalised experience</div><a href="#" style="display:inline-block;margin-top:12px;padding:10px 28px;background:linear-gradient(135deg,#BF0E23,#E8334A);color:#fff;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none">Login / Sign Up</a></div>';
   }
+  applyLoginState(true);
+
+  // ── Wishlist/Bag counts ──
+  function setCounts(wishlist, cart) {
+    [['wishlistBadge', wishlist], ['cartBadge', cart], ['wishlistBadgeM', wishlist], ['cartBadgeM', cart]].forEach(([id, n]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = n;
+      el.style.display = n > 0 ? 'flex' : 'none';
+    });
+  }
+</script>
+<script src="shared/edge-cases.js"></script>
+<script>
+  EdgeCases.init({
+    reset: () => { closeMobileMenu(); applyLoginState(true); setCounts(2, 1); },
+    cases: [
+      { id: 'default', group: 'Header', label: 'Logged in (default)', desc: 'Profile card, Sign Out and badge counts shown as usual.', run: () => {} },
+      { id: 'guest-mobile', group: 'Header', label: 'Guest profile (mobile)', desc: 'Hamburger menu shows the "Welcome to beYon" login prompt instead of the profile card.', run: () => { applyLoginState(false); toggleMobileMenu(); } },
+      { id: 'zero-counts', group: 'Header', label: 'Empty wishlist & bag', desc: 'Wishlist and Bag badges are hidden when the count is zero.', run: () => setCounts(0, 0) }
+    ]
+  });
 </script>
 </body>
 </html>

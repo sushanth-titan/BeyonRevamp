@@ -49,6 +49,21 @@
       .filter-chip{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:20px;border:1.5px solid #ECEBE8;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;background:#fff}
       .filter-chip:hover{border-color:#C5A575}
       .filter-chip.selected{border-color:#BF0E23;background:#FFF5F5;color:#BF0E23}
+      .active-chip{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;white-space:nowrap;padding:5px 6px 5px 12px;border-radius:999px;border:1.5px solid #BF0E23;background:#FFF5F5;color:#BF0E23;font-size:12px;font-weight:500}
+      .active-chip button{display:flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%}
+      .active-chip button:active{background:rgba(191,14,35,.15)}
+      .fg-collapsed .brand-check.extra:not(:has(input:checked)){display:none}
+      .fg-toggle{font-size:12px;font-weight:600;color:#BF0E23;padding:6px 2px}
+      .filter-footer{position:sticky;bottom:0;z-index:2;margin:0 -20px -20px;padding:12px 20px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #ECEBE8;box-shadow:0 -8px 20px -12px rgba(0,0,0,.18)}
+      @keyframes bagBump{0%{transform:scale(1)}40%{transform:scale(1.6)}100%{transform:scale(1)}}
+      .badge-bump{animation:bagBump .5s cubic-bezier(.34,1.56,.64,1)}
+      .bag-added{background:#1E8E3E!important;border-color:#1E8E3E!important}
+      .rg-modal{position:fixed;z-index:310;left:50%;top:50%;transform:translate(-50%,-50%) scale(.95);width:440px;max-width:92vw;max-height:85vh;display:flex;flex-direction:column;background:#fff;border-radius:24px;overflow:hidden;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.4,0,.2,1)}
+      .rg-modal.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto}
+      @media(max-width:640px){.rg-modal{left:0;top:auto;bottom:0;width:100%;max-width:100%;transform:translateY(100%);border-radius:24px 24px 0 0}.rg-modal.open{transform:translateY(0)}}
+      .rg-table{width:100%;border-collapse:collapse;font-size:12px;text-align:center}
+      .rg-table th{position:sticky;top:0;background:#F7F4EF;padding:8px 6px;font-weight:700}
+      .rg-table td{padding:7px 6px;border-bottom:1px solid #F0EDE8}
 
       .brand-check{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 2px;cursor:pointer;font-size:13px}
       .brand-check input{width:16px;height:16px;accent-color:#BF0E23}
@@ -298,12 +313,12 @@
           <button class="dd-signout"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
         </div>
       </div>
-      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span>Wishlist</span><span class="badge">2</span></button>
-      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span>Bag</span><span class="badge">1</span></button>
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span>Wishlist</span><span class="badge" id="wishlistBadge">2</span></button>
+      <button class="icon-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span>Bag</span><span class="badge" id="cartBadge">1</span></button>
     </div>
     <div class="mobile-only flex items-center gap-3">
-      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="badge">2</span></button>
-      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="badge">1</span></button>
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.3l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg><span class="badge" id="wishlistBadgeM">2</span></button>
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="badge" id="cartBadgeM">1</span></button>
     </div>
   </div>
 
@@ -418,6 +433,12 @@
     </div>
   </div>
   <button class="login-btn-mobile" id="loginBtn" style="display:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Login / Sign Up</button>
+
+  <div class="menu-section">
+    <a href="#" class="menu-link"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4.5"/><circle cx="12" cy="8" r="0.9" fill="rgba(255,255,255,.7)" stroke="none"/></svg></span>beYon Facts<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+    <a href="#" class="menu-link"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8V21"/><path d="M3 13h18"/></svg></span>Gifting<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+    <a href="https://www.beyon.co.in/en_IN/stores" target="_blank" rel="noopener" class="menu-link"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>Find Store<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+  </div>
 
   <div class="menu-section">
     <a href="#" class="menu-link"><span class="menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.8"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8"/><path d="M8 11h5"/><path d="M8 15h3"/></svg></span>Orders<span class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
@@ -563,8 +584,12 @@
     <a href="#" class="sub-link">Nose Rings</a><a href="#" class="sub-link">Nose Pins</a><a href="#" class="sub-link">Watch Charms</a><a href="#" class="sub-link">Charms</a><a href="#" class="sub-link">22kt Jewellery</a><a href="#" class="sub-link">Silver Jewellery</a><a href="#" class="sub-link">Platinum Jewellery</a><a href="#" class="sub-link">Gold Chains</a>
     <div class="sub-section-title">Shop For Men</div>
     <a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Studs</a><a href="#" class="sub-link">Chains</a><a href="#" class="sub-link">Pendants</a><a href="#" class="sub-link">Bracelets</a><a href="#" class="sub-link">Kadas</a>
+    <div class="sub-section-title">By Price (Men)</div>
+    <a href="#" class="sub-link">Under ₹ 10k</a><a href="#" class="sub-link">₹ 10k to ₹ 20k</a><a href="#" class="sub-link">₹ 20k to ₹ 30k</a><a href="#" class="sub-link">₹ 30k to ₹ 50k</a><a href="#" class="sub-link">₹ 50k to ₹ 70k</a><a href="#" class="sub-link">₹ 75k & Above</a>
     <div class="sub-section-title">Shop For Kids</div>
     <a href="#" class="sub-link">Earrings</a><a href="#" class="sub-link">Rings</a><a href="#" class="sub-link">Bracelets</a><a href="#" class="sub-link">Necklaces</a><a href="#" class="sub-link">Pendants</a><a href="#" class="sub-link">Baby Bangles</a>
+    <div class="sub-section-title">By Price (Kids)</div>
+    <a href="#" class="sub-link">Under ₹10k</a><a href="#" class="sub-link">₹10k - ₹20k</a><a href="#" class="sub-link">₹20k - ₹30k</a><a href="#" class="sub-link">₹30k - ₹40k</a>
     <div class="sub-section-title">By Metal & Stone</div>
     <a href="#" class="sub-link">Gold</a><a href="#" class="sub-link">Diamond</a><a href="#" class="sub-link">Pearl</a><a href="#" class="sub-link">Gemstone</a><a href="#" class="sub-link">Yellow Gold</a><a href="#" class="sub-link">Rose Gold</a><a href="#" class="sub-link">White Gold</a><a href="#" class="sub-link">22kt Gold</a>
   </div>
@@ -654,12 +679,24 @@
   if (mp2 && ms2) animatePH(mp2, ms2, suggestionsMobile);
 
   // ── Login toggle ──
-  const isLoggedIn = true;
-  if (!isLoggedIn) {
-    document.getElementById('profileCard').style.display = 'none';
-    document.getElementById('signOutBtn').style.display = 'none';
-    document.getElementById('loginBtn').style.display = 'flex';
-    document.getElementById('ddProfileSection').innerHTML = '<div style="text-align:center;padding:10px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div style="margin-top:8px;font-size:14px;font-weight:600;color:#2C2C2C">Welcome to Beyon</div><div style="font-size:11px;color:#B0ABAB;margin-top:4px">Login for a personalised experience</div><a href="#" style="display:inline-block;margin-top:12px;padding:10px 28px;background:linear-gradient(135deg,#BF0E23,#E8334A);color:#fff;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none">Login / Sign Up</a></div>';
+  function applyLoginState(loggedIn) {
+    document.getElementById('profileCard').style.display = loggedIn ? '' : 'none';
+    document.getElementById('signOutBtn').style.display = loggedIn ? '' : 'none';
+    document.getElementById('loginBtn').style.display = loggedIn ? 'none' : 'flex';
+    document.getElementById('ddProfileSection').innerHTML = loggedIn
+      ? '<img src="../Header/Y.png" class="watermark" alt="" /><div class="dd-name">Priya Sharma</div><div class="dd-detail">+91 98765 43210</div><div class="dd-detail">priya.sharma@email.com</div>'
+      : '<div style="text-align:center;padding:10px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#B0ABAB" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div style="margin-top:8px;font-size:14px;font-weight:600;color:#2C2C2C">Welcome to beYon</div><div style="font-size:11px;color:#B0ABAB;margin-top:4px">Login for a personalised experience</div><a href="#" style="display:inline-block;margin-top:12px;padding:10px 28px;background:linear-gradient(135deg,#BF0E23,#E8334A);color:#fff;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none">Login / Sign Up</a></div>';
+  }
+  applyLoginState(true);
+
+  // ── Wishlist/Bag counts ──
+  function setCounts(wishlist, cart) {
+    [['wishlistBadge', wishlist], ['cartBadge', cart], ['wishlistBadgeM', wishlist], ['cartBadgeM', cart]].forEach(([id, n]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = n;
+      el.style.display = n > 0 ? 'flex' : 'none';
+    });
   }
   </script>
 
@@ -679,10 +716,11 @@
 
       <!-- Mobile title + merged sort/filter pill -->
       <div class="flex items-center justify-between gap-3 mb-3 lg:hidden">
-        <h1 class="text-base leading-none font-bold" style="color:#B91C1C">All Collections <span class="text-gray-400 text-[13px] font-normal" id="productCountMobile">(0)</span></h1>
+        <h1 class="text-base leading-none font-bold" style="color:#3c3c3c">All Collections <span class="text-gray-400 text-[13px] font-normal" id="productCountMobile">(0)</span></h1>
         <button class="flex items-center gap-2.5 rounded-full px-3.5 py-2.5" style="background:#F7F4EF" onclick="openSortSheet()" aria-label="Sort">
-          <span onclick="event.stopPropagation();openFilterSheet()" aria-label="Filter">
+          <span class="relative" onclick="event.stopPropagation();openFilterSheet()" aria-label="Filter">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/><circle cx="9" cy="7" r="1.6" fill="#2C2C2C" stroke="none"/><circle cx="15" cy="12" r="1.6" fill="#2C2C2C" stroke="none"/><circle cx="9" cy="17" r="1.6" fill="#2C2C2C" stroke="none"/></svg>
+            <span id="filterCount" class="hidden absolute -top-2 -right-2 min-w-[15px] h-[15px] px-1 rounded-full items-center justify-center text-[9px] font-bold text-white" style="background:#BF0E23"></span>
           </span>
           <span class="w-px h-4" style="background:#D8D2C6"></span>
           <span class="text-[13px] font-semibold" id="sortLabelMobile">Best Matches</span>
@@ -699,7 +737,7 @@
         <option value="discount">Discount</option>
       </select>
 
-      <div id="activeFilters" class="hidden flex flex-wrap gap-2 mb-4"></div>
+      <div id="activeFilters" aria-live="polite" class="hidden flex flex-nowrap lg:flex-wrap items-center gap-2 mb-4 overflow-x-auto no-scrollbar"></div>
 
       <div class="grid lg:grid-cols-[220px_1fr] gap-6">
         <!-- Desktop sidebar: breadcrumb + title + filters, aligned with the banner's top -->
@@ -792,13 +830,13 @@
     </main>
 
     <!-- Filter sheet (mobile bottom / desktop right-side panel) -->
-    <div id="filterOverlay" class="overlay" onclick="closeFilterSheet()"></div>
+    <div id="filterOverlay" class="overlay" onclick="dismissFilterSheet()"></div>
     <div id="filterSheet" class="sheet">
       <div class="p-5">
         <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5 lg:hidden"></div>
         <div class="flex items-center justify-between mb-5">
           <h3 class="text-base font-bold" style="font-family:'Geom'">Filter By</h3>
-          <button onclick="closeFilterSheet()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <button onclick="dismissFilterSheet()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
         <p class="text-[10px] font-bold tracking-[0.14em] uppercase text-gray-400 mb-2">Price Range</p>
         <div class="flex flex-wrap gap-1.5 mb-6">
@@ -825,9 +863,9 @@
         <div id="sizeFiltersMobile" class="mb-5"></div>
         <p class="text-[10px] font-bold tracking-[0.14em] uppercase text-gray-400 mb-2">Shop For</p>
         <div id="shopForFiltersMobile" class="mb-5"></div>
-        <div class="flex gap-3">
+        <div class="filter-footer flex gap-3">
           <button onclick="clearFilters()" class="flex-1 py-3 rounded-xl text-sm font-semibold" style="border:1.5px solid #ECEBE8">Clear All</button>
-          <button onclick="applyFilters()" class="flex-1 py-3 rounded-xl text-white text-sm font-bold" style="background:linear-gradient(135deg,#C62828,#991B1B)">Apply</button>
+          <button id="applyBtn" onclick="applyFilters()" class="flex-1 py-3 rounded-xl text-white text-sm font-bold" style="background:linear-gradient(135deg,#C62828,#991B1B)">Apply</button>
         </div>
       </div>
     </div>
@@ -842,11 +880,21 @@
         </div>
         <div id="sizeOptions" class="flex flex-wrap gap-2"></div>
         <div class="mt-auto">
-          <div class="text-right mb-3"><a href="#" class="text-sm underline font-semibold">Size Guide</a></div>
+          <div class="text-right mb-3"><button type="button" onclick="openRingGuide()" class="text-sm underline font-semibold">Size Guide</button></div>
           <div class="flex items-center justify-between mb-4"><span class="font-semibold">Total Price :</span><span class="text-xl font-bold" id="sizeTotalPrice"></span></div>
           <button onclick="confirmAddBag()" class="w-full py-4 rounded-full text-sm font-bold" style="background:#fff;color:#BF0E23">Confirm & Add to Bag</button>
         </div>
       </div>
+    </div>
+
+    <!-- Ring size guide — opened from the Size Guide link in the select-size popup -->
+    <div id="ringGuideOverlay" class="size-overlay" style="z-index:300" onclick="closeRingGuide()"></div>
+    <div id="ringGuide" class="rg-modal" role="dialog" aria-label="Ring size guide">
+      <div class="flex items-start justify-between p-5 pb-3">
+        <div><h3 class="text-base font-bold" style="font-family:'Geom'">Finding your Ring Size</h3><p class="text-xs text-gray-400 mt-0.5">Sizes are for Indian scale</p></div>
+        <button onclick="closeRingGuide()" aria-label="Close" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div id="ringGuideBody" class="px-5 pb-5 overflow-y-auto"></div>
     </div>
 
     <!-- Sort sheet (mobile) -->
@@ -906,15 +954,29 @@
       let shown = 12;
       let activeFilterSet = {};
       const fmt = n => '₹' + n.toLocaleString('en-IN');
+      const BAG_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center" style="background:#BF0E23;border:1.5px solid #fff"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>`;
+      const CHECK_ICON = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>';
+      const PRICES = [{ id: 'under-10k', label: 'Under ₹10K' }, { id: '10k-25k', label: '₹10K–25K' }, { id: '25k-50k', label: '₹25K–50K' }, { id: '50k-plus', label: '₹50K+' }];
+      // Filter popup shows 5 options per group, rest behind "Show more"; chips row shows every applied filter
+      const FILTER_META = { price: [PRICES, ''], cat: [CATS, ''], karatage: [KARATAGE, ''], jtype: [JEWELLERY_TYPES, ''], metal: [METAL_COLOURS, 'Colour: '], metaltype: [METAL_TYPES, 'Metal: '], clarity: [CLARITY, 'Clarity: '], carat: [CARATS, ''], size: [SIZES, 'Size: '], shopfor: [SHOP_FOR, ''] };
+      const filterLabel = (k, v) => { const [opts, pre] = FILTER_META[k] || [[], '']; return pre + (opts.find(o => o.id === v)?.label || v); };
+      const addedToBag = new Set();
       const ribbonClass = r => r === 'selling fast' ? 'ribbon-red' : r === 'just dropped' ? 'ribbon-dark' : 'ribbon-gold';
 
       function renderCheckGroup(targetId, items, filterKey, productField) {
+        const LIMIT = 5, mobile = targetId.endsWith('Mobile'), collapsible = mobile && items.length > LIMIT + 1;
         document.querySelectorAll('#' + targetId).forEach(el => {
-          el.innerHTML = items.map(it => {
+          el.innerHTML = items.map((it, i) => {
             const count = productField ? allProducts.filter(p => p[productField] === it.id).length : null;
-            return `<label class="brand-check"><span class="flex items-center gap-2"><input type="checkbox" data-filter="${filterKey}" data-val="${it.id}" onchange="toggleCheckbox(this)" />${it.label}</span>${count === null ? '' : `<span class="count">(${count})</span>`}</label>`;
-          }).join('');
+            return `<label class="brand-check${collapsible && i >= LIMIT ? ' extra' : ''}"><span class="flex items-center gap-2"><input type="checkbox" data-filter="${filterKey}" data-val="${it.id}" onchange="toggleCheckbox(this)" />${it.label}</span>${count === null ? '' : `<span class="count">(${count})</span>`}</label>`;
+          }).join('') + (collapsible ? `<button type="button" class="fg-toggle" onclick="toggleGroup(this)">Show ${items.length - LIMIT} more</button>` : '');
+          el.classList.toggle('fg-collapsed', collapsible);
         });
+      }
+      function toggleGroup(btn) {
+        const g = btn.parentElement, collapsed = g.classList.toggle('fg-collapsed');
+        btn.textContent = collapsed ? `Show ${g.querySelectorAll('.extra').length} more` : 'Show less';
       }
 
       function renderSortOptions() {
@@ -939,10 +1001,7 @@
           <div class="px-1 pt-2 pb-1 flex flex-col flex-1">
             <div class="flex items-start justify-between gap-1.5">
               <p class="text-[13px] font-medium leading-snug flex-1" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${p.name}</p>
-              ${!p.outOfStock ? `<button onclick="openSizePopup('${p.id}')" class="shrink-0 relative rounded-full flex items-center justify-center active:scale-90 transition-transform" style="width:26px;height:26px;background:#fff;border:1.3px solid #ECEBE8" aria-label="Add to bag">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center" style="background:#BF0E23;border:1.5px solid #fff"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
-              </button>` : ''}
+              ${!p.outOfStock ? `<button data-bag="${p.id}" onclick="openSizePopup('${p.id}')" class="shrink-0 relative rounded-full flex items-center justify-center active:scale-90 transition-transform${addedToBag.has(p.id) ? ' bag-added' : ''}" style="width:26px;height:26px;background:#fff;border:1.3px solid #ECEBE8" aria-label="${addedToBag.has(p.id) ? 'Added to bag' : 'Add to bag'}">${addedToBag.has(p.id) ? CHECK_ICON : BAG_ICON}</button>` : ''}
             </div>
             <div class="mt-1">
               ${p.outOfStock ? `<button onclick="openRequestPopup()" class="w-full flex items-center justify-center gap-1.5 text-[10px] font-bold tracking-wide py-2 active:scale-95 transition-transform" style="border-radius:16px;background:rgba(44,44,44,0.05);border:1px solid rgba(44,44,44,0.15);color:#2C2C2C"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Request Design</button>` : `
@@ -988,7 +1047,37 @@
       }
       function selectSize(i) { document.querySelectorAll('.size-pill').forEach((el, idx) => el.classList.toggle('selected', idx === i)); }
       function closeSizePopup() { document.getElementById('sizeOverlay').classList.remove('active'); document.getElementById('sizeModal').classList.remove('open'); }
-      function confirmAddBag() { closeSizePopup(); showToast('Added to bag'); }
+      function confirmAddBag() {
+        const id = sizePopupProductId; closeSizePopup();
+        ['cartBadge', 'cartBadgeM'].forEach(i => {
+          const b = document.getElementById(i); if (!b) return;
+          b.textContent = (parseInt(b.textContent) || 0) + 1; b.style.display = 'flex';
+          b.classList.remove('badge-bump'); void b.offsetWidth; b.classList.add('badge-bump');
+        });
+        addedToBag.add(id);
+        const btn = document.querySelector(`[data-bag="${id}"]`);
+        if (btn) { btn.classList.add('bag-added'); btn.innerHTML = CHECK_ICON; btn.setAttribute('aria-label', 'Added to bag'); }
+        showToast('Added to bag');
+      }
+
+      // Ring size guide (Indian scale, sizes 6–30) — same data as the PDP guide
+      const RING = {
+        sizes: Array.from({ length: 25 }, (_, i) => i + 6),
+        circMm: [45.9,47.1,48.1,49.0,50.0,50.9,51.8,52.8,54.0,55.0,55.9,56.9,57.8,59.1,60.0,60.9,61.9,62.8,63.8,64.7,66.0,66.9,67.9,69.1,70.1],
+        diaMm: [14.6,15.0,15.3,15.6,15.9,16.2,16.5,16.8,17.2,17.5,17.8,18.1,18.4,18.8,19.1,19.4,19.7,20.0,20.3,20.6,21.0,21.3,21.6,22.0,22.3]
+      };
+      function openRingGuide() {
+        document.getElementById('ringGuideBody').innerHTML = `
+          <div class="text-[12px] text-gray-500 space-y-1 mb-4">
+            <p><b class="text-[#2C2C2C]">No ring?</b> Wrap a thin paper strip around your finger, mark where it meets, and measure the length in mm (circumference).</p>
+            <p><b class="text-[#2C2C2C]">Have a ring?</b> Measure its inner diameter in mm.</p>
+            <p>Match the value to the chart below.</p>
+          </div>
+          <table class="rg-table"><thead><tr><th>Ring size</th><th>Circumference (mm)</th><th>Diameter (mm)</th></tr></thead><tbody>${RING.sizes.map((s, i) => `<tr><td class="font-semibold">${s}</td><td>${RING.circMm[i].toFixed(1)}</td><td>${RING.diaMm[i].toFixed(1)}</td></tr>`).join('')}</tbody></table>`;
+        document.getElementById('ringGuideOverlay').classList.add('active');
+        document.getElementById('ringGuide').classList.add('open');
+      }
+      function closeRingGuide() { document.getElementById('ringGuideOverlay').classList.remove('active'); document.getElementById('ringGuide').classList.remove('open'); }
 
       function withLoader(work) {
         document.getElementById('productGrid').style.display = 'none';
@@ -1010,32 +1099,55 @@
         renderSortOptions();
       }
 
-      function toggleFilter(el) { el.classList.toggle('selected'); applyFilters(); }
-      function toggleCheckbox(el) {
-        document.querySelectorAll(`[data-filter="${el.dataset.filter}"][data-val="${el.dataset.val}"]`).forEach(e => {
-          if (e.tagName === 'INPUT') e.checked = el.checked; else e.classList.toggle('selected', el.checked);
+      // Mobile filter sheet stages selections; only Apply commits them. Desktop sidebar applies instantly.
+      const inSheet = el => !!el.closest('#filterSheet');
+      function syncControls(key, val, on) {
+        document.querySelectorAll(`[data-filter="${key}"][data-val="${val}"]`).forEach(e => {
+          if (e.tagName === 'INPUT') e.checked = on; else e.classList.toggle('selected', on);
         });
-        applyFilters();
       }
+      function selectedPairs() {
+        const m = new Map();
+        document.querySelectorAll('.filter-chip[data-filter].selected, input[data-filter]:checked').forEach(c => m.set(c.dataset.filter + '|' + c.dataset.val, [c.dataset.filter, c.dataset.val]));
+        return [...m.values()];
+      }
+      function updateSheetCount() {
+        const n = selectedPairs().length;
+        document.getElementById('applyBtn').textContent = n ? `Apply (${n})` : 'Apply';
+      }
+      function toggleFilter(el) {
+        syncControls(el.dataset.filter, el.dataset.val, !el.classList.contains('selected'));
+        inSheet(el) ? updateSheetCount() : applyFilters();
+      }
+      function toggleCheckbox(el) {
+        syncControls(el.dataset.filter, el.dataset.val, el.checked);
+        inSheet(el) ? updateSheetCount() : applyFilters();
+      }
+      function removeFilter(k, v) { syncControls(k, v, false); applyFilters(); }
       function openFilterSheet() { document.getElementById('filterOverlay').classList.add('active'); document.getElementById('filterSheet').classList.add('open'); }
       function closeFilterSheet() { document.getElementById('filterOverlay').classList.remove('active'); document.getElementById('filterSheet').classList.remove('open'); }
+      // Closing without Apply discards staged changes
+      function dismissFilterSheet() {
+        document.querySelectorAll('[data-filter]').forEach(e => {
+          const on = (activeFilterSet[e.dataset.filter] || []).includes(e.dataset.val);
+          if (e.tagName === 'INPUT') e.checked = on; else e.classList.toggle('selected', on);
+        });
+        updateSheetCount(); closeFilterSheet();
+      }
       function openSortSheet() { renderSortOptions(); document.getElementById('sortOverlay').classList.add('active'); document.getElementById('sortSheetMobile').classList.add('open'); }
       function closeSortSheet() { document.getElementById('sortOverlay').classList.remove('active'); document.getElementById('sortSheetMobile').classList.remove('open'); }
 
       function clearFilters() {
-        document.querySelectorAll('.filter-chip.selected').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('.filter-chip[data-filter].selected').forEach(c => c.classList.remove('selected'));
         document.querySelectorAll('input[data-filter]').forEach(c => c.checked = false);
         activeFilterSet = {}; shown = 12; products = allProducts.slice(0, shown);
-        renderActiveFilters();
+        renderActiveFilters(); updateSheetCount();
         withLoader(renderGrid);
       }
 
       function applyFilters() {
         activeFilterSet = {};
-        document.querySelectorAll('.filter-chip.selected, input[data-filter]:checked').forEach(c => {
-          const f = c.dataset.filter, v = c.dataset.val;
-          (activeFilterSet[f] = activeFilterSet[f] || []).push(v);
-        });
+        selectedPairs().forEach(([f, v]) => (activeFilterSet[f] = activeFilterSet[f] || []).push(v));
         let filtered = allProducts;
         if (activeFilterSet.cat?.length) filtered = filtered.filter(p => activeFilterSet.cat.includes(p.category));
         if (activeFilterSet.metal?.length) filtered = filtered.filter(p => activeFilterSet.metal.includes(p.metal));
@@ -1046,18 +1158,20 @@
           return p.price > 50000;
         }));
         products = filtered; shown = Math.min(12, products.length);
-        closeFilterSheet(); renderActiveFilters();
+        closeFilterSheet(); renderActiveFilters(); updateSheetCount();
         withLoader(renderGrid);
       }
 
       function renderActiveFilters() {
-        const wrap = document.getElementById('activeFilters');
-        const keys = Object.keys(activeFilterSet).filter(k => activeFilterSet[k].length);
-        if (!keys.length) { wrap.classList.add('hidden'); return; }
+        const wrap = document.getElementById('activeFilters'), badge = document.getElementById('filterCount');
+        const pairs = Object.entries(activeFilterSet).flatMap(([k, vs]) => vs.map(v => [k, v]));
+        badge.textContent = pairs.length; badge.classList.toggle('hidden', !pairs.length); badge.classList.toggle('flex', !!pairs.length);
+        if (!pairs.length) { wrap.classList.add('hidden'); wrap.innerHTML = ''; return; }
         wrap.classList.remove('hidden');
-        wrap.innerHTML = keys.flatMap(k => activeFilterSet[k].map(v =>
-          `<span class="filter-chip selected text-xs">${v.replace(/-/g, ' ')}</span>`
-        )).join('') + `<button onclick="clearFilters()" class="text-xs font-semibold" style="color:#BF0E23">Clear</button>`;
+        wrap.innerHTML = `<button onclick="clearFilters()" class="shrink-0 text-xs font-semibold underline whitespace-nowrap" style="color:#BF0E23">Clear all</button>` + pairs.map(([k, v]) => {
+          const l = filterLabel(k, v);
+          return `<span class="active-chip">${l}<button type="button" onclick="removeFilter('${k}','${v}')" aria-label="Remove ${l} filter"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>`;
+        }).join('');
       }
 
       let toastT;
@@ -1200,12 +1314,14 @@
         </svg>`;
       }
       EdgeCases.init({
-        reset: () => { closeFilterSheet(); closeSortSheet(); clearFilters(); },
+        reset: () => { closeFilterSheet(); closeSortSheet(); clearFilters(); closeMobileMenu(); applyLoginState(true); setCounts(2, 1); },
         cases: [
           { id: 'default', group: 'PLP', label: 'Default grid', desc: 'Standard listing with sidebar/bottom-nav filters.', run: () => {} },
           { id: 'empty', group: 'PLP', label: 'No results', desc: 'Filters applied with zero matches.', run: () => { setTimeout(() => { products = []; shown = 0; document.getElementById('productGrid').innerHTML = `<div class="col-span-full flex flex-col items-center text-center py-16 px-4">${catIllustration()}<h3 class="text-base font-bold mt-4" style="font-family:'Geom'">No pieces found</h3><p class="text-sm text-gray-400 mt-1 max-w-xs">We couldn't find anything matching your filters. Try adjusting them or explore other collections.</p><button onclick="clearFilters()" class="mt-5 px-6 py-2.5 rounded-xl text-sm font-semibold text-white" style="background:linear-gradient(135deg,#C62828,#991B1B)">Clear Filters</button></div>`; }, 550); } },
           { id: 'wishlisted', group: 'PLP', label: 'All wishlisted', desc: 'Every card shown as wishlisted.', run: () => { allProducts.forEach(p => p.wishlisted = true); renderGrid(); } },
-          { id: '404', group: 'Errors', label: '404 — Page not found', desc: 'Broken/missing link, no header.', run: () => location.href = '../404.html' }
+          { id: '404', group: 'Errors', label: '404 — Page not found', desc: 'Broken/missing link, no header.', run: () => location.href = '../404.html' },
+          { id: 'guest-mobile', group: 'Header', label: 'Guest profile (mobile)', desc: 'Hamburger menu shows the "Welcome to beYon" login prompt instead of the profile card.', run: () => { applyLoginState(false); toggleMobileMenu(); } },
+          { id: 'zero-counts', group: 'Header', label: 'Empty wishlist & bag', desc: 'Wishlist and Bag badges are hidden when the count is zero.', run: () => setCounts(0, 0) }
         ]
       });
     </script>
