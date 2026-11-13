@@ -307,7 +307,7 @@
       </div>
     </div>
     <div class="desktop-only flex items-center gap-2 ml-auto">
-      <a href="#" class="header-cta cta-facts" style="word-spacing:-3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l6 7-10 13L2 9z"/><path d="M2 9h20"/><path d="M8 2l4 7 4-7"/><path d="M12 9v13"/></svg>beYon Facts</a>
+      <a href="#" class="header-cta cta-facts" style="word-spacing:-3px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4.5"/><circle cx="12" cy="8" r="0.9" fill="currentColor" stroke="none"/></svg>beYon Facts</a>
       <a href="#" class="header-cta cta-gift"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8V21"/><path d="M3 13h18"/></svg>Gifting</a>
       <a href="https://www.beyon.co.in/en_IN/stores" target="_blank" rel="noopener" class="header-cta cta-store"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Find Store</a>
     </div>
@@ -963,7 +963,7 @@
       function renderCustomisation() {
         return `<div class="px-4 py-4 section-gold-bg">
           <div class="flex items-center gap-2 mb-4">
-            <div class="w-0.5 h-3.5 rounded-full shrink-0" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" class="shrink-0"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
             <span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Customise</span>
             <span class="ml-auto text-[8px] font-semibold tracking-wide px-1.5 py-0.5 rounded-full" style="background:rgba(211,11,57,0.06);color:#b8860b;border:1px solid rgba(184,134,11,0.15)">PERSONALISE YOUR PIECE</span>
           </div>
@@ -1021,7 +1021,7 @@
 
           <button onclick="openCustomisationPopup()" class="group w-full mt-4 flex items-center gap-3 px-3.5 py-3 rounded-2xl active:scale-[0.98] transition-all duration-200" style="background:linear-gradient(135deg,rgba(255,255,255,0.85),rgba(253,232,236,0.75));border:1px solid rgba(185,28,28,0.18);box-shadow:0 8px 22px -14px rgba(153,27,27,0.45), inset 0 1px 0 rgba(255,255,255,0.9)">
             <span class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background:rgba(185,28,28,0.08);border:1px solid rgba(185,28,28,0.15)">
-              <svg width="18" height="18" viewBox="0 0 48 48" fill="none" stroke="#B91C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 23l-9-9h18z"/><path d="M8 14l9 9-9 9"/><path d="M30 15h8l4 8-4 8h-8l-4-8z" fill="none"/>${sparkSvg(38, 36, 3.5)}${sparkSvg(8, 32, 3)}</svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>
             </span>
             <span class="flex flex-col items-start text-left">
               <span class="text-[12px] font-semibold tracking-wide text-[#2C2C2C]">Personalise this piece</span>
@@ -1575,12 +1575,12 @@
 
       function renderExtras(reverse) {
         const gold = `<div class="rounded-3xl p-4 section-gold-bg" style="border:1px solid rgba(184,134,11,0.18)">
-            <div class="flex items-center gap-2 mb-2"><svg width="20" height="20" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><polygon points="13,6 21,16 13,26 5,16"/><polygon points="28,18 42,18 42,30 28,30"/><path d="M18 12a16 16 0 0 1 16-3"/><path d="M14 8l4 1-1 4"/><path d="M30 36a16 16 0 0 1-16 3"/><path d="M34 40l-4-1 1-4"/>${sparkSvg(39, 8, 3.5)}${sparkSvg(6, 36, 3)}</svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Gold Exchange</span></div>
+            <div class="flex items-center gap-2 mb-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M17 3l4 4-4 4"/><path d="M21 7H7"/><path d="M7 21l-4-4 4-4"/><path d="M3 17h14"/></svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Gold Exchange</span></div>
             <p class="text-[11px] text-gray-500 leading-relaxed">Get value on your old gold jewellery · <strong class="text-[#8a6e3a]">${formatPrice(goldRate(22))}/gm (22Kt)</strong></p>
             <button onclick="openExchange()" class="w-full mt-3 py-2.5 rounded-xl text-[11px] font-bold tracking-wide cta-customise active:scale-[0.98] transition-transform" style="color:#8a6e3a">Check Exchange Value</button>
           </div>`;
         const store = `<div class="rounded-3xl p-4 section-delivery-bg" style="border:1px solid rgba(211,11,57,0.12)">
-            <div class="flex items-center gap-2 mb-2"><svg width="20" height="20" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M24 4C15 4 9 11 9 19c0 12 15 25 15 25s15-13 15-25c0-8-6-15-15-15z"/><circle cx="24" cy="19" r="6"/>${sparkSvg(38, 8, 3.5)}${sparkSvg(8, 36, 3)}</svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Store Availability</span></div>
+            <div class="flex items-center gap-2 mb-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M3 9l2-5h14l2 5"/><path d="M3 9h18v0a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/></svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Store Availability</span></div>
             <p class="text-[11px] text-gray-500 leading-relaxed">See if this piece is available at a store near you.</p>
             <a href="https://www.beyon.co.in/en_IN/stores" target="_blank" rel="noopener" class="w-full mt-3 py-2.5 rounded-xl text-white text-[11px] font-bold tracking-wide btn-add-to-bag active:scale-[0.98] transition-transform flex items-center justify-center">Check Store Availability</a>
           </div>`;
