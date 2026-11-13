@@ -120,7 +120,9 @@
           @keyframes bagBump{0%{transform:scale(1)}40%{transform:scale(1.6)}100%{transform:scale(1)}}
       .badge-bump{animation:bagBump .5s cubic-bezier(.34,1.56,.64,1)}
       .bag-added{background:#1E8E3E!important;border-color:#1E8E3E!important}
-    </style>
+        #loginFrame{display:none;position:fixed;inset:0;width:100%;height:100%;border:0;z-index:300;background:transparent;color-scheme:normal}
+    #loginFrame.open{display:block}
+  </style>
     <style>
 
     
@@ -414,6 +416,7 @@
 </header>
 
 <div class="mega-overlay" id="megaOverlay"></div>
+<iframe id="loginFrame" title="Sign in or sign up" src="about:blank"></iframe>
 
 <!-- ═══ MOBILE MENU ═══ -->
 <nav class="mobile-menu mobile-only" id="mobileMenu">
@@ -650,7 +653,11 @@
   const accountBtn = document.getElementById('accountBtn');
   const profileDropdown = document.getElementById('profileDropdown');
   let ddOpen = false;
-  accountBtn.addEventListener('click', e => { e.stopPropagation(); ddOpen = !ddOpen; profileDropdown.classList.toggle('open', ddOpen); });
+  // Guests get the sign-in popup straight away; the dropdown is for logged-in users only
+  const loginFrame = document.getElementById('loginFrame');
+  function openLogin() { loginFrame.src = '../Login/login-aurora-editorial.html'; loginFrame.classList.add('open'); }
+  window.addEventListener('message', e => { if (e.data === 'beyon-close-login') loginFrame.classList.remove('open'); });
+  accountBtn.addEventListener('click', e => { e.stopPropagation(); if (!isLoggedIn) { openLogin(); return; } ddOpen = !ddOpen; profileDropdown.classList.toggle('open', ddOpen); });
   document.addEventListener('click', e => { if (ddOpen && !document.getElementById('accountWrap').contains(e.target)) { ddOpen = false; profileDropdown.classList.remove('open'); } });
 
   // ── Mega menu hover ──
@@ -681,7 +688,9 @@
   if (mp2 && ms2) animatePH(mp2, ms2, suggestionsMobile);
 
   // ── Login toggle ──
+  let isLoggedIn = true;
   function applyLoginState(loggedIn) {
+    isLoggedIn = loggedIn;
     document.getElementById('profileCard').style.display = loggedIn ? '' : 'none';
     document.getElementById('signOutBtn').style.display = loggedIn ? '' : 'none';
     document.getElementById('loginBtn').style.display = loggedIn ? 'none' : 'flex';
