@@ -932,7 +932,6 @@
       ];
       const SHOP_FOR = [{ id: 'women', label: 'Women' }];
       const CATEGORIES = ['pendant','ring','bracelet','earrings','necklace','earrings','ring','bracelet','pendant','ring','necklace','bracelet','ring','bracelet','pendant','earrings','chain','bracelet','ring','earrings','necklace','ring','bracelet','earrings'];
-      const METAL_OPTS = METAL_COLOURS;
       const METALS = ['rose','white','yellow','rose','white','yellow','white','rose','yellow','white','white','yellow','rose','yellow','white','rose','yellow','white','white','rose','yellow','rose','yellow','white'];
       const RIBBONS = { 0: 'selling fast', 2: 'just dropped', 5: 'stackable', 8: 'selling fast', 11: 'just dropped', 14: 'stackable' };
       const BESTSELLER = new Set([1, 4, 7, 10, 13, 16, 19, 22]);
@@ -1314,7 +1313,7 @@
         </svg>`;
       }
       EdgeCases.init({
-        reset: () => { closeFilterSheet(); closeSortSheet(); clearFilters(); closeMobileMenu(); applyLoginState(true); setCounts(2, 1); },
+        reset: () => { closeFilterSheet(); closeSortSheet(); clearFilters(); closeMobileMenu(); applyLoginState(true); setCounts(2, 1); addedToBag.clear(); },
         cases: [
           { id: 'default', group: 'PLP', label: 'Default grid', desc: 'Standard listing with sidebar/bottom-nav filters.', run: () => {} },
           { id: 'empty', group: 'PLP', label: 'No results', desc: 'Filters applied with zero matches.', run: () => { setTimeout(() => { products = []; shown = 0; document.getElementById('productGrid').innerHTML = `<div class="col-span-full flex flex-col items-center text-center py-16 px-4">${catIllustration()}<h3 class="text-base font-bold mt-4" style="font-family:'Geom'">No pieces found</h3><p class="text-sm text-gray-400 mt-1 max-w-xs">We couldn't find anything matching your filters. Try adjusting them or explore other collections.</p><button onclick="clearFilters()" class="mt-5 px-6 py-2.5 rounded-xl text-sm font-semibold text-white" style="background:linear-gradient(135deg,#C62828,#991B1B)">Clear Filters</button></div>`; }, 550); } },

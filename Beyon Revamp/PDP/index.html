@@ -74,6 +74,7 @@
       .cr-input:focus { border-color:#2c2c2c; }
       .cr-input::placeholder { color:#b0b0b0; }
       .cr-input.error { border-color:#d30b39; }
+      select.cr-input, select.rd-input { -webkit-appearance:none; appearance:none; cursor:pointer; padding-left:12px !important; padding-right:28px !important; background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'><path d='M1 1l4 4 4-4' stroke='%2371717A' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 10px center; }
       .cr-error { font-size:11px;color:#d30b39;margin-top:4px;display:none; }
       .cr-error.show { display:block; }
       .btn-customisation-request { background: #2c2c2c; }
@@ -129,6 +130,9 @@
         border:2px solid #d30b39;border-radius:50%;
         animation:ring-burst .5s ease-out forwards;pointer-events:none;
       }
+          @keyframes bagBump{0%{transform:scale(1)}40%{transform:scale(1.6)}100%{transform:scale(1)}}
+      .badge-bump{animation:bagBump .5s cubic-bezier(.34,1.56,.64,1)}
+      .bag-added{background:#1E8E3E!important;border-color:#1E8E3E!important}
     </style>
     <style>
 
@@ -738,7 +742,7 @@
           grandTotal: 49389
         },
         images: ['assets/img/prd 1.webp', 'assets/img/pd 2.webp', 'assets/img/pd 3.webp', 'assets/img/pd 4.webp', 'assets/img/pd 5.webp'],
-        delivery: { estimate: 'Tomorrow, its yours! 1-day delivery for orders placed before 12pm for selected pincodes*' }
+        delivery: { estimate: 'Tomorrow, its yours! 1-day delivery for orders placed before 12pm for selected PIN codes*' }
       };
 
       const recommendations = [
@@ -826,6 +830,10 @@
         { code: 'GB', flag: '🇬🇧', name: 'United Kingdom' }
       ];
 
+      // PIN code for India (6 digits), ZIP code for every other country
+      const pinWord = c => c === 'IN' ? 'PIN code' : 'ZIP code';
+      const pinClean = (c, v) => c === 'IN' ? v.replace(/\D/g, '').slice(0, 6) : v.replace(/[^A-Za-z0-9 -]/g, '').slice(0, 10);
+      const pinValid = (c, v) => c === 'IN' ? /^\d{6}$/.test(v) : /^[A-Za-z0-9 -]{3,10}$/.test(v);
       const PINCODE_DB={'110001':{ok:true,date:'27 Jun'},'400001':{ok:true,date:'26 Jun'},'560001':{ok:true,date:'28 Jun'},'700001':{ok:true,date:'29 Jun'},'600001':{ok:true,date:'25 Jun'},'500001':{ok:false},'999999':{ok:false}};
 
 
@@ -1056,7 +1064,8 @@
       }
 
       function renderDelivery() {
-        const canCheck = state.pincode.length === 6;
+        const canCheck = pinValid(state.selectedCountry, state.pincode);
+        const pinLabel = pinWord(state.selectedCountry);
         const selCountry = DELIVERY_COUNTRIES.find(c=>c.code===state.selectedCountry);
         return `<div class="px-5 py-5 section-delivery-bg">
           <div class="flex items-center gap-2 mb-4">
@@ -1074,7 +1083,7 @@
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform .2s;transform:${state.countryDropdownOpen ? 'rotate(180deg)' : 'rotate(0)'}"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
               ${state.countryDropdownOpen ? `<div class="absolute top-full left-0 mt-1 z-50 bg-white rounded-xl shadow-xl overflow-y-auto" style="max-height:240px;min-width:200px;border:1px solid rgba(0,0,0,0.08)">
-                ${DELIVERY_COUNTRIES.map(c => `<button onclick="state.selectedCountry='${c.code}';state.countryDropdownOpen=false;state.pincodeChecked=false;render()" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-left hover:bg-gray-50 transition-colors" style="${state.selectedCountry === c.code ? 'background:rgba(211,11,57,0.04)' : ''}">
+                ${DELIVERY_COUNTRIES.map(c => `<button onclick="state.selectedCountry='${c.code}';state.countryDropdownOpen=false;state.pincodeChecked=false;state.pincode=pinClean('${c.code}',state.pincode);render()" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-left hover:bg-gray-50 transition-colors" style="${state.selectedCountry === c.code ? 'background:rgba(211,11,57,0.04)' : ''}">
                   <span class="text-base leading-none">${c.flag}</span>
                   <span class="text-[12px] font-medium text-[#3c3c3c]">${c.name}</span>
                   <span class="text-[10px] text-gray-400 ml-auto">${c.code}</span>
@@ -1082,9 +1091,9 @@
                 </button>`).join('')}
               </div>` : ''}
             </div>
-            <input type="tel" maxlength="6" value="${state.pincode}" oninput="handlePincodeInput(this)" placeholder="Enter pincode" class="flex-1 px-4 py-3.5 text-sm font-medium outline-none bg-transparent placeholder-gray-400" style="color:#3c3c3c" id="pincodeInput" />
+            <input type="text" inputmode="${state.selectedCountry === 'IN' ? 'numeric' : 'text'}" maxlength="${state.selectedCountry === 'IN' ? 6 : 10}" value="${state.pincode}" oninput="handlePincodeInput(this)" placeholder="Enter ${pinLabel}" aria-label="${pinLabel}" autocomplete="postal-code" class="flex-1 px-4 py-3.5 text-sm font-medium outline-none bg-transparent placeholder-gray-400" style="color:#3c3c3c" id="pincodeInput" />
             <div class="pr-2.5 shrink-0">
-              <button onclick="checkPdpPincode()" class="text-[10px] font-bold whitespace-nowrap rounded-lg transition-all duration-200" style="padding:6px 10px;${canCheck ? 'background:#d30b39;color:#fff;border:none' : 'background:transparent;color:#ccc;border:1px solid #e0e0e0'}">CHECK</button>
+              <button onclick="checkPdpPincode()" ${canCheck ? '' : 'disabled'} class="text-[10px] font-bold whitespace-nowrap rounded-lg transition-all duration-200" style="padding:6px 10px;${canCheck ? 'background:#d30b39;color:#fff;border:none' : 'background:transparent;color:#ccc;border:1px solid #e0e0e0'}">CHECK</button>
             </div>
           </div>
           ${state.pincodeChecked && state.pincodeOk ? `<div class="flex items-center gap-2 mb-4 px-3 py-2.5 rounded-xl bg-green-50" style="border:1px solid rgba(46,125,50,0.2)">
@@ -1109,7 +1118,22 @@
         return `<div class="relative w-full overflow-hidden" style="aspect-ratio:2866/1170;max-height:60vh"><img src="assets/Horizontalbanner.png" alt="Beyon brand" class="w-full h-full object-cover block" loading="lazy" /></div>`;
       }
 
+      const recAdded = new Set();
+      function addRecToBag(btn, i) {
+        if (recAdded.has(i)) { showPdpToast('Already in your bag'); return; }
+        recAdded.add(i);
+        btn.classList.add('bag-added'); btn.innerHTML = REC_CHECK; btn.setAttribute('aria-label', 'Added to bag');
+        ['cartBadge', 'cartBadgeM'].forEach(id => {
+          const b = document.getElementById(id); if (!b) return;
+          b.textContent = (parseInt(b.textContent) || 0) + 1; b.style.display = 'flex';
+          b.classList.remove('badge-bump'); void b.offsetWidth; b.classList.add('badge-bump');
+        });
+        showPdpToast('Added to bag');
+      }
+      const REC_BAG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center" style="background:#BF0E23;border:1.5px solid #fff"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>';
+      const REC_CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>';
       function renderRecommendationCard(item) {
+        const i = recommendations.indexOf(item), added = recAdded.has(i);
         return `<div class="flex flex-col gap-2">
           <div class="relative overflow-hidden rounded-2xl" style="aspect-ratio:1/1;background:#fff;border:1px solid #ECEBE8">
             <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" draggable="false" loading="lazy" />
@@ -1117,9 +1141,12 @@
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             </button>
           </div>
-          <div class="px-0.5">
-            <p class="text-[11px] font-medium text-[#1a1a1a] leading-tight truncate">${item.name}</p>
-            <p class="text-[12px] font-bold text-[#3c3c3c] mt-0.5">${formatPrice(item.price)}</p>
+          <div class="px-0.5 flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <p class="text-[11px] font-medium text-[#1a1a1a] leading-tight truncate">${item.name}</p>
+              <p class="text-[12px] font-bold text-[#3c3c3c] mt-0.5">${formatPrice(item.price)}</p>
+            </div>
+            <button onclick="addRecToBag(this, ${i})" class="shrink-0 relative rounded-full flex items-center justify-center active:scale-90 transition-transform${added ? ' bag-added' : ''}" style="width:28px;height:28px;background:#fff;border:1.3px solid #ECEBE8" aria-label="${added ? 'Added to bag' : 'Add to bag'}">${added ? REC_CHECK : REC_BAG}</button>
           </div>
         </div>`;
       }
@@ -1261,36 +1288,6 @@
         </div>`;
       }
 
-      const REVIEWS = [
-        ['Sanjana Sahu', 'October 12, 2025', 'So tbh, for a very long time, I wanted to purchase dainty jewellery from BEYON from my first salary because the pieces felt so personal. The packaging, the sparkle and the certificate made it a day I will never forget.'],
-        ['Drswati Mishra', 'October 12, 2025', 'BEYON, to me, represents timeless elegance with a modern touch. I love jewellery that feels classic yet effortless enough to wear every single day, and this pendant does exactly that.'],
-        ['Blessy Sherline', 'October 12, 2025', 'My husband gifted me my first BEYON jewellery for our wedding anniversary after my second delivery, and I felt so special. The diamonds are brilliant and the finish is flawless.'],
-        ['Priyadarshini', 'October 12, 2025', 'It means an opportunity to return the love I have received. I want to gift my mom a diamond earring, she does not own one. The delivery was quick and the team helped me pick the perfect size.'],
-        ['Neha Gajendra', 'November 12, 2025', 'It means a lot to me. Tata hai toh trust hai. I bought my first gold jewellery from BEYON, and I was also the first in my family to choose a laboratory-grown diamond. Absolutely love it.']
-      ];
-      function renderReviews() {
-        const star = '<svg width="12" height="12" viewBox="0 0 24 24" fill="#C5A575"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>';
-        const quote = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#B91C1C" opacity=".18"><path d="M3 21h7l2-8V3H3v10h4zM14 21h7l2-8V3h-9v10h4z" transform="scale(.9) translate(-1 0)"/></svg>';
-        return `<div class="reviews-section w-full py-8 px-4">
-          <div class="flex items-center gap-2.5 mb-5">
-            <div class="w-1 h-5 rounded-full" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
-            <h2 class="text-[11px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Real stories from real BEYON lovers</h2>
-            <span class="ml-auto flex items-center gap-1 text-[11px] font-semibold text-[#3c3c3c]">${star}4.9<span class="text-gray-400 font-normal">· 10,000+ reviews</span></span>
-          </div>
-          <div class="flex gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-5 lg:gap-4 lg:overflow-visible" style="scroll-snap-type:x mandatory;scrollbar-width:none">
-            ${REVIEWS.map(([n, d, t]) => `<div class="shrink-0 lg:shrink flex flex-col rounded-2xl bg-white p-4" style="width:min(260px,75vw);scroll-snap-align:start;border:1px solid #ECEBE8" >
-              <div class="flex items-center justify-between">${quote}<span class="flex gap-0.5">${star.repeat(5)}</span></div>
-              <p class="text-[12px] text-gray-600 leading-relaxed mt-3 flex-1" style="display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden">${t}</p>
-              <button onclick="const p=this.previousElementSibling;const o=p.style.webkitLineClamp==='unset';p.style.webkitLineClamp=o?'4':'unset';this.textContent=o?'Read more':'Show less'" class="mt-2 self-start text-[11px] font-bold" style="color:#d30b39">Read more</button>
-              <div class="flex items-center justify-between mt-3 pt-3" style="border-top:1px solid rgba(0,0,0,0.06)">
-                <div class="min-w-0"><p class="text-[12px] font-bold text-[#1a1a1a] truncate">${n}</p><p class="text-[10px] text-gray-400">${d}</p></div>
-                <span class="text-[8px] font-bold tracking-[0.12em] uppercase px-2 py-0.5 rounded-full shrink-0" style="background:rgba(211,11,57,0.08);color:#d30b39">Verified</span>
-              </div>
-            </div>`).join('')}
-          </div>
-        </div>`;
-      }
-
       function renderSizeChartModal() {
         if (!state.sizeChartOpen) return '';
         const sizes = [
@@ -1350,7 +1347,6 @@
                 <div class="mt-3 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderCustomisation()}</div>
                 <div class="mt-3 mx-3 sm:mx-4 space-y-3">${renderExtras(true)}</div>
                 <div class="mt-3 overflow-hidden">${renderBrandImage()}</div>
-                ${renderReviews()}
                 ${renderStackIt()}
                 ${renderFAQ()}
                 <div class="h-28"></div>
@@ -1369,7 +1365,6 @@
                 </div>
               </div>
               <div class="w-full">${renderBrandImage()}</div>
-              <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderReviews()}</div>
               <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderStackIt()}</div>
               <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderFAQ()}</div>
               <div class="h-24"></div>
@@ -1430,12 +1425,13 @@
       }
 
       function handlePincodeInput(el) {
-        el.value = el.value.replace(/\D/g, '');
+        el.value = pinClean(state.selectedCountry, el.value);
         state.pincode = el.value;
         state.pincodeChecked = false;
         const checkBtn = el.parentElement.querySelector('.pr-2\\.5 button') || el.nextElementSibling?.querySelector('button');
-        const canCheck = state.pincode.length === 6;
+        const canCheck = pinValid(state.selectedCountry, state.pincode);
         if (checkBtn) {
+          checkBtn.disabled = !canCheck;
           checkBtn.style.background = canCheck ? '#d30b39' : 'transparent';
           checkBtn.style.color = canCheck ? '#fff' : '#ccc';
           checkBtn.style.border = canCheck ? 'none' : '1px solid #e0e0e0';
@@ -1443,7 +1439,7 @@
       }
 
       function checkPdpPincode() {
-        if (state.pincode.length !== 6) return;
+        if (!pinValid(state.selectedCountry, state.pincode)) return;
         const entry = PINCODE_DB[state.pincode];
         if (entry) {
           state.pincodeChecked = true;
@@ -1610,51 +1606,71 @@
       }
 
       const goldRate = k => Math.round(13991 * k / 24);
-      const exState = { k: 22, w: '', name: '', mobile: '', computed: false };
+      const EX_CC = [['IN', '🇮🇳', '+91', 10], ['AE', '🇦🇪', '+971', 9], ['US', '🇺🇸', '+1', 10], ['GB', '🇬🇧', '+44', 10], ['SG', '🇸🇬', '+65', 8], ['AU', '🇦🇺', '+61', 9], ['CA', '🇨🇦', '+1', 10], ['SA', '🇸🇦', '+966', 9]];
+      const exState = { k: 22, w: '', name: '', cc: 'IN', mobile: '', computed: false };
+      const exCc = () => EX_CC.find(c => c[0] === exState.cc) || EX_CC[0];
+      const exClearErr = (el, id) => { el.classList.remove('error'); document.getElementById(id)?.classList.remove('show'); };
       function openExchange() { exState.computed = false; renderExchange(); }
-      function renderExchange(err) {
+      // Weight: digits with at most 3 decimal places
+      function exWeightInput(el) {
+        el.value = el.value.replace(/[^\d.]/g, '').replace(/^(\d*\.?\d{0,3}).*$/, '$1');
+        exState.w = el.value; exClearErr(el, 'exWErr');
+      }
+      function exMobileInput(el) {
+        el.value = el.value.replace(/\D/g, '').slice(0, exCc()[3]);
+        exState.mobile = el.value; exClearErr(el, 'exMErr');
+      }
+      function renderExchange(err = {}) {
         const value = Math.round((parseFloat(exState.w) || 0) * goldRate(exState.k));
-        const payLeft = Math.max(0, product.price - value);
+        const payLeft = Math.max(0, (product.price || 0) - value);
+        const req = '<span style="color:#d30b39"> *</span>';
+        const lbl = 'text-[9px] font-bold tracking-[0.14em] uppercase';
         openSheet(`${sheetHead('Gold Exchange Calculator', 'Calculate the exchange value of your old gold jewellery.')}
-          <p class="text-[9px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Karatage</p>
+          <p class="${lbl} mb-2" style="color:#b8a080">Karatage</p>
           <div class="flex flex-wrap gap-1.5">${[9,14,18,22,24].map(k => `<button onclick="exState.k=${k};renderExchange()" class="px-3.5 py-1.5 rounded-full text-[10px] font-semibold ${pillClass(exState.k === k)}">${k} KT</button>`).join('')}</div>
           <p class="text-[11px] mt-2" style="color:#8a6e3a">Today's ${exState.k} KT rate: ${formatPrice(goldRate(exState.k))}/gm</p>
-          <p class="text-[9px] font-bold tracking-[0.14em] uppercase mt-4 mb-2" style="color:#b8a080">Weight (grams)</p>
+          <p class="${lbl} mt-4 mb-2" style="color:#b8a080">Weight (grams)${req}</p>
           <div class="flex items-center gap-2">
             <button onclick="stepWeight(-0.5)" aria-label="Decrease" class="w-9 h-9 rounded-full bg-gray-100 font-bold">-</button>
-            <input id="exW" type="number" min="0" step="0.1" inputmode="decimal" value="${exState.w}" placeholder="Type here" oninput="exState.w=this.value" class="cr-input" style="text-align:center" />
+            <input id="exW" type="text" inputmode="decimal" autocomplete="off" value="${exState.w}" placeholder="Up to 3 decimals" oninput="exWeightInput(this)" class="cr-input ${err.weight ? 'error' : ''}" style="text-align:center" />
             <button onclick="stepWeight(0.5)" aria-label="Increase" class="w-9 h-9 rounded-full bg-gray-100 font-bold">+</button>
           </div>
+          <p id="exWErr" class="cr-error ${err.weight ? 'show' : ''}">Enter the weight of your jewellery</p>
           ${!exState.computed ? `
-          <p class="text-[9px] font-bold tracking-[0.14em] uppercase mt-4 mb-2" style="color:#b8a080">Your Name</p>
-          <input id="exName" type="text" placeholder="Enter your name" value="${exState.name}" oninput="exState.name=this.value" class="cr-input ${err === 'name' ? 'error' : ''}" />
-          <p class="cr-error ${err === 'name' ? 'show' : ''}">Enter your name</p>
-          <p class="text-[9px] font-bold tracking-[0.14em] uppercase mt-4 mb-2" style="color:#b8a080">Mobile Number</p>
-          <input id="exMobile" type="tel" maxlength="10" placeholder="10-digit number" value="${exState.mobile}" oninput="exState.mobile=this.value.replace(/\\D/g,'').slice(0,10)" class="cr-input ${err === 'mobile' ? 'error' : ''}" />
-          <p class="cr-error ${err === 'mobile' ? 'show' : ''}">Enter a valid 10-digit mobile number</p>
-          <p class="cr-error ${err === 'weight' ? 'show' : ''}">Enter the weight of your jewellery</p>
+          <p class="${lbl} mt-4 mb-2" style="color:#b8a080">Your Name${req}</p>
+          <input id="exName" type="text" placeholder="Enter your name" value="${exState.name}" oninput="exState.name=this.value;exClearErr(this,'exNErr')" class="cr-input ${err.name ? 'error' : ''}" />
+          <p id="exNErr" class="cr-error ${err.name ? 'show' : ''}">Enter your name</p>
+          <p class="${lbl} mt-4 mb-2" style="color:#b8a080">Mobile Number${req}</p>
+          <div class="flex gap-2">
+            <select aria-label="Country code" onchange="exState.cc=this.value;exState.mobile=exState.mobile.slice(0,exCc()[3]);renderExchange()" class="cr-input" style="width:104px;flex:none;padding-left:10px;padding-right:6px">${EX_CC.map(c => `<option value="${c[0]}" ${c[0] === exState.cc ? 'selected' : ''}>${c[1]} ${c[2]}</option>`).join('')}</select>
+            <input id="exMobile" type="tel" inputmode="numeric" maxlength="${exCc()[3]}" placeholder="${exCc()[3]}-digit number" value="${exState.mobile}" oninput="exMobileInput(this)" class="cr-input ${err.mobile ? 'error' : ''}" style="flex:1;min-width:0" />
+          </div>
+          <p id="exMErr" class="cr-error ${err.mobile ? 'show' : ''}">${exState.mobile ? `Enter a valid ${exCc()[3]}-digit mobile number` : 'Enter your mobile number'}</p>
           <button onclick="calcExchange()" class="w-full mt-5 py-3.5 rounded-xl text-white font-bold text-sm btn-add-to-bag active:scale-[0.98] transition-transform">Show Exchange Value</button>
           ` : `
-          <div class="mt-5 p-4 rounded-2xl text-center" style="background:#faf0d8">
+          <button onclick="exState.computed=false;renderExchange()" class="mt-4 flex items-center gap-1 text-[11px] font-semibold" style="color:#d30b39"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>Edit details</button>
+          <div class="mt-3 p-4 rounded-2xl text-center" style="background:#faf0d8">
             <p class="text-[11px] font-semibold" style="color:#8a6e3a">Your Gold Exchange Value*</p>
             <p class="text-2xl font-bold mt-1" style="color:#b8860b">${formatPrice(value)}</p>
           </div>
-          <div class="mt-3 p-4 rounded-2xl" style="background:rgba(211,11,57,0.05);border:1px solid rgba(211,11,57,0.1)">
+          ${product.price ? `<div class="mt-3 p-4 rounded-2xl" style="background:rgba(211,11,57,0.05);border:1px solid rgba(211,11,57,0.1)">
             <div class="flex items-center justify-between text-sm"><span class="text-gray-500">Product Price</span><span class="font-semibold">${formatPrice(product.price)}</span></div>
             <div class="flex items-center justify-between text-sm mt-2"><span class="text-gray-500">Exchange Value</span><span class="font-semibold" style="color:#b8860b">- ${formatPrice(value)}</span></div>
             <div class="h-px my-3" style="background:rgba(211,11,57,0.15)"></div>
             <div class="flex items-center justify-between text-sm font-bold" style="color:#d30b39"><span>You Pay*</span><span>${formatPrice(payLeft)}</span></div>
             ${payLeft === 0 ? `<p class="text-[10px] mt-2" style="color:#d30b39">Your exchange value covers this product. You can pick another piece from Beyon!</p>` : ''}
-          </div>
+          </div>` : ''}
           <a href="https://www.beyon.co.in/en_IN/stores" target="_blank" rel="noopener" class="w-full mt-4 py-3.5 rounded-xl text-white font-bold text-sm btn-add-to-bag active:scale-[0.98] transition-transform flex items-center justify-center">Find Stores Near You</a>
           <p class="text-[9px] text-gray-400 mt-3 text-center">*This is an approximate value. Final exchange price may vary based on actual purity testing at the store. Visit your nearest Beyon store for exact valuation.</p>
           `}`);
       }
-      function stepWeight(d) { exState.w = Math.max(0, (parseFloat(exState.w) || 0) + d).toFixed(1); renderExchange(); }
+      function stepWeight(d) { exState.w = String(parseFloat(Math.max(0, (parseFloat(exState.w) || 0) + d).toFixed(3))); renderExchange(); }
       function calcExchange() {
-        if (!(parseFloat(exState.w) > 0)) { renderExchange('weight'); return; }
-        if (!exState.name.trim()) { renderExchange('name'); return; }
-        if (!/^\d{10}$/.test(exState.mobile)) { renderExchange('mobile'); return; }
+        const err = {};
+        if (!(parseFloat(exState.w) > 0)) err.weight = true;
+        if (!exState.name.trim()) err.name = true;
+        if (exState.mobile.length !== exCc()[3]) err.mobile = true;
+        if (Object.keys(err).length) { renderExchange(err); return; }
         exState.computed = true;
         renderExchange();
       }
@@ -1811,7 +1827,7 @@
     <script src="shared/edge-cases.js"></script>
     <script>
       EdgeCases.init({
-        reset: () => { closeSheet(); state.pincode = ''; state.pincodeChecked = false; state.noOffer = false; state.noCustomise = true; product.gold.metal = '18 KT YELLOW'; render(); closeMobileMenu(); applyLoginState(true); setCounts(2, 1); },
+        reset: () => { closeSheet(); state.pincode = ''; state.pincodeChecked = false; state.noOffer = false; state.noCustomise = true; product.gold.metal = '18 KT YELLOW'; render(); closeMobileMenu(); applyLoginState(true); setCounts(2, 1); Object.assign(exState, { k: 22, w: '', name: '', cc: 'IN', mobile: '', computed: false }); recAdded.clear(); },
         cases: [
           { id: 'default', group: 'PDP', label: 'No customisation (default)', desc: 'Customise card shows only size, size chart, gross weight and the Personalise CTA.', run: () => {} },
           { id: 'oos', group: 'PDP', label: 'Out of stock', desc: 'No price / Add to Bag; Request Design instead.', run: () => location.href = 'oos.html' },
@@ -1822,9 +1838,10 @@
           { id: 'chain', group: 'Size guides', label: 'Chain size', desc: 'Chain length popup.', run: () => openGuide('chain') },
           { id: 'exchange', group: 'Features', label: 'Gold exchange calculator', desc: 'Exchange value popup.', run: () => openExchange() },
           { id: 'exchange-error', group: 'Features', label: 'Gold exchange calculator - error', desc: 'Submits the exchange form empty to show validation errors.', run: () => { openExchange(); calcExchange(); } },
+          { id: 'exchange-step2', group: 'Features', label: 'Gold exchange calculator - result', desc: 'Step 2 (value shown) with the Edit details link back to step 1.', run: () => { exState.w = '5.25'; exState.name = 'Priya'; exState.mobile = '9876543210'; exState.computed = true; renderExchange(); } },
           { id: 'stores', group: 'Features', label: 'Store availability', desc: 'Check Store Availability now links directly to the store locator.', run: () => window.open('https://www.beyon.co.in/en_IN/stores', '_blank') },
-          { id: 'pin-ok', group: 'Delivery check', label: 'Delivery check success', desc: 'Pincode entered, deliverable with an ETA.', run: () => { state.pincode = '560001'; state.pincodeChecked = true; state.pincodeOk = true; state.pincodeDate = '28 Jun'; render(); } },
-          { id: 'pin-fail', group: 'Delivery check', label: 'Delivery check error', desc: 'Pincode entered, not deliverable.', run: () => { state.pincode = '500001'; state.pincodeChecked = true; state.pincodeOk = false; render(); } },
+          { id: 'pin-ok', group: 'Delivery check', label: 'Delivery check success', desc: 'PIN code entered, deliverable with an ETA.', run: () => { state.pincode = '560001'; state.pincodeChecked = true; state.pincodeOk = true; state.pincodeDate = '28 Jun'; render(); } },
+          { id: 'pin-fail', group: 'Delivery check', label: 'Delivery check error', desc: 'PIN code entered, not deliverable.', run: () => { state.pincode = '500001'; state.pincodeChecked = true; state.pincodeOk = false; render(); } },
           { id: 'nooffer', group: 'PDP', label: 'No offer', desc: 'Removes the strikethrough MRP and the 15% off making-charges badge.', run: () => { state.noOffer = true; render(); } },
           { id: 'rose14', group: 'Metal', label: '14 KT Rose Gold', desc: 'Product details metal switches to 14 KT Rose Gold with rose shine animation.', run: () => { product.gold.metal = '14 KT ROSE'; render(); } },
           { id: 'white14', group: 'Metal', label: '14 KT White Gold', desc: 'Product details metal switches to 14 KT White Gold with white-gold shine animation.', run: () => { product.gold.metal = '14 KT WHITE'; render(); } },
