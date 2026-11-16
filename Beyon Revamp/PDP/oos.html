@@ -122,7 +122,11 @@
       .bag-added{background:#1E8E3E!important;border-color:#1E8E3E!important}
         #loginFrame{display:none;position:fixed;inset:0;width:100%;height:100%;border:0;z-index:300;background:transparent;color-scheme:normal}
     #loginFrame.open{display:block}
-  </style>
+        @keyframes rvScroll{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+      .rv-track{animation:rvScroll 70s linear infinite;will-change:transform}
+      .rv-track:hover,.rv-track:focus-within,.rv-track:active{animation-play-state:paused}
+      @media (prefers-reduced-motion:reduce){.rv-marquee{overflow-x:auto}.rv-track{animation:none}}
+    </style>
     <style>
 
     
@@ -989,6 +993,43 @@
         for (const el of sections) { if (el.offsetParent !== null) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); break; } }
       }
 
+      // ─── Testimonials: 10 cards, auto-scrolling left to right (list is doubled for a seamless loop) ───
+      const REVIEWS = [
+        ['Sanjana Sahu', 'October 12, 2025', 'So tbh, for a very long time, I wanted to purchase dainty jewellery from BEYON from my first salary because the pieces felt so personal. The packaging, the sparkle and the certificate made it a day I will never forget.'],
+        ['Drswati Mishra', 'October 12, 2025', 'BEYON, to me, represents timeless elegance with a modern touch. I love jewellery that feels classic yet effortless enough to wear every single day, and this pendant does exactly that.'],
+        ['Blessy Sherline', 'October 12, 2025', 'My husband gifted me my first BEYON jewellery for our wedding anniversary after my second delivery, and I felt so special. The diamonds are brilliant and the finish is flawless.'],
+        ['Priyadarshini', 'October 12, 2025', 'It means an opportunity to return the love I have received. I want to gift my mom a diamond earring, she does not own one. The delivery was quick and the team helped me pick the perfect size.'],
+        ['Neha Gajendra', 'November 12, 2025', 'It means a lot to me. Tata hai toh trust hai. I bought my first gold jewellery from BEYON, and I was also the first in my family to choose a laboratory-grown diamond. Absolutely love it.'],
+        ['Ananya Rao', 'November 3, 2025', 'I was unsure about laboratory-grown diamonds until I held the ring. The sparkle is unreal and the authenticity certificate gave me complete peace of mind.'],
+        ['Meera Iyer', 'October 28, 2025', 'Ordered a pair of studs for my sister and they arrived beautifully packed, a day early. She has not taken them off since. Lovely quality for the price.'],
+        ['Kavya Reddy', 'October 21, 2025', 'The 14kt rose gold finish is gorgeous in daylight. I get compliments every time I wear this pendant to work, and it sits so comfortably.'],
+        ['Rhea Kapoor', 'September 30, 2025', 'Customising the ring size was effortless, and the team kept me updated at every step. It fits perfectly and looks exactly like the photos.'],
+        ['Shruti Nair', 'September 18, 2025', 'Bought a bracelet as a gift for my mother and she was thrilled. Elegant, lightweight and the BEYON box itself felt like a present.']
+      ];
+      function renderReviews() {
+        const star = '<svg width="12" height="12" viewBox="0 0 24 24" fill="#C5A575"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>';
+        const quote = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#B91C1C" opacity=".18"><path d="M3 21h7l2-8V3H3v10h4zM14 21h7l2-8V3h-9v10h4z" transform="scale(.9) translate(-1 0)"/></svg>';
+        const card = ([n, d, t], dup) => `<div class="shrink-0 flex flex-col rounded-2xl bg-white p-4" style="width:min(260px,75vw);border:1px solid #ECEBE8" ${dup ? 'aria-hidden="true"' : ''}>
+              <div class="flex items-center justify-between">${quote}<span class="flex gap-0.5">${star.repeat(5)}</span></div>
+              <p class="text-[12px] text-gray-600 leading-relaxed mt-3 flex-1" style="display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden">${t}</p>
+              <button ${dup ? 'tabindex="-1"' : ''} onclick="const p=this.previousElementSibling;const o=p.style.webkitLineClamp==='unset';p.style.webkitLineClamp=o?'4':'unset';this.textContent=o?'Read more':'Show less'" class="mt-2 self-start text-[11px] font-bold" style="color:#d30b39">Read more</button>
+              <div class="flex items-center justify-between mt-3 pt-3" style="border-top:1px solid rgba(0,0,0,0.06)">
+                <div class="min-w-0"><p class="text-[12px] font-bold text-[#1a1a1a] truncate">${n}</p><p class="text-[10px] text-gray-400">${d}</p></div>
+                <span class="text-[8px] font-bold tracking-[0.12em] uppercase px-2 py-0.5 rounded-full shrink-0" style="background:rgba(211,11,57,0.08);color:#d30b39">Verified</span>
+              </div>
+            </div>`;
+        return `<div class="reviews-section w-full py-8 px-4">
+          <div class="flex items-center gap-2.5 mb-5">
+            <div class="w-1 h-5 rounded-full" style="background:linear-gradient(to bottom, #d30b39, #a00828)"></div>
+            <h2 class="text-[11px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Testimonials</h2>
+            <span class="ml-auto flex items-center gap-1 text-[11px] font-semibold text-[#3c3c3c]">${star}4.9</span>
+          </div>
+          <div class="rv-marquee overflow-hidden">
+            <div class="rv-track flex gap-3 lg:gap-4 w-max items-stretch">${REVIEWS.map(r => card(r)).join('')}${REVIEWS.map(r => card(r, true)).join('')}</div>
+          </div>
+        </div>`;
+      }
+
       function renderStackIt() {
         return `<div class="stack-it-section w-full py-8 px-4">
           <div class="flex items-center gap-2.5 mb-5">
@@ -1170,6 +1211,7 @@
                 <div class="mt-3 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderCustomisation()}</div>
                 <div class="mt-3 mx-3 sm:mx-4 space-y-3">${renderExtras(true)}</div>
                 <div class="mt-3 overflow-hidden">${renderBrandImage()}</div>
+                ${renderReviews()}
                 ${renderStackIt()}
                 ${renderFAQ()}
                 <div class="h-28"></div>
@@ -1187,6 +1229,7 @@
                 </div>
               </div>
               <div class="w-full">${renderBrandImage()}</div>
+              <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderReviews()}</div>
               <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderStackIt()}</div>
               <div class="mx-auto" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px)">${renderFAQ()}</div>
               <div class="h-24"></div>
