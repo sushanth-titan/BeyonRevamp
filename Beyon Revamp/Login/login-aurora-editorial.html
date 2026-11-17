@@ -396,7 +396,7 @@
           <span id="timerText">Resend in <b id="timerNum" style="color:var(--ink-2);">30</b>s</span>
           <button class="link" id="resendBtn" style="display:none; margin-left:6px;" onclick="requestOtp()">Resend</button>
         </div>
-        <button class="btn" onclick="alert('Signed in — demo only')">
+        <button class="btn" id="verifyBtn" disabled onclick="alert('Signed in — demo only')">
           <span class="cut"><svg width="12" height="12"><use href="#icon-check-shield"/></svg></span>
           Verify &amp; sign in
           <svg class="arr" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -437,14 +437,22 @@
     const dial = $('cc').value.split('-')[0];
     $('otpTo').textContent = dial + ' · ' + phone.value.replace(/(\d{3,5})(\d+)/, '$1 $2');
     resendCount = 0; $('blockedPanel').classList.remove('active');
+    document.querySelectorAll('.otp-boxes input').forEach(i => i.value = ''); syncVerify();
     $('formPanel').classList.add('hidden-panel'); $('otpPanel').classList.add('active');
     startTimer(); setTimeout(() => document.querySelector('.otp-boxes input')?.focus(), 100);
   }
   function backToForm(){
     $('otpPanel').classList.remove('active'); $('formPanel').classList.remove('hidden-panel');
   }
+  // Verify stays disabled until all 6 digits are entered
+  const syncVerify = () => { $('verifyBtn').disabled = ![...document.querySelectorAll('.otp-boxes input')].every(i => /^\d$/.test(i.value)); };
   document.querySelectorAll('.otp-boxes input').forEach((inp, i, arr) => {
-    inp.addEventListener('input', () => { inp.value = inp.value.replace(/[^0-9]/g,'').slice(0,1); if (inp.value && arr[i+1]) arr[i+1].focus(); });
+    inp.addEventListener('input', () => { inp.value = inp.value.replace(/[^0-9]/g,'').slice(0,1); if (inp.value && arr[i+1]) arr[i+1].focus(); syncVerify(); });
+    inp.addEventListener('paste', e => {
+      const d = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, arr.length - i);
+      if (!d) return;
+      e.preventDefault(); [...d].forEach((ch, k) => arr[i + k].value = ch); arr[Math.min(i + d.length, arr.length - 1)].focus(); syncVerify();
+    });
     inp.addEventListener('keydown', e => { if (e.key === 'Backspace' && !inp.value && arr[i-1]) arr[i-1].focus(); });
   });
   let timerId;
