@@ -65,6 +65,8 @@
       .cr-error.show { display:block; }
       .btn-customisation-request { background: #2c2c2c; }
       .btn-customisation-request:hover { background: #1a1a1a; }
+      .spec-cell+.spec-cell{position:relative}
+      .spec-cell+.spec-cell::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:1px;background:rgba(197,165,117,0.35)}
       .cta-customise {
         background: linear-gradient(135deg, #fdfcf8 0%, #f6f0e4 50%, #fdfcf8 100%);
         border: 1px solid rgba(184,134,11,0.18);
@@ -81,10 +83,9 @@
       @keyframes ctaShimmer { 0%{left:-100%} 100%{left:200%} }
 
       .pd-grid { display:grid; grid-template-columns:118px 1fr auto auto; }
-      .cp-slide { opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .4s ease, transform .4s cubic-bezier(.2,.7,.2,1); }
-      .cp-slide.on { opacity:1; transform:none; pointer-events:auto; }
       .pill-selected { background: #3c3c3c; color: #fff; box-shadow: 0 2px 8px rgba(60,60,60,0.2); }
       .pill-default { background: rgba(0,0,0,0.03); color: #8a7a60; border: 1.5px solid rgba(0,0,0,0.08); }
+      .section-delivery-bg { background: linear-gradient(135deg, #fdf5f6 0%, #faf0f1 40%, #fdf5f6 100%); }
       .section-gold-bg { background: linear-gradient(135deg, #fdfcf8 0%, #f9f5ee 50%, #fdfcf8 100%); border-top: 1px solid rgba(212,168,67,0.15); }
       .btn-request-design { background: #2c2c2c; }
       .btn-request-design:hover { background: #1a1a1a; }
@@ -888,19 +889,20 @@
         </div>`;
       }
 
-      function renderProductHeader(pad = 'px-4 pt-3 pb-1') {
-        return `<div class="${pad}">
-          <div class="flex items-start justify-between gap-2">
-            <h1 class="font-semibold text-[#1a1a1a] leading-snug tracking-tight" style="font-size:14px">${product.name}</h1>
-            <button onclick="toggleWishlist(this)" class="hidden lg:flex shrink-0 w-6 h-6 rounded-full items-center justify-center active:scale-90 transition-transform" style="background:rgba(0,0,0,0.04)" aria-label="Wishlist">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            </button>
-          </div>
-          <div class="flex items-center gap-2 mt-0">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold" style="background:rgba(191,14,35,0.06);color:#BF0E23;border:1px solid rgba(191,14,35,0.15)">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              Available on Request
-            </span>
+      function renderBuyBlock() {
+        const d = product.diamond, u = product.gold.metal.toUpperCase();
+        const metal = product.gold.metal.toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase()).replace(/\bKt\b/, 'KT');
+        const metalColour = /ROSE/.test(u) ? '#B76E79' : /WHITE|SILVER/.test(u) ? '#8A8F98' : '#B8860B';
+        const cell = (label, value, color = '#2C2C2C') => `<button onclick="openCustomisationPopup()" class="spec-cell flex-1 min-w-0 px-1 py-1.5 text-center flex flex-col items-center justify-center"><span class="block text-[8px] uppercase tracking-[0.08em] leading-[1.15] font-medium text-[#666]">${label}</span><span class="block text-[11.5px] sm:text-[12.5px] font-semibold leading-[1.15] mt-0.5" style="color:${color}">${value}</span></button>`;
+        return `<div class="bg-white rounded-3xl shadow-sm p-4 sm:p-5">
+          <h1 class="text-[13px] lg:text-[14px] font-medium text-[#555] leading-snug">${product.name}</h1>
+          <span class="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-[11px] font-semibold" style="background:rgba(191,14,35,0.06);color:#BF0E23;border:1px solid rgba(191,14,35,0.15)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#BF0E23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Available on Request
+          </span>
+          <div class="mt-4 flex items-stretch rounded-2xl p-1" style="background:#fff;border:1px solid rgba(197,165,117,0.35);box-shadow:0 6px 18px -12px rgba(140,110,60,0.35)">
+            ${cell('Size', state.selectedSize + '<br><span role="link" tabindex="0" onclick="event.stopPropagation();state.sizeChartOpen=true;render()" class="text-[9px] font-medium underline underline-offset-2 text-[#8a7a60]">Size chart</span>')}${cell('Metal', metal.replace(/ (\S+)$/, '<br><span class="text-[10px] font-medium">$1</span>'), metalColour)}${cell('Laboratory Grown Diamond', d.clarity + ' ' + d.colour)}
+            <button onclick="openCustomisationPopup()" class="shrink-0 ml-1 px-3 rounded-xl text-[10.5px] sm:text-[11px] font-bold tracking-[0.14em] text-[#2C2C2C] active:scale-[0.97] transition-transform" style="background:linear-gradient(135deg,#E6D2AC,#C5A575);min-width:92px">CUSTOMISE</button>
           </div>
         </div>`;
       }
@@ -912,79 +914,6 @@
             ${renderShareBtn()}
           </div>
           ${renderProductDetailsTab()}
-        </div>`;
-      }
-
-      function renderCustomisation() {
-        return `<div class="px-4 py-4 section-gold-bg">
-          <div class="flex items-center gap-2 mb-4">
-            <div class="w-0.5 h-3.5 rounded-full shrink-0" style="background:linear-gradient(to bottom, #d4a843, #b8860b)"></div>
-            <span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#8a6e3a">Customise</span>
-            <span class="ml-auto text-[8px] font-semibold tracking-wide px-1.5 py-0.5 rounded-full" style="background:rgba(184,134,11,0.08);color:#b8860b;border:1px solid rgba(184,134,11,0.15)">PERSONALISE YOUR PIECE</span>
-          </div>
-          <div class="mb-4">
-            <div class="flex items-center justify-between mb-2">
-              <p class="text-[8px] font-bold tracking-[0.14em] uppercase" style="color:#b8a080">Size</p>
-              <button onclick="state.sizeChartOpen=true;render()" class="flex items-center gap-0.5 text-[8px] font-semibold text-[#8a6e3a] underline underline-offset-2 tracking-wide">
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#8a6e3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                Size Chart
-              </button>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              ${product.sizes.map(s => `<button onclick="state.selectedSize='${s}';render()" class="px-3.5 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 active:scale-95 ${pillClass(state.selectedSize === s)}">${s}</button>`).join('')}
-            </div>
-          </div>
-          <div class="mb-4">
-            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Gross Weight</p>
-            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-semibold pill-selected">${product.grossWeight}</span>
-          </div>
-          ${state.noCustomise ? '' : `
-          <div class="mb-4">
-            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Metal Colour</p>
-            <div class="flex items-center gap-4">
-              ${metalColours.map(c => {
-                const sel = state.metalColour === c.id;
-                return `<button onclick="state.metalColour='${c.id}';render()" class="flex flex-col items-center gap-1 transition-all duration-200">
-                  <div class="rounded-full" style="width:28px;height:28px;background:${c.gradient};box-shadow:${sel ? `0 0 0 2px #fdfcf8, 0 0 0 3.5px ${c.ring}` : '0 1px 4px rgba(0,0,0,0.15)'};transform:${sel ? 'scale(1.08)' : 'scale(1)'}"></div>
-                  <span class="text-[8px] font-semibold" style="color:${sel ? '#3c3c3c' : '#b8a080'}">${c.label}</span>
-                </button>`;
-              }).join('')}
-            </div>
-          </div>
-          <div class="mb-4">
-            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Gold Finish</p>
-            <div class="flex items-center gap-1.5">
-              ${karatOptions.map(k => `<button onclick="state.karat='${k}';render()" class="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide transition-all duration-200 ${pillClass(state.karat === k)}">${k}</button>`).join('')}
-            </div>
-          </div>
-          <div class="mb-4">
-            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Diamond Shape</p>
-            <div class="flex items-center gap-1.5 flex-wrap">
-              ${diamondShapes.map(s => {
-                const sel = state.diamondShape === s.id;
-                return `<button onclick="state.diamondShape='${s.id}';render()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 ${pillClass(sel)}">${diamondShapeSvg(s.id, sel)} ${s.label}</button>`;
-              }).join('')}
-            </div>
-          </div>
-          <div class="mb-4">
-            <p class="text-[8px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Diamond Size</p>
-            <div class="flex items-center gap-1.5">
-              ${diamondSizes.map(d => `<button onclick="state.diamondSize='${d}';render()" class="px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide transition-all duration-200 ${pillClass(state.diamondSize === d)}">${d}</button>`).join('')}
-            </div>
-          </div>
-          `}
-
-          <button onclick="openCustomisationPopup()" class="group w-full mt-4 flex items-center gap-3 px-3.5 py-3 rounded-2xl active:scale-[0.98] transition-all duration-200" style="background:linear-gradient(135deg,rgba(255,255,255,0.85),rgba(253,232,236,0.75));border:1px solid rgba(185,28,28,0.18);box-shadow:0 8px 22px -14px rgba(153,27,27,0.45), inset 0 1px 0 rgba(255,255,255,0.9)">
-            <span class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style="background:rgba(185,28,28,0.08);border:1px solid rgba(185,28,28,0.15)">
-              <svg width="18" height="18" viewBox="0 0 48 48" fill="none" stroke="#B91C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 23l-9-9h18z"/><path d="M8 14l9 9-9 9"/><path d="M30 15h8l4 8-4 8h-8l-4-8z" fill="none"/>${sparkSvg(38, 36, 3.5)}${sparkSvg(8, 32, 3)}</svg>
-            </span>
-            <span class="flex flex-col items-start text-left">
-              <span class="text-[12px] font-semibold tracking-wide text-[#2C2C2C]">Personalise this piece</span>
-              <span class="text-[10px] text-[#71717A]">Customise colour, size, purity, cut, carat &amp; more</span>
-            </span>
-            <svg class="ml-auto shrink-0 transition-transform duration-200 group-hover:translate-x-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </button>
-
         </div>`;
       }
 
@@ -1174,7 +1103,7 @@
 
       function renderDesktopBottomBar() {
         return `<div class="hidden lg:block fixed bottom-4 left-0 right-0 z-50 px-6 pointer-events-none">
-          <div class="mx-auto flex items-center gap-3 rounded-full pointer-events-auto" style="max-width:min(100% - 2rem, 1180px);padding:8px 8px 8px 24px;background:rgba(255,255,255,0.7);backdrop-filter:blur(30px) saturate(1.4);-webkit-backdrop-filter:blur(30px) saturate(1.4);border:1px solid rgba(255,255,255,0.7);box-shadow:0 20px 50px -18px rgba(44,44,44,0.35), inset 0 1px 0 rgba(255,255,255,0.8)">
+          <div class="mx-auto flex items-center gap-3 rounded-full pointer-events-auto" style="max-width:min(100% - 2rem, 708px);padding:8px 8px 8px 24px;background:rgba(255,255,255,0.7);backdrop-filter:blur(30px) saturate(1.4);-webkit-backdrop-filter:blur(30px) saturate(1.4);border:1px solid rgba(255,255,255,0.7);box-shadow:0 20px 50px -18px rgba(44,44,44,0.35), inset 0 1px 0 rgba(255,255,255,0.8)">
             <div class="min-w-0 mr-auto">
               <p class="text-[11px] text-gray-500 truncate leading-tight">${product.name}</p>
               <span class="inline-flex items-center gap-1.5 mt-0.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold" style="background:rgba(191,14,35,0.06);color:#BF0E23;border:1px solid rgba(191,14,35,0.15)">
@@ -1182,6 +1111,7 @@
                 Available on Request
               </span>
             </div>
+            <button onclick="toggleWishlist(this)" aria-label="Wishlist" class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center active:scale-95" style="border:1.5px solid #ddd;background:#fff"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
             <button onclick="openCustomisationPopup()" class="flex items-center justify-center gap-2 rounded-full h-10 px-6 text-[13px] font-bold text-white active:scale-[0.97] transition-transform whitespace-nowrap" style="background:#3c3c3c;box-shadow:0 8px 20px -8px rgba(44,44,44,0.5)">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
               Request Design
@@ -1243,10 +1173,8 @@
               ${renderAppBanner()}
               <div class="md:max-w-[680px] md:mx-auto">
                 ${renderMobileGallery()}
-                <div class="mt-4 mb-3 mx-3 sm:mx-4">${renderProductHeader('px-4')}</div>
+                <div class="mt-4 mb-3 mx-3 sm:mx-4">${renderBuyBlock()}</div>
                 <div class="mt-1 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm bg-white">${renderProductInfo()}</div>
-                <div class="mt-3 mx-3 sm:mx-4">${renderCoupons()}</div>
-                <div class="mt-3 mx-3 sm:mx-4 rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderCustomisation()}</div>
                 <div class="mt-3 mx-3 sm:mx-4 space-y-3">${renderExtras(true)}</div>
                 <div class="mt-3 overflow-hidden">${renderBrandImage()}</div>
                 ${renderReviews()}
@@ -1259,11 +1187,9 @@
               <div class="mx-auto pt-6" style="max-width:min(100% - 2rem, 1600px);padding-left:clamp(16px, 2.5vw, 40px);padding-right:clamp(16px, 2.5vw, 40px);display:grid;grid-template-columns:minmax(0, 1fr) clamp(360px, 30%, 440px);gap:clamp(20px, 2.5vw, 40px)">
                 <div class="pb-8 min-w-0">${renderDesktopGrid()}</div>
                 <div class="sticky self-start space-y-4 pb-24" style="top:73px">
-                  <div>${renderProductHeader()}</div>
+                  <div>${renderBuyBlock()}</div>
                   <div class="bg-white rounded-3xl shadow-sm overflow-hidden">${renderProductInfo()}</div>
-                  <div>${renderCoupons()}</div>
-                  <div class="rounded-3xl overflow-hidden shadow-sm" style="border:1px solid rgba(0,0,0,0.06)">${renderCustomisation()}</div>
-                  <div class="space-y-3">${renderExtras()}</div>
+                  <div class="space-y-3">${renderExtras(true)}</div>
                 </div>
               </div>
               <div class="w-full">${renderBrandImage()}</div>
@@ -1591,14 +1517,14 @@
 
       function renderExtras(reverse) {
         const gold = `<div class="rounded-3xl p-4 section-gold-bg" style="border:1px solid rgba(184,134,11,0.18)">
-            <div class="flex items-center gap-2 mb-2"><svg width="20" height="20" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><polygon points="13,6 21,16 13,26 5,16"/><polygon points="28,18 42,18 42,30 28,30"/><path d="M18 12a16 16 0 0 1 16-3"/><path d="M14 8l4 1-1 4"/><path d="M30 36a16 16 0 0 1-16 3"/><path d="M34 40l-4-1 1-4"/>${sparkSvg(39, 8, 3.5)}${sparkSvg(6, 36, 3)}</svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Gold Exchange</span></div>
+            <div class="flex items-center gap-2 mb-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M17 3l4 4-4 4"/><path d="M21 7H7"/><path d="M7 21l-4-4 4-4"/><path d="M3 17h14"/></svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Gold Exchange</span></div>
             <p class="text-[11px] text-gray-500 leading-relaxed">Get value on your old gold jewellery · <strong class="text-[#8a6e3a]">${formatPrice(goldRate(22))}/gm (22Kt)</strong></p>
             <button onclick="openExchange()" class="w-full mt-3 py-2.5 rounded-xl text-[11px] font-bold tracking-wide cta-customise active:scale-[0.98] transition-transform" style="color:#8a6e3a">Check Exchange Value</button>
           </div>`;
         const store = `<div class="rounded-3xl p-4 section-delivery-bg" style="border:1px solid rgba(211,11,57,0.12)">
-            <div class="flex items-center gap-2 mb-2"><svg width="20" height="20" viewBox="0 0 48 48" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M24 4C15 4 9 11 9 19c0 12 15 25 15 25s15-13 15-25c0-8-6-15-15-15z"/><circle cx="24" cy="19" r="6"/>${sparkSvg(38, 8, 3.5)}${sparkSvg(8, 36, 3)}</svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Store Availability</span></div>
+            <div class="flex items-center gap-2 mb-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0"><path d="M3 9l2-5h14l2 5"/><path d="M3 9h18v0a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/></svg><span class="text-[9px] font-bold tracking-[0.2em] uppercase" style="color:#d30b39">Store Availability</span></div>
             <p class="text-[11px] text-gray-500 leading-relaxed">See if this piece is available at a store near you.</p>
-            <a href="https://www.beyon.co.in/en_IN/stores" target="_blank" rel="noopener" class="w-full mt-3 py-2.5 rounded-xl text-white text-[11px] font-bold tracking-wide btn-request-design active:scale-[0.98] transition-transform flex items-center justify-center">Check Store Availability</a>
+            <a href="https://www.beyon.co.in/en_IN/stores" target="_blank" rel="noopener" class="w-full mt-3 py-2.5 rounded-xl text-[11px] font-bold tracking-wide active:scale-[0.98] transition-transform flex items-center justify-center" style="color:#d30b39;background:rgba(211,11,57,0.07);border:1px solid rgba(211,11,57,0.22)">Check Store Availability</a>
           </div>`;
         return reverse ? store + gold : gold + store;
       }
@@ -1674,45 +1600,6 @@
       }
 
 
-      // ─── Coupons ───
-      const COUPONS = [
-        { tag: 'BEYON 500', title: 'Flat ₹500/- Off', sub: 'Applicable for your first purchase', code: 'BEYON500', terms: 'Valid on your first order above ₹10,000.' },
-        { tag: 'ANNIVERSARY', title: 'Flat ₹1,000/- Off', sub: 'On orders above ₹25,000', code: 'LOVE1000', terms: 'Valid till month end on diamond jewellery.' },
-        { tag: 'MAKING CHARGES', title: '15% Off Making', sub: 'On select gold and diamond pieces', code: 'MAKE15', terms: 'Not combinable with other making-charge offers.' }
-      ];
-      let cpIdx = 0;
-      function setCoupon(i) {
-        cpIdx = (i + COUPONS.length) % COUPONS.length;
-        document.querySelectorAll('.cp-slide').forEach(el => el.classList.toggle('on', +el.dataset.i === cpIdx));
-        document.querySelectorAll('.cp-dot').forEach(el => { const on = +el.dataset.i === cpIdx; el.style.width = on ? '16px' : '5px'; el.style.background = on ? '#B91C1C' : 'rgba(197,165,117,.35)'; });
-      }
-      let cpTimer;
-      function cpAuto() { clearInterval(cpTimer); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) cpTimer = setInterval(() => setCoupon(cpIdx + 1), 4500); }
-      function renderCoupons() {
-        const copyIcon = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>';
-        const dots = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Ccircle cx='1.5' cy='1.5' r='1.5' fill='%23B8956A' opacity='.16'/%3E%3C/svg%3E";
-        const arrow = (dir, p) => `<button onclick="setCoupon(cpIdx+${dir});cpAuto()" aria-label="${dir < 0 ? 'Previous' : 'Next'} coupon" class="w-6 h-6 rounded-full flex items-center justify-center active:scale-90 transition-transform" style="background:#fff;border:1px solid rgba(197,165,117,.35)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="${p}"/></svg></button>`;
-        return `<div class="cp-section relative overflow-hidden rounded-2xl" onmouseenter="clearInterval(cpTimer)" onmouseleave="cpAuto()" style="background:#FFFDF9 url('${dots}');border:1px solid rgba(197,165,117,.35);box-shadow:0 10px 26px -18px rgba(185,28,28,0.3), inset 0 1px 0 #fff">
-          <span class="absolute left-0 top-0 bottom-0 w-1" style="background:linear-gradient(to bottom,#C5A575,#B91C1C)"></span>
-          <div class="absolute top-3 right-3.5 z-10 flex gap-1.5">${arrow(-1, '15 18 9 12 15 6')}${arrow(1, '9 18 15 12 9 6')}</div>
-          <div class="relative grid pl-5 pr-4 pt-3.5 pb-3">
-            ${COUPONS.map((c, i) => `<div class="cp-slide ${i === cpIdx ? 'on' : ''}" data-i="${i}" style="grid-area:1/1;padding-right:60px">
-              <p class="flex items-center gap-1.5 uppercase text-[9px] font-bold tracking-[0.22em]" style="color:#B91C1C"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/></svg>${c.tag}</p>
-              <p class="text-[28px] leading-tight -mt-0.5" style="font-family:'Didact Gothic',sans-serif;color:#B91C1C">${c.title}</p>
-              <div class="flex items-center gap-2.5 mt-1">
-                <p class="text-[10.5px] text-gray-500 leading-tight flex-1 min-w-0">${c.sub}</p>
-                <span class="shrink-0 self-stretch" style="width:0;border-left:1.5px dashed rgba(197,165,117,.5)"></span>
-                <button onclick="copyCoupon('${c.code}')" aria-label="Copy code ${c.code}" class="flex items-center gap-1 px-2.5 h-6 rounded-full text-[10px] font-bold tracking-wide active:scale-95 transition-transform shrink-0" style="color:#8A6D45;background:linear-gradient(135deg,#fff,#fdf8ee);border:1px dashed #C5A575">${c.code}${copyIcon}</button>
-              </div>
-            </div>`).join('')}
-          </div>
-          <div class="relative flex items-center justify-center pb-2.5 -mt-0.5">
-            <span class="flex gap-1">${COUPONS.map((_, i) => `<button onclick="setCoupon(${i});cpAuto()" aria-label="Coupon ${i + 1}" data-i="${i}" class="cp-dot h-[5px] rounded-full transition-all duration-300" style="width:${i === cpIdx ? 16 : 5}px;background:${i === cpIdx ? '#B91C1C' : 'rgba(197,165,117,.35)'}"></button>`).join('')}</span>
-          </div>
-        </div>`;
-      }
-      function copyCoupon(code) { navigator.clipboard?.writeText(code); showPdpToast('Code ' + code + ' copied'); }
-
       // Swipe handling (gallery + lightbox unified)
       let swipeStartX = 0, swipeStartY = 0, swipeTarget = null;
 
@@ -1762,9 +1649,9 @@
       EdgeCases.init({
         reset: () => { closeSheet(); state.currentImageIdx = 0; state.lightboxOpen = false; document.body.style.overflow = ''; if (state.noCustomise) state.noCustomise = false; render(); closeMobileMenu(); applyLoginState(true); setCounts(2, 1); Object.assign(exState, { k: 22, w: '', name: '', cc: 'IN', mobile: '', computed: false }); recAdded.clear(); },
         cases: [
-          { id: 'default', group: 'PDP', label: 'In stock (default)', desc: 'Standard PDP — buy now, price breakup, customisation.', run: () => location.href = 'index.html' },
+          { id: 'default', group: 'PDP', label: 'In stock (default)', desc: 'Standard PDP with price, Add to Bag and the Customise sheet.', run: () => location.href = 'index.html' },
           { id: 'oos', group: 'PDP', label: 'Out of stock (this page)', desc: 'No price/Add to Bag — "Request Design" flow instead.', run: () => {} },
-          { id: 'nocustom', group: 'PDP', label: 'No customisation', desc: 'Customise card shows only size, size chart, gross weight and the Personalise CTA.', run: () => { state.noCustomise = true; render(); } },
+          { id: 'cr-popup', group: 'PDP', label: 'Customisation Request popup', desc: 'Request Design / CUSTOMISE opens the request form.', run: () => openCustomisationPopup() },
           { id: 'ring', group: 'Size guides', label: 'Ring size', desc: 'Opens on the default PDP.', run: () => location.href = 'index.html?case=ring' },
           { id: 'bangle', group: 'Size guides', label: 'Bangle size', desc: 'Opens on the default PDP.', run: () => location.href = 'index.html?case=bangle' },
           { id: 'bracelet', group: 'Size guides', label: 'Bracelet size', desc: 'Opens on the default PDP.', run: () => location.href = 'index.html?case=bracelet' },
