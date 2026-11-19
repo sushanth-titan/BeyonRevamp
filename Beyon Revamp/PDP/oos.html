@@ -69,6 +69,30 @@
       .btn-customisation-request:hover { background: #1a1a1a; }
       .spec-cell+.spec-cell{position:relative}
       .spec-cell+.spec-cell::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:1px;background:rgba(197,165,117,0.35)}
+      /* Customise sheet */
+      .cz-wrap{position:fixed;inset:0;z-index:4900;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:flex;align-items:stretch;justify-content:center}
+      .cz-panel{background:#fff;width:100%;height:100%;display:flex;flex-direction:column;animation:lbFadeIn .25s ease}
+      @media(min-width:640px){.cz-wrap{align-items:center;padding:24px}.cz-panel{max-width:560px;height:min(100%,820px);border-radius:24px;overflow:hidden}}
+      .cz-head{display:flex;justify-content:space-between;align-items:flex-start;padding:16px 20px;background:#fff;border-bottom:1px solid rgba(197,165,117,.35);flex:none}
+      .cz-scroll{flex:1;overflow-y:auto;overscroll-behavior:contain}
+      .cz-scroll section{padding:16px 20px;border-bottom:1px solid rgba(197,165,117,.22)}
+      .cz-scroll h3{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:#8a7a60;margin:0 0 12px}
+      .cz-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+      .cz-card{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:12px;background:#fff;border:1px solid rgba(197,165,117,.35);text-align:center;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+      .cz-card.sel{background:#F2FAF3;border-color:#2E7D32;box-shadow:0 0 0 1px #2E7D32}
+      .cz-grid.five{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+      .cz-grid.five .cz-card{padding:8px 3px}
+      .cz-grid.five .cz-tag{font-size:9px;line-height:1.2}
+      .cz-card b{font-size:13px;color:#2C2C2C;line-height:1.2}
+      .cz-card small{font-size:10.5px;color:#8a7a60}
+      .cz-tag.in{color:#16a34a;font-weight:600}
+      .cz-tag.low{color:#d30b39;font-weight:700}
+      .cz-tag.low::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#d30b39;margin-right:4px;vertical-align:1px;animation:czPulse 1.2s ease-in-out infinite}
+      @keyframes czPulse{50%{opacity:.25}}
+      @media (prefers-reduced-motion:reduce){.cz-tag.low::before{animation:none}}
+      .cz-tag{display:block;width:100%;background:none;padding:2px 0;font-size:10px;color:#8a7a60}
+      .cz-link{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#d30b39;background:none;border:none;cursor:pointer}
+      .cz-confirm{flex:none;margin:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(135deg,#E6D2AC,#C5A575);color:#2C2C2C;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12px;padding:14px 18px;border:none;border-radius:14px;cursor:pointer}
       .cta-customise {
         background: linear-gradient(135deg, #fdfcf8 0%, #f6f0e4 50%, #fdfcf8 100%);
         border: 1px solid rgba(184,134,11,0.18);
@@ -725,6 +749,7 @@
     <div id="requestDesignPopup"></div>
     <div id="sheetRoot"></div>
     <div id="customisationRequestPopup"></div>
+    <div id="customiseRoot"></div>
 
     <script>
       const product = {
@@ -768,7 +793,8 @@
       const tagVariants = ['selling fast'];
 
       const state = {
-        selectedSize: product.defaultSize,
+        selectedSize: '12',
+        ptype: 'ring',
         currentImageIdx: 0,
         lightboxOpen: false,
         lightboxIdx: 0,
@@ -891,11 +917,56 @@
         </div>`;
       }
 
+      const RING_SIZES = [[5, '44.8', 'Made to Order'], [6, '45.9', 'Made to Order'], [7, '47.1', 'Only 1 left'], [8, '48.1', 'Only 1 left'], [9, '49.0', 'In Stock'], [10, '50.0', 'In Stock'], [11, '50.9', 'In Stock'], [12, '51.8', 'In Stock'], [13, '52.8', 'In Stock'], [14, '54.0', 'In Stock'], [15, '55.0', 'In Stock'], [16, '55.9', 'Only 1 left'], [17, '56.9', 'Only 1 left'], [18, '57.8', 'Made to Order'], [19, '59.1', 'Made to Order'], [20, '60.0', 'Made to Order'], [21, '60.9', 'Made to Order'], [22, '61.9', 'Made to Order'], [23, '62.8', 'Made to Order'], [24, '63.8', 'Made to Order'], [25, '64.7', 'Made to Order']]; // [size, mm, stock label]
+      const sizeOpts = () => RING_SIZES.map(([n, mm]) => [String(n), mm + ' mm', 'Made to Order']);
+      const sizeText = v => v === '12' ? '44 Inches' : v;
+      const CZ_WEIGHTS = ['2.015 g', '2.380 g', '2.790 g', '3.164 g'];
+      const CZ_KT = ['9KT', '14KT', '18KT'];
+      const CZ_COLOURS = [
+        { id: 'yellow', label: 'Yellow', gradient: 'radial-gradient(circle at 35% 30%, #fde98a, #d4a843 48%, #8a5e0a)' },
+        { id: 'rose', label: 'Rose', gradient: 'radial-gradient(circle at 35% 30%, #fdd5cc, #c47878 48%, #7a3030)' },
+        { id: 'white', label: 'White', gradient: 'radial-gradient(circle at 35% 30%, #ffffff, #c8c8c8 48%, #787878)' }
+      ];
+      // Customise sheet (out of stock): every option is made to order, so Confirm opens the request form
+      let cz = null;
+      function openCustomise() { cz = { kt: '18KT', colour: 'yellow', size: state.selectedSize, weight: CZ_WEIGHTS[0] }; document.body.style.overflow = 'hidden'; renderCustomise(); }
+      function closeCustomise() { cz = null; document.body.style.overflow = ''; document.getElementById('customiseRoot').innerHTML = ''; }
+      function czPick(k, v) { cz[k] = v; renderCustomise(); }
+      function confirmCustomise() {
+        const pre = { metal: { yellow: 'Yellow gold', rose: 'Rose gold', white: 'White gold' }[cz.colour], purity: cz.kt, size: cz.size };
+        const from = cz; closeCustomise(); openCustomisationPopup(pre, from);
+      }
+      function renderCustomise() {
+        const prev = document.getElementById('czScroll'), top = prev ? prev.scrollTop : 0;
+        const card = (sel, click, title, sub) => `<button type="button" onclick="${click}" aria-pressed="${sel}" class="cz-card ${sel ? 'sel' : ''}"><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}<span class="cz-tag">Made to Order</span></button>`;
+        const metalCards = CZ_KT.flatMap(kt => CZ_COLOURS.map(m => card(cz.kt === kt && cz.colour === m.id, `czPick('kt','${kt}');czPick('colour','${m.id}')`, kt.replace('KT', ' KT'), `<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${m.gradient};vertical-align:-1px;margin-right:4px"></span>${m.label}`)));
+        document.getElementById('customiseRoot').innerHTML = `<div class="cz-wrap" onclick="closeCustomise()"><div class="cz-panel" role="dialog" aria-modal="true" aria-label="Customise" onclick="event.stopPropagation()">
+          <div class="cz-head">
+            <div><p class="text-[22px] font-bold text-[#2C2C2C] leading-tight">Request</p></div>
+            <button onclick="closeCustomise()" aria-label="Close" class="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          </div>
+          <div id="czScroll" class="cz-scroll">
+            <section><h3>Choice of Metal</h3><div class="cz-grid five">${metalCards.join('')}</div></section>
+            <section>
+              <div class="flex items-center justify-between mb-3"><h3 style="margin:0">Select Size</h3><button class="cz-link" onclick="state.sizeChartOpen=true;render()">Size guide</button></div>
+              <div class="cz-grid five">${sizeOpts().map(([n, sub]) => card(cz.size === n, `czPick('size','${n}')`, n, sub)).join('')}</div>
+            </section>
+            <section>
+              <h3>Select Weight</h3>
+              <div class="cz-grid" style="grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">${CZ_WEIGHTS.map(w => card(cz.weight === w, `czPick('weight','${w}')`, w, '')).join('')}</div>
+            </section>
+          </div>
+          <button class="cz-confirm" onclick="confirmCustomise()">Confirm customisation</button>
+        </div></div>`;
+        document.getElementById('czScroll').scrollTop = top;
+      }
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && cz) closeCustomise(); });
+
       function renderBuyBlock() {
         const d = product.diamond, u = product.gold.metal.toUpperCase();
         const metal = product.gold.metal.toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase()).replace(/\bKt\b/, 'KT');
         const metalColour = /ROSE/.test(u) ? '#B76E79' : /WHITE|SILVER/.test(u) ? '#8A8F98' : '#B8860B';
-        const cell = (label, value, color = '#2C2C2C') => `<button onclick="openCustomisationPopup()" class="spec-cell flex-1 min-w-0 px-1 py-1.5 text-center flex flex-col items-center justify-center"><span class="block text-[8px] uppercase tracking-[0.08em] leading-[1.15] font-medium text-[#666]">${label}</span><span class="block text-[11.5px] sm:text-[12.5px] font-semibold leading-[1.15] mt-0.5" style="color:${color}">${value}</span></button>`;
+        const cell = (label, value, color = '#2C2C2C') => `<button onclick="openCustomise()" class="spec-cell flex-1 min-w-0 px-1 py-1.5 text-center flex flex-col items-center justify-center"><span class="block text-[8px] uppercase tracking-[0.08em] leading-[1.15] font-medium text-[#666]">${label}</span><span class="block text-[11.5px] sm:text-[12.5px] font-semibold leading-[1.15] mt-0.5" style="color:${color}">${value}</span></button>`;
         return `<div class="bg-white rounded-3xl shadow-sm p-4 sm:p-5">
           <h1 class="text-[13px] lg:text-[14px] font-medium text-[#555] leading-snug">${product.name}</h1>
           <span class="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-[11px] font-semibold" style="background:rgba(191,14,35,0.06);color:#BF0E23;border:1px solid rgba(191,14,35,0.15)">
@@ -903,8 +974,8 @@
             Available on Request
           </span>
           <div class="mt-4 flex items-stretch rounded-2xl p-1" style="background:#fff;border:1px solid rgba(197,165,117,0.35);box-shadow:0 6px 18px -12px rgba(140,110,60,0.35)">
-            ${cell('Size', state.selectedSize + '<br><span role="link" tabindex="0" onclick="event.stopPropagation();state.sizeChartOpen=true;render()" class="text-[9px] font-medium underline underline-offset-2 text-[#8a7a60]">Size chart</span>')}${cell('Metal', metal.replace(/ (\S+)$/, '<br><span class="text-[10px] font-medium">$1</span>'), metalColour)}${cell('Laboratory Grown Diamond', d.clarity + ' ' + d.colour)}
-            <button onclick="openCustomisationPopup()" class="shrink-0 ml-1 px-3 rounded-xl text-[10.5px] sm:text-[11px] font-bold tracking-[0.14em] text-[#2C2C2C] active:scale-[0.97] transition-transform" style="background:linear-gradient(135deg,#E6D2AC,#C5A575);min-width:92px">CUSTOMISE</button>
+            ${cell('Size', sizeText(state.selectedSize) + '<br><span role="link" tabindex="0" onclick="event.stopPropagation();state.sizeChartOpen=true;render()" class="text-[9px] font-medium underline underline-offset-2 text-[#8a7a60]">Size chart</span>')}${cell('Metal', metal.replace(/ (\S+)$/, '<br><span class="text-[10px] font-medium">$1</span>'), metalColour)}${cell('Laboratory Grown Diamond', d.clarity + ' ' + d.colour)}
+            <button onclick="openCustomise()" class="shrink-0 ml-1 px-3 rounded-xl text-[10.5px] sm:text-[11px] font-bold tracking-[0.14em] text-[#2C2C2C] active:scale-[0.97] transition-transform" style="background:linear-gradient(135deg,#E6D2AC,#C5A575);min-width:92px">CUSTOMISE</button>
           </div>
         </div>`;
       }
@@ -1095,7 +1166,7 @@
       function renderMobileBottomBar() {
         return `<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-6 pt-4" style="background:linear-gradient(to top, rgba(247,247,247,1) 70%, rgba(247,247,247,0))">
           <div class="md:max-w-[640px] md:mx-auto">
-            <button onclick="openCustomisationPopup()" class="w-full flex items-center justify-center gap-2 px-7 py-3 rounded-2xl text-white font-bold text-base active:scale-[0.98] transition-transform" style="background:#3c3c3c;box-shadow:0 8px 28px rgba(44,44,44,0.35)">
+            <button onclick="openCustomise()" class="w-full flex items-center justify-center gap-2 px-7 py-3 rounded-2xl text-white font-bold text-base active:scale-[0.98] transition-transform" style="background:#3c3c3c;box-shadow:0 8px 28px rgba(44,44,44,0.35)">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
               Request Design
             </button>
@@ -1114,7 +1185,7 @@
               </span>
             </div>
             <button onclick="toggleWishlist(this)" aria-label="Wishlist" class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center active:scale-95" style="border:1.5px solid #ddd;background:#fff"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
-            <button onclick="openCustomisationPopup()" class="flex items-center justify-center gap-2 rounded-full h-10 px-6 text-[13px] font-bold text-white active:scale-[0.97] transition-transform whitespace-nowrap" style="background:#3c3c3c;box-shadow:0 8px 20px -8px rgba(44,44,44,0.5)">
+            <button onclick="openCustomise()" class="flex items-center justify-center gap-2 rounded-full h-10 px-6 text-[13px] font-bold text-white active:scale-[0.97] transition-transform whitespace-nowrap" style="background:#3c3c3c;box-shadow:0 8px 20px -8px rgba(44,44,44,0.5)">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
               Request Design
             </button>
@@ -1405,23 +1476,30 @@
       };
       const CR_METALS = ['Yellow gold', 'White gold', 'Rose gold', 'Gold plated silver', 'Silver'];
       const CR_PURITY = ['14KT', '9KT', '18KT', '925 Silver'];
-      const CR_SHAPES = [['princess', 'Princess'], ['pear', 'Pear'], ['kite', 'Kite'], ['marquise', 'Marquise'], ['cushion', 'Cushion'], ['emerald', 'Emerald'], ['oval', 'Oval'], ['round', 'Round'], ['trillion', 'Trillion'], ['hexagon', 'Hexagon'], ['heart', 'Heart'], ['halfmoon', 'Half Moon'], ['baguette', 'Baguette']];
-      let crSel = { metal: '', purity: '', shape: '' };
+      let crSel = { metal: '', purity: '', size: '' };
       function crPick(k, v) { crSel[k] = crSel[k] === v ? '' : v; renderCrGroups(); }
       function renderCrGroups() {
         const pill = (k, v, ico) => { const on = crSel[k] === v; return `<button type="button" onclick="crPick('${k}','${v}')" aria-pressed="${on}" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-semibold transition-all duration-200 ${pillClass(on)}">${ico ? ico(on) : ''}${v}</button>`; };
         document.getElementById('crMetal').innerHTML = CR_METALS.map(v => pill('metal', v, () => crSwatch(v))).join('');
         document.getElementById('crPurity').innerHTML = CR_PURITY.map(v => pill('purity', v, () => crSwatch(v))).join('');
-        document.getElementById('crShape').innerHTML = CR_SHAPES.map(([id, label]) => pill('shape', label, on => diamondShapeSvg(id, on))).join('');
+        const sz = document.getElementById('crSize');
+        if (sz) sz.innerHTML = sizeOpts(state.ptype).map(([n]) => pill('size', n)).join('');
       }
 
-      function openCustomisationPopup() {
-        crSel = { metal: '', purity: '', shape: '' };
+      let crBack = null; // Customise selections to restore when Back is pressed
+      function crGoBack() {
+        const b = crBack; closeCustomisationPopup();
+        if (b) { cz = b; document.body.style.overflow = 'hidden'; renderCustomise(); }
+      }
+      function openCustomisationPopup(pre, back) {
+        crBack = back || null;
+        crSel = { metal: '', purity: '', size: '', ...(pre || {}) };
         document.body.style.overflow = 'hidden';
         renderCustomisationPopup();
       }
 
       function closeCustomisationPopup() {
+        crBack = null;
         document.body.style.overflow = '';
         document.getElementById('customisationRequestPopup').innerHTML = '';
       }
@@ -1432,7 +1510,8 @@
           <div class="cr-overlay" onclick="closeCustomisationPopup()">
             <div class="cr-modal" onclick="event.stopPropagation()">
               <div class="flex items-center justify-between mb-6">
-                <div>
+                <button type="button" onclick="crGoBack()" aria-label="Back" class="w-8 h-8 mr-3 rounded-full bg-gray-100 flex items-center justify-center shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+                <div class="flex-1 min-w-0">
                   <h3 class="text-base font-bold text-[#1a1a1a]">Customisation Request</h3>
                   <p class="text-xs text-gray-400 mt-0.5">Fill in your details and we'll get back to you in 24hrs</p>
                 </div>
@@ -1469,10 +1548,10 @@
                     <p class="text-[9px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Purity</p>
                     <div id="crPurity" class="flex flex-wrap gap-1.5"></div>
                   </div>
-                  <div>
-                    <p class="text-[9px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Diamond Shape</p>
-                    <div id="crShape" class="flex flex-wrap gap-1.5"></div>
-                  </div>
+                  ${state.ptype === 'none' ? '' : `<div>
+                    <p class="text-[9px] font-bold tracking-[0.14em] uppercase mb-2" style="color:#b8a080">Size</p>
+                    <div id="crSize" class="flex flex-wrap gap-1.5"></div>
+                  </div>`}
                   <div>
                     <textarea id="crType" class="cr-input" rows="3" placeholder="Additional details"></textarea>
                   </div>
@@ -1649,10 +1728,11 @@
     <script src="shared/edge-cases.js"></script>
     <script>
       EdgeCases.init({
-        reset: () => { closeSheet(); state.currentImageIdx = 0; state.lightboxOpen = false; document.body.style.overflow = ''; if (state.noCustomise) state.noCustomise = false; render(); closeMobileMenu(); applyLoginState(true); setCounts(2, 1); Object.assign(exState, { k: 22, w: '', name: '', cc: 'IN', mobile: '', computed: false }); recAdded.clear(); },
+        reset: () => { closeSheet(); closeCustomise(); closeCustomisationPopup(); state.currentImageIdx = 0; state.lightboxOpen = false; document.body.style.overflow = ''; if (state.noCustomise) state.noCustomise = false; render(); closeMobileMenu(); applyLoginState(true); setCounts(2, 1); Object.assign(exState, { k: 22, w: '', name: '', cc: 'IN', mobile: '', computed: false }); recAdded.clear(); },
         cases: [
           { id: 'default', group: 'PDP', label: 'In stock (default)', desc: 'Standard PDP with price, Add to Bag and the Customise sheet.', run: () => location.href = 'index.html' },
           { id: 'oos', group: 'PDP', label: 'Out of stock (this page)', desc: 'No price/Add to Bag — "Request Design" flow instead.', run: () => {} },
+          { id: 'cz-open', group: 'PDP', label: 'Customise sheet', desc: 'Request Design / CUSTOMISE opens the Customise sheet first.', run: () => openCustomise() },
           { id: 'cr-popup', group: 'PDP', label: 'Customisation Request popup', desc: 'Request Design / CUSTOMISE opens the request form.', run: () => openCustomisationPopup() },
           { id: 'ring', group: 'Size guides', label: 'Ring size', desc: 'Opens on the default PDP.', run: () => location.href = 'index.html?case=ring' },
           { id: 'bangle', group: 'Size guides', label: 'Bangle size', desc: 'Opens on the default PDP.', run: () => location.href = 'index.html?case=bangle' },
