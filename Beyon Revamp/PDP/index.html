@@ -58,7 +58,9 @@
       .ribbon-dark { background: #2C2C2C; }
 
       /* Customisation Request Popup */
-      .cr-overlay { position:fixed;inset:0;z-index:2100;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center; }
+      /* Popups must dim the whole page including the sticky header (Safari can keep a backdrop-filter header above fixed overlays) */
+      body:has(.cz-wrap, .cr-overlay) .header-main { z-index: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+      .cr-overlay { position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center; }
       @media(min-width:640px){ .cr-overlay{align-items:center} }
       .cr-modal { background:#fff;width:100%;max-width:440px;max-height:85vh;overflow-y:auto;overscroll-behavior:contain;border-radius:24px 24px 0 0;padding:28px 24px 32px;animation:lbFadeIn .25s ease; }
       @media(min-width:640px){ .cr-modal{border-radius:24px} }
@@ -140,7 +142,7 @@
           /* Customise sheet */
       .spec-cell+.spec-cell{position:relative}
       .spec-cell+.spec-cell::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:1px;background:rgba(197,165,117,0.35)}
-      .cz-wrap{position:fixed;inset:0;z-index:2050;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:flex;align-items:stretch;justify-content:center}
+      .cz-wrap{position:fixed;inset:0;z-index:4900;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:flex;align-items:stretch;justify-content:center}
       .cz-panel{background:#fff;width:100%;height:100%;display:flex;flex-direction:column;animation:lbFadeIn .25s ease}
       @media(min-width:640px){.cz-wrap{align-items:center;padding:24px}.cz-panel{max-width:560px;height:min(100%,820px);border-radius:24px;overflow:hidden}}
       .cz-head{display:flex;justify-content:space-between;align-items:flex-start;padding:16px 20px;background:#fff;border-bottom:1px solid rgba(197,165,117,.35);flex:none}
@@ -779,7 +781,7 @@
           gst: 1439,
           grandTotal: 49389
         },
-        images: ['assets/img/prd 1.webp', 'assets/Video.mp4', 'assets/img/pd 2.webp', 'assets/img/pd 3.webp', 'assets/img/pd 4.webp', 'assets/img/pd 5.webp'],
+        images: ['assets/img/prd 1.webp', 'assets/Video.mp4', 'assets/img/pd 2.webp', 'assets/img/pd 3.webp', 'assets/img/pd 4.webp', 'assets/img/pd 5.webp', 'assets/img/prd 1.webp', 'assets/img/pd 2.webp', 'assets/img/pd 3.webp', 'assets/img/pd 4.webp'], // 9 images + video in slot 2; last four repeat the available shots until more are supplied
         delivery: { estimate: 'Tomorrow, its yours! 1-day delivery for orders placed before 12pm for selected PIN codes*' }
       };
 
@@ -1060,7 +1062,7 @@
       function confirmCustomise() {
         if (czIsMto()) {
           const pre = { metal: { yellow: 'Yellow gold', rose: 'Rose gold', white: 'White gold' }[cz.colour], purity: cz.kt, size: cz.size };
-          closeCustomise(); openCustomisationPopup(pre); return;
+          const from = cz; closeCustomise(); openCustomisationPopup(pre, from); return;
         }
         const p = calcPrice(cz.kt, cz.q), [col, cla] = cz.q.split('-'), kf = KT_FACTOR[cz.kt];
         Object.assign(state, { karat: cz.kt, metalColour: cz.colour, quality: cz.q, selectedSize: cz.size });
@@ -1308,7 +1310,7 @@
 
       function renderDesktopGrid() {
         return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-          ${product.images.slice(0, 4).map((img, i) => `<div class="relative overflow-hidden rounded-2xl cursor-zoom-in group" style="aspect-ratio:1/1;background:#fff;border:1px solid #ECEBE8" onclick="openLightbox(${i})">
+          ${product.images.map((img, i) => `<div class="relative overflow-hidden rounded-2xl cursor-zoom-in group" style="aspect-ratio:1/1;background:#fff;border:1px solid #ECEBE8" onclick="openLightbox(${i})">
             ${mediaEl(img, 'absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]', '', 'grid', i, `Product view ${i+1}`)}
             ${tagVariants[i] ? renderTag(tagVariants[i]) : ''}
             ${i === 1 ? `<button onclick="event.stopPropagation();scrollToStack()" class="absolute bottom-3 left-3 z-10 flex items-center gap-1 px-2.5 py-1.5 rounded-full active:scale-95 hover:scale-105" style="background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,0.1);border:1px solid #ECEBE8"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><span class="text-[9px] font-bold tracking-wider uppercase text-[#3c3c3c]">Stack It</span></button>` : ''}
@@ -1638,13 +1640,20 @@
         if (sz) sz.innerHTML = sizeOpts(state.ptype).map(([n]) => pill('size', n)).join('');
       }
 
-      function openCustomisationPopup(pre) {
+      let crBack = null; // Customise selections to restore when Back is pressed
+      function crGoBack() {
+        const b = crBack; closeCustomisationPopup();
+        if (b) { cz = b; document.body.style.overflow = 'hidden'; renderCustomise(); }
+      }
+      function openCustomisationPopup(pre, back) {
+        crBack = back || null;
         crSel = { metal: '', purity: '', size: '', ...(pre || {}) };
         document.body.style.overflow = 'hidden';
         renderCustomisationPopup();
       }
 
       function closeCustomisationPopup() {
+        crBack = null;
         document.body.style.overflow = '';
         document.getElementById('customisationRequestPopup').innerHTML = '';
       }
@@ -1655,7 +1664,8 @@
           <div class="cr-overlay" onclick="closeCustomisationPopup()">
             <div class="cr-modal" onclick="event.stopPropagation()">
               <div class="flex items-center justify-between mb-6">
-                <div>
+                <button type="button" onclick="crGoBack()" aria-label="Back" class="w-8 h-8 mr-3 rounded-full bg-gray-100 flex items-center justify-center shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></button>
+                <div class="flex-1 min-w-0">
                   <h3 class="text-base font-bold text-[#1a1a1a]">Customisation Request</h3>
                   <p class="text-xs text-gray-400 mt-0.5">Fill in your details and we'll get back to you in 24hrs</p>
                 </div>

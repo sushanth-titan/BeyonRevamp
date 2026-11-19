@@ -122,6 +122,9 @@
     .metal-platinum{background:linear-gradient(135deg,#C0C0C0,#E8E8E8,#A0A0A0);color:#444;border:1px solid rgba(180,180,180,.5)}
     .metal-silver{background:linear-gradient(135deg,#D8D8D8,#F0F0F0,#C4C4C4);color:#4a4a4a;border:1px solid rgba(196,196,196,.5)}
 
+    .bag-added{background:#1E8E3E!important;border-color:#1E8E3E!important}
+    @keyframes wishPop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+    .wish-pop svg{animation:wishPop .5s cubic-bezier(.17,.89,.32,1.49)}
     .product-img{border-radius:18px;overflow:hidden;position:relative;background:#f5f0eb}
     .product-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.4,0,.2,1)}
     .product-img:hover img{transform:scale(1.08)}
@@ -357,11 +360,13 @@
         <button onclick="applyCouponFromInput()" class="px-6 py-3 btn-cta text-sm">Apply</button>
       </div>
       <div id="couponMessage" class="mb-5 hidden"></div>
-      <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase mb-3 flex items-center gap-1">
-        <svg width="12" height="12" fill="none" stroke="#BF0E23" stroke-width="2.5" stroke-linecap="round"><path d="M1 6l3.5 3.5L11 3"/></svg>
-        Available Coupons
-      </p>
-      <div class="space-y-3" id="couponList"></div>
+      <div id="couponListWrap">
+        <p class="text-[11px] text-warm-grey font-semibold tracking-widest uppercase mb-3 flex items-center gap-1">
+          <svg width="12" height="12" fill="none" stroke="#BF0E23" stroke-width="2.5" stroke-linecap="round"><path d="M1 6l3.5 3.5L11 3"/></svg>
+          Available Coupons
+        </p>
+        <div class="space-y-3" id="couponList"></div>
+      </div>
     </div>
   </div>
 
@@ -417,9 +422,10 @@
     renderBanner();
     setInterval(()=>{bannerIdx=(bannerIdx+1)%BANNERS.length;renderBanner()},2000);
 
+    const OFFER_LINE='<p class="flex items-center gap-1 mt-0.5 text-[11px] font-semibold" style="color:#d30b39"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>15% off on making charges</p>';
     const PRODUCTS=[
       {id:'p1',name:'Cross My Lines Pendant With Chain',price:28450,size:'18 inches',weight:'3.52 gm',quantity:1,metal:'18KT Rose Gold',img:'product 1.webp',outOfStock:false},
-      {id:'p2',name:'Split Love Diamond Ring',price:40771,size:'16.40 MM',weight:'2.215 gm',quantity:1,metal:'14KT White Gold',img:'product 2.webp',outOfStock:false},
+      {id:'p2',name:'Split Love Diamond Ring',price:40771,size:'16.40 MM',weight:'2.215 gm',quantity:1,metal:'14KT White Gold',img:'product 2.webp',outOfStock:false,mrp:46886,offer:true},
       {id:'p3',name:'Golden Harmony Bracelet',price:35200,size:'Free Size',weight:'8.10 gm',quantity:1,metal:'22KT Yellow Gold',img:'product 3.webp',outOfStock:true,nonServiceable:true},
       {id:'p4',name:'Minimal Chain Bracelet',price:6450,size:'Free Size',weight:'4.80 gm',quantity:1,metal:'925 Silver',img:'product 1.webp',outOfStock:false},
     ];
@@ -430,7 +436,7 @@
     ];
     const PINCODE_DB={'110001':{ok:true,date:'20 Jun'},'400001':{ok:true,date:'19 Jun'},'560001':{ok:true,date:'21 Jun'},'700001':{ok:true,date:'22 Jun'},'600001':{ok:true,date:'18 Jun'},'500001':{ok:false}};
 
-    const initState=()=>({items:PRODUCTS.map(p=>({...p})),coupon:null,discount:0,removeId:null,country:'IN',countryOpen:false,pin:'',pincodeChecked:false,pincodeOk:false,pincodeDate:null,pincodeInput:''});
+    const initState=()=>({items:PRODUCTS.map(p=>({...p})),noCoupons:false,coupon:null,discount:0,removeId:null,country:'IN',countryOpen:false,pin:'',pincodeChecked:false,pincodeOk:false,pincodeDate:null,pincodeInput:''});
     let S=initState();
     const curCountry=()=>COUNTRIES.find(c=>c.code===S.country);
     // PIN code for India, ZIP code everywhere else
@@ -478,7 +484,8 @@
                   <svg width="16" height="16" fill="none" stroke="#BF0E23" stroke-width="2" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
                 </button>
               </div>
-              <p class="text-lg sm:text-xl font-bold mt-1">${item.outOfStock?'<span class="text-primary text-sm font-semibold">Out of Stock</span>':fmt(item.price)}</p>
+              <p class="text-lg sm:text-xl font-bold mt-1">${item.outOfStock?'<span class="text-primary text-sm font-semibold">Out of Stock</span>':fmt(item.price)}${item.offer&&!item.outOfStock?`<span class="ml-2 text-sm font-medium text-gray-400 line-through">${fmt(item.mrp)}</span>`:''}</p>
+              ${item.offer&&!item.outOfStock?OFFER_LINE:''}
               <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
                 <span class="text-xs font-medium text-dark bg-soft-grey px-2.5 py-0.5 rounded-md">Qty: ${item.quantity}</span>
                 ${i===1?'':`<span class="text-xs text-warm-grey">Size: ${item.size}</span>`}
@@ -529,6 +536,7 @@
     }
 
     function renderCouponList(){
+      document.getElementById('couponListWrap').classList.toggle('hidden',S.noCoupons);
       document.getElementById('couponList').innerHTML=COUPONS.map((c,i)=>{
         const a=S.coupon&&S.coupon.code===c.code;
         return `<div class="coupon-available p-4 anim-scale" style="animation-delay:${i*80}ms;${a?'border-color:#A5D6A7;background:#F6FFF6':''}">
@@ -631,8 +639,31 @@
 
     function continueToCheckout(){if(!S.items.length){showToast('Your bag is empty','error');return}if(S.items.some(isBlocked)){openNonServiceable();return}localStorage.setItem('beyon_cart',JSON.stringify(S));window.location.href='checkout.html'}
 
-    const SUGGESTIONS=[['Cross My Lines Pendant',28450,'product 1.webp'],['Split Love Diamond Ring',40771,'product 2.webp'],['Golden Harmony Bracelet',35200,'product 3.webp'],['Minimal Chain Bracelet',6450,'product 1.webp']];
-    document.getElementById('emptySuggestions').innerHTML=SUGGESTIONS.map(([n,p,img])=>`<a href="#" class="block"><div class="product-img aspect-square mb-2"><img src="${img}" alt="${n}" loading="lazy" /></div><p class="text-sm font-medium truncate">${n}</p><p class="text-sm font-bold mt-0.5">${fmt(p)}</p></a>`).join('');
+    // Same tile as "Stack It With Below Products" on the PDP; the first tile carries the offer price
+    const SUGGESTIONS=[{n:'Cross My Lines Pendant',p:28450,img:'product 1.webp',offer:true},{n:'Split Love Diamond Ring',p:40771,img:'product 2.webp'},{n:'Golden Harmony Bracelet',p:35200,img:'product 3.webp'},{n:'Minimal Chain Bracelet',p:6450,img:'product 1.webp'}];
+    const REC_BAG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2C2C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center" style="background:#BF0E23;border:1.5px solid #fff"><svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>';
+    const REC_CHECK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 7"/></svg>';
+    const recAdded=new Set();
+    function toggleWish(btn){const on=btn.dataset.on!=='1';btn.dataset.on=on?'1':'';const p=btn.querySelector('path');p.setAttribute('fill',on?'#BF0E23':'none');p.setAttribute('stroke',on?'#BF0E23':'#3c3c3c');btn.classList.remove('wish-pop');void btn.offsetWidth;btn.classList.add('wish-pop');showToast(on?'Added to wishlist ❤️':'Removed from wishlist')}
+    function addRecToBag(btn,i){
+      if(recAdded.has(i)){showToast('Already in your bag');return}
+      recAdded.add(i);btn.classList.add('bag-added');btn.innerHTML=REC_CHECK;btn.setAttribute('aria-label','Added to bag');
+      const hc=document.getElementById('headerCount');hc.textContent=(parseInt(hc.textContent)||0)+1;hc.classList.remove('hidden');showToast('Added to bag');
+    }
+    document.getElementById('emptySuggestions').innerHTML=SUGGESTIONS.map((x,i)=>`<div class="flex flex-col gap-2">
+      <div class="relative overflow-hidden rounded-2xl" style="aspect-ratio:1/1;background:#fff;border:1px solid #ECEBE8">
+        <img src="${x.img}" alt="${x.n}" class="w-full h-full object-cover" draggable="false" loading="lazy" />
+        <button onclick="toggleWish(this)" class="absolute top-2.5 right-2.5 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-transform active:scale-90" aria-label="Wishlist"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3c3c3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+      </div>
+      <div class="px-0.5 flex items-start justify-between gap-2">
+        <div class="min-w-0">
+          <p class="text-[11px] font-medium text-[#1a1a1a] leading-tight truncate">${x.n}</p>
+          <p class="text-[12px] font-bold text-[#3c3c3c] mt-0.5">${fmt(x.p)}${x.offer?`<span class="ml-1.5 text-[10px] font-medium text-gray-400 line-through">${fmt(Math.floor(x.p*1.15))}</span>`:''}</p>
+          ${x.offer?OFFER_LINE.replace('text-[11px]','text-[9px]'):''}
+        </div>
+        <button onclick="addRecToBag(this,${i})" class="shrink-0 relative rounded-full flex items-center justify-center active:scale-90 transition-transform" style="width:28px;height:28px;background:#fff;border:1.3px solid #ECEBE8" aria-label="Add to bag">${REC_BAG}</button>
+      </div>
+    </div>`).join('');
 
     render();
   </script>
@@ -641,10 +672,11 @@
     EdgeCases.init({
       reset: () => { closeNonServiceable(); closeCouponDrawer(); closeRemoveConfirm(); S = initState(); render(); },
       cases: [
+        { id:'cart', group:'Pages', label:'Cart (default)', desc:'Default bag view with items in stock.', run:()=>{} },
         { id:'empty-cart', group:'Cart states', label:'Empty bag', desc:'Full-width empty state with CTAs, categories and bestsellers (desktop).', run:()=>{ S.items=[]; render(); } },
+        { id:'no-coupons', group:'Cart states', label:'No coupons available', desc:'Coupon drawer hides the Available Coupons list and shows only the Enter coupon code field.', run:()=>{ S.noCoupons=true; render(); openCouponDrawer(); } },
         { id:'pin-partial', group:'Cart states', label:'Some items not serviceable', desc:'PIN code is valid but two items cannot be delivered there — popup on Checkout.', run:()=>{ S.pin='560001'; S.pincodeInput='560001'; S.pincodeChecked=true; S.pincodeOk=true; S.pincodeDate='21 Jun'; S.items.forEach(i=>{ if(i.id==='p2'||i.id==='p4') i.nonServiceable=true; }); render(); openNonServiceable(); } },
         { id:'pin-none', group:'Cart states', label:'No item serviceable', desc:'PIN code not serviceable at all — popup only offers Change PIN code.', run:()=>{ S.pin='500001'; S.pincodeInput='500001'; S.pincodeChecked=true; S.pincodeOk=false; render(); openNonServiceable(); } },
-        { id:'cart', group:'Pages', label:'Cart (default)', desc:'Default bag view with items in stock.', run:()=>{} },
         { id:'checkout', group:'Pages', label:'Checkout', desc:'Address, delivery & payment flow.', run:()=>location.href='checkout.html' },
         { id:'no-address', group:'Pages', label:'No Address', desc:'Checkout state with no saved address.', run:()=>location.href='NoAddress.html' },
         { id:'intl-alert', group:'Edge Cases', label:'International Delivery Alert', desc:'PAN card, custom duty & return policy notice.', run:()=>location.href='edge%20cases.html?case=intl-alert' },
