@@ -999,12 +999,12 @@
       function renderBuyBlock() {
         const d = product.diamond, save = product.mrp - product.price;
         const metal = product.gold.metal.toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase()).replace(/\bKt\b/, 'KT');
-        const sizeLabel = state.selectedSize + `<br><span role="link" tabindex="0" onclick="event.stopPropagation();openGuide('${state.ptype}')" class="text-[9px] font-medium underline underline-offset-2 text-[#8a7a60]">Size chart</span>`;
+        const sizeLabel = sizeText(state.selectedSize) + `<br><span role="link" tabindex="0" onclick="event.stopPropagation();openGuide('${state.ptype}')" class="text-[9px] font-medium underline underline-offset-2 text-[#8a7a60]">Size chart</span>`;
         const cell = (label, value, color = '#2C2C2C') => `<button onclick="openCustomise()" class="spec-cell flex-1 min-w-0 px-1 py-1.5 text-center flex flex-col items-center justify-center"><span class="block text-[8px] uppercase tracking-[0.08em] leading-[1.15] font-medium text-[#666]">${label}</span><span class="block text-[11.5px] sm:text-[12.5px] font-semibold leading-[1.15] mt-0.5" style="color:${color}">${value}</span></button>`;
         return `<div class="bg-white rounded-3xl shadow-sm p-4 sm:p-5">
           <div class="hidden lg:flex items-start justify-between gap-3">
             <div>
-              <p class="flex items-center gap-2 font-bold tracking-tight text-[13px] lg:text-[14px] leading-[1.1]"><span class="text-[#2C2C2C]">${formatPrice(product.mrp)}</span>${state.noOffer ? '' : `<span class="text-gray-400 line-through font-medium">${formatPrice(Math.floor(product.mrp * 1.15))}</span><span class="inline-flex items-center gap-1 text-[10px] font-semibold tracking-normal" style="color:#B91C1C"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>15% off on making charges</span>`}</p>
+              <p class="flex items-center gap-2 font-bold tracking-tight text-[13px] lg:text-[14px] leading-[1.1]"><span class="text-[#2C2C2C]">${formatPrice(product.mrp)}</span>${state.noOffer ? '' : `<span class="text-gray-400 line-through font-medium">${formatPrice(Math.floor(product.mrp * 1.15))}</span><span class="inline-flex items-center gap-1 text-[10px] font-semibold tracking-normal" style="color:#d30b39"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>15% off on making charges</span>`}</p>
               <p class="text-[7px] text-gray-400 mt-0.5">(MRP Inclusive of all taxes)</p>
             </div>
           </div>
@@ -1332,24 +1332,44 @@
         </div>`;
       }
 
+      const sizeText = v => v === '12' ? '44 Inches' : v;
+      // Sticky-bar size picker: 5 in-stock sizes around the default; hidden for non sizable products
+      function renderStickySize() {
+        if (state.ptype === 'none') return '';
+        const ins = sizeOpts(state.ptype).filter(o => o[2] === 'In Stock');
+        const k = Math.max(0, ins.findIndex(o => o[0] === defaultSize(state.ptype))), st = Math.max(0, Math.min(k - 2, ins.length - 5));
+        return `<div class="relative shrink-0 self-center">
+          <button type="button" aria-haspopup="true" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('hidden')" class="flex items-center gap-1 h-[37px] lg:h-10 px-3 rounded-full text-[11px] lg:text-[12px] font-semibold text-[#3c3c3c] whitespace-nowrap active:scale-95 transition-transform" style="background:rgba(255,255,255,0.8);border:1px solid rgba(197,165,117,0.5)">${sizeText(state.selectedSize)}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg></button>
+          <div class="size-pop hidden absolute bottom-full left-0 mb-2 w-[176px] overflow-hidden rounded-2xl bg-white" style="border:1px solid rgba(0,0,0,0.06);box-shadow:0 18px 40px -14px rgba(44,44,44,0.35)">
+            <p class="py-2.5 text-center text-[10px] font-bold uppercase tracking-[0.16em] text-[#8a7a60]" style="border-bottom:1px solid rgba(0,0,0,0.05)">Size</p>
+            ${ins.slice(st, st + 5).map(([n, sub]) => `<button type="button" onclick="pickStickySize('${n}')" class="w-full flex items-center justify-between px-4 py-2.5 text-[13px] ${n === state.selectedSize ? 'font-bold' : 'font-medium text-[#3c3c3c]'}" style="${n === state.selectedSize ? 'background:rgba(211,11,57,0.06);color:#d30b39' : ''}">${sizeText(n)}<span class="text-[10px] font-normal text-gray-400">${sub}</span></button>`).join('')}
+          </div>
+        </div>`;
+      }
+      function pickStickySize(n) { state.selectedSize = n; render(); }
+      document.addEventListener('click', () => document.querySelectorAll('.size-pop').forEach(p => p.classList.add('hidden')));
+
       function renderMobileBottomBar() {
-        return `<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 pt-1" style="background:linear-gradient(to top, rgba(247,247,247,1) 70%, rgba(247,247,247,0))">
+        return `<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 pt-1">
           <div class="md:max-w-[640px] md:mx-auto">
-            ${state.noOffer ? '' : `<div class="flex items-center justify-center gap-1.5 mb-1.5 py-1 px-3 rounded-lg" style="background:rgba(211,11,57,0.12)">
+            ${state.noOffer ? '' : `<div class="flex items-center justify-center gap-1.5 mb-1.5 py-1 px-3 rounded-full" style="background:#fbe3e8">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#d30b39" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
               <span class="text-[10px] font-bold text-[#d30b39] tracking-wide">15% OFF ON MAKING CHARGES</span>
               <span class="text-[9px] font-semibold text-[#d30b39]" style="opacity:0.75">· You save ${formatPrice(product.mrp - product.price)}</span>
             </div>`}
-            <button onclick="${state.addedToBag ? '' : 'addToBag()'}" class="w-full flex items-center justify-between px-5 py-2.5 rounded-xl text-white font-bold text-[14px] active:scale-[0.98] transition-transform ${state.addedToBag ? 'btn-go-to-bag' : 'btn-add-to-bag'}" style="box-shadow:${state.addedToBag ? '0 8px 28px rgba(17,178,106,0.38)' : '0 8px 28px rgba(211,11,57,0.38)'}">
-              <span class="flex items-center gap-2">
+            <div class="flex items-stretch gap-2">
+            ${renderStickySize()}
+            <button onclick="${state.addedToBag ? '' : 'addToBag()'}" class="flex-1 min-w-0 flex items-center justify-between gap-2 px-4 h-[37px] rounded-full text-white font-bold text-[13px] whitespace-nowrap active:scale-[0.98] transition-transform ${state.addedToBag ? 'btn-go-to-bag' : 'btn-add-to-bag'}" style="box-shadow:${state.addedToBag ? '0 8px 28px rgba(17,178,106,0.38)' : '0 8px 28px rgba(211,11,57,0.38)'}">
+              <span class="flex items-center gap-1.5 min-w-0">
                 <span>${formatPrice(product.mrp)}</span>
-                ${state.noOffer ? '' : `<span class="text-[11px] font-medium line-through opacity-50">${formatPrice(Math.floor(product.mrp * 1.15))}</span>`}
+                ${state.noOffer ? '' : `<span class="max-[380px]:hidden text-[10px] font-medium line-through opacity-50">${formatPrice(Math.floor(product.mrp * 1.15))}</span>`}
               </span>
-              <span class="flex items-center gap-1.5">
+              <span class="flex items-center gap-1 shrink-0">
                 ${state.addedToBag ? 'Go to Bag' : 'Add to Bag'}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
               </span>
             </button>
+            </div>
           </div>
         </div>`;
       }
@@ -1363,6 +1383,7 @@
               <p class="text-[11px] text-gray-500 truncate leading-tight">${product.name}</p>
               <p class="flex items-baseline gap-2 leading-tight"><span class="text-[19px] font-bold text-[#2C2C2C]">${formatPrice(product.mrp)}</span>${state.noOffer ? '' : `<span class="text-[11px] text-gray-400 line-through">${formatPrice(Math.floor(product.mrp * 1.15))}</span><span class="text-[9px] font-bold tracking-wide uppercase" style="color:#B91C1C">15% off making</span>`}</p>
             </div>
+            ${renderStickySize()}
             <button onclick="${state.addedToBag ? '' : 'addToBag()'}" class="${btn} text-white${state.addedToBag ? '' : ' cta-red'}" style="min-width:180px;${state.addedToBag ? 'background:linear-gradient(65deg,#11b26a,#1dde88)' : ''}">${bag}${state.addedToBag ? 'Go to Bag' : 'Add to Bag'}</button>
           </div>
         </div>`;
