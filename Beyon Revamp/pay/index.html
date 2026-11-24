@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Payment — BEYON</title>
+  <link rel="stylesheet" href="assets/fonts/geom.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oooh+Baby&family=Didact+Gothic&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/pay.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="pay-header-inner">
+      <a class="header-icon" href="../Cart/checkout.html" aria-label="Go back to checkout"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9H4M8 5l-4 4 4 4"/></svg></a>
+      <div class="pay-title"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/></svg><span>SECURED PAYMENT</span></div>
+      <button class="header-icon" type="button" aria-label="Wishlist"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+    </div>
+  </header>
+  <main class="page">
+    <div class="stack">
+    <section class="payment-col" aria-label="Payment">
+      <div class="card amount"><h1>YOUR <span>ORDER</span></h1><div><div class="amount-label">Total</div><div class="amount-value" id="amountValue">₹27,272</div></div></div>
+      <section class="card order" id="orderCard">
+        <button class="order-tab" type="button" aria-expanded="false" aria-controls="orderPanel" id="orderTab">
+          <span class="thumbs" id="orderThumbs"></span>
+          <span class="order-copy"><strong>View order &amp; shipping details</strong><span id="orderHint">Items, price and delivery</span></span>
+          <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="order-panel" id="orderPanel"><div class="order-clip"><div class="order-body" id="orderBody"></div></div></div>
+      </section>
+      <div class="card gateway">
+        <div class="method-rail" role="tablist" aria-label="Payment methods">
+          <button class="method-tab" type="button" role="tab" aria-selected="false" data-method="card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="17" height="14" rx="1"/><path d="M6 2h15a1 1 0 0 1 1 1v14"/></svg>Cards</button>
+          <button class="method-tab" type="button" role="tab" aria-selected="true" data-method="upi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-9 13h7l-1 7 10-14h-7z"/></svg>UPI</button>
+          <button class="method-tab" type="button" role="tab" aria-selected="false" data-method="bank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-6 9 6M4 10h16M5 20h14M7 10v8m5-8v8m5-8v8M3 21h18"/></svg>Netbanking</button>
+          <div class="secured-by"><span>secured by</span><i class="juspay-mark" aria-hidden="true"></i><span class="juspay">JUSPAY</span></div>
+        </div>
+        <div class="method-panel" id="methodPanel" role="tabpanel"></div>
+      </div>
+    </section>
+    </div>
+    <aside class="aside">
+      <div class="card trust"><span class="shield" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/></svg></span><div><strong>Secured by TATA</strong><span>Payment and delivery handled by</span><span class="trust-brand">House of Titan</span></div></div>
+      <ul class="card promises"><li><i></i>7 days free returns</li><li><i></i>Free shipping in India</li><li><i></i>Lifetime gold exchange</li><li><i></i>BIS hallmark certified</li></ul>
+    </aside>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+    const fmt=n=>'₹'+Number(n||0).toLocaleString('en-IN');
+    const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const FALLBACK=[{name:'Cross My Lines Pendant With Chain',price:28450,quantity:1,metal:'18KT Rose Gold',size:'18 inches',img:'assets/img/product 1.webp'},{name:'Split Love Diamond Ring',price:40771,mrp:46886,quantity:1,metal:'14KT White Gold',size:'16.40 MM',img:'assets/img/product 2.webp'}];
+    let cart=null,address=null;
+    try{cart=JSON.parse(localStorage.getItem('beyon_cart')||'null')}catch{}
+    try{address=JSON.parse(localStorage.getItem('beyon_checkout_address')||'null')}catch{}
+    const items=(cart&&cart.items||[]).filter(i=>!i.outOfStock);
+    const lines=items.length?items:FALLBACK;
+    const subtotal=lines.reduce((t,i)=>(i.price||0)*(i.quantity||1)+t,0);
+    const savedAmount=Number(localStorage.getItem('beyon_payment_amount'));
+    const discount=Math.max(0,(cart&&cart.discount)||0);
+    let amount=Number.isFinite(savedAmount)&&savedAmount>0?savedAmount:Math.max(0,subtotal-discount);
+    document.getElementById('amountValue').textContent=fmt(amount);
+    const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const PIN_DAYS={'110001':2,'400001':3,'560001':4,'700001':5,'600001':3};
+    function deliveryDate(i){
+      if(cart&&cart.pincodeChecked&&cart.pincodeOk&&cart.pincodeDate){const p=cart.pincodeDate.split(' ');return (parseInt(p[0],10)+i)+' '+p[1]}
+      const d=new Date();d.setDate(d.getDate()+(PIN_DAYS[address&&address.pincode]||5)+i);return d.getDate()+' '+MONTHS[d.getMonth()];
+    }
+    function productImage(item){
+      const filename=String(item.img||'').split('/').pop();
+      return 'assets/img/'+(/^product [1-3]\.webp$/.test(filename)?filename:'product 1.webp');
+    }
+    document.getElementById('orderThumbs').innerHTML=lines.slice(0,3).map(i=>'<img src="'+productImage(i)+'" alt="">').join('')+(lines.length>3?'<span class="thumb-more">+'+(lines.length-3)+'</span>':'');
+    const who=[address&&address.firstName,address&&address.lastName].filter(Boolean).join(' ');
+    document.getElementById('orderHint').textContent=lines.length+' item'+(lines.length>1?'s':'')+' · '+fmt(amount)+(who?' · '+who:'');
+    const ship=address?(esc(who)+' · '+esc(address.building||'')+', '+esc(address.street||'')+'<br>'+esc(address.city||'')+', '+esc(address.state||'')+' '+esc(address.pincode||'')):'Rahul Sharma · B-204, Sunrise Apartments, MG Road<br>New Delhi, Delhi 110001';
+    const list=lines.reduce((t,i)=>t+((i.mrp&&i.mrp>i.price?i.mrp:i.price)||0)*(i.quantity||1),0);
+    const saved=Math.max(0,list-amount);
+    document.getElementById('orderBody').innerHTML=lines.map((it,i)=>{
+      const qty=it.quantity||1,now=(it.price||0)*qty,was=it.mrp&&it.mrp>it.price?it.mrp*qty:0,cut=was?was-now:0;
+      return '<article class="line"><img src="'+productImage(it)+'" alt=""><div class="line-main"><h3>'+esc(it.name)+'</h3><p class="meta">'+esc([it.metal,(it.size&&!/^free size$/i.test(it.size))?it.size:'',qty>1?'Qty '+qty:''].filter(Boolean).join(' · '))+'</p><p class="eta">Delivery by '+deliveryDate(i)+'</p></div><div class="prices">'+(was?'<span class="was">'+fmt(was)+'</span>':'')+'<span class="now">'+fmt(now)+'</span>'+(cut?'<span class="cut">You save '+fmt(cut)+'</span>':'')+'</div></article>';
+    }).join('')+'<div class="ship"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><div><strong>Deliver to</strong><p>'+ship+'</p></div></div>';
+    document.getElementById('orderTab').addEventListener('click',()=>{const open=document.getElementById('orderCard').classList.toggle('open');document.getElementById('orderTab').setAttribute('aria-expanded',String(open))});
+        const tabs=[...document.querySelectorAll('.method-tab')],panel=document.getElementById('methodPanel');let method='upi',selectedBank='',toastTimer;
+    const banks=[['State Bank of India','SBI','#20a9e0'],['HDFC Bank','HDFC','#e33238'],['ICICI Netbanking','i','#e84b24'],['Axis Bank','A','#9c1b64'],['AU Small Finance Bank','AU','#f58220'],['Bank of Baroda','BoB','#e56f21'],['Canara Bank','C','#087d50'],['Kotak Mahindra Bank','K','#e31d36'],['Punjab National Bank','PNB','#e22735'],['Union Bank of India','UBI','#eb6c26']];
+    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2600)}
+    function bankMarkup(filter=''){
+      const q=filter.trim().toLowerCase(),found=banks.filter(b=>b[0].toLowerCase().includes(q));
+      return found.length?found.map(([name,mark,color])=>`<button type="button" class="bank-row" aria-pressed="${selectedBank===name}" data-bank="${name}"><span class="bank-logo" style="color:${color}">${mark}</span><span class="bank-name">${name}</span><span class="radio" aria-hidden="true"></span></button>`).join(''):'<p class="panel-copy">No banks match your search.</p>';
+    }
+    function makeQr(){
+      const n=29,seed=Array.from('BEYON-DEMO-'+Math.round(amount)).reduce((a,c)=>a+c.charCodeAt(0),0);let cells='';
+      const finder=(x,y)=>{for(let r=0;r<7;r++)for(let c=0;c<7;c++){const edge=r===0||r===6||c===0||c===6,core=r>=2&&r<=4&&c>=2&&c<=4;if(edge||core)cells+=`<rect x="${x+c}" y="${y+r}" width="1" height="1"/>`}};
+      for(let y=0;y<n;y++)for(let x=0;x<n;x++){const inFinder=(x<8&&y<8)||(x>=n-8&&y<8)||(x<8&&y>=n-8);if(!inFinder&&((x*13+y*7+seed*3+x*y)%11<5))cells+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}
+      finder(0,0);finder(n-7,0);finder(0,n-7);
+      return `<svg class="qr-code" viewBox="-2 -2 ${n+4} ${n+4}" role="img" aria-label="Demo QR preview"><rect x="-2" y="-2" width="${n+4}" height="${n+4}" fill="#fff"/>${cells}</svg>`;
+    }
+    function setMethod(next){method=next;selectedBank='';tabs.forEach(t=>t.setAttribute('aria-selected',String(t.dataset.method===next)));renderMethod()}
+    function renderMethod(){
+      if(method==='card'){
+        panel.innerHTML=`<div class="card-form"><h2>Enter Credit / Debit card details</h2><form id="cardForm" novalidate>
+          <label class="field-label" for="cardNumber">Card Number</label><div class="card-number"><input id="cardNumber" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="Enter Card Number"><svg class="card-glyph" width="25" height="20" viewBox="0 0 25 20" fill="none"><rect x="1" y="2" width="23" height="16" rx="3" fill="#d5d5d5"/><path d="M1 7h23" stroke="#aaa"/><path d="M4 13h6" stroke="#aaa"/></svg></div>
+          <div class="card-pair"><label>Expiry<input id="cardExpiry" inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY"></label><label>CVV<input id="cardCvv" type="password" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="CVV"></label></div>
+          <button class="pay-button" id="cardPay" type="submit" disabled>Proceed to Pay</button></form></div>`;
+        const num=document.getElementById('cardNumber'),exp=document.getElementById('cardExpiry'),cvv=document.getElementById('cardCvv'),btn=document.getElementById('cardPay');
+        num.addEventListener('input',()=>{let v=num.value.replace(/\D/g,'').slice(0,16);num.value=v.replace(/(.{4})/g,'$1 ').trim();sync()});
+        exp.addEventListener('input',()=>{let v=exp.value.replace(/\D/g,'').slice(0,4);exp.value=v.length>2?v.slice(0,2)+'/'+v.slice(2):v;sync()});
+        cvv.addEventListener('input',()=>{cvv.value=cvv.value.replace(/\D/g,'').slice(0,4);sync()});
+        function sync(){const digits=num.value.replace(/\D/g,'');const valid=digits.length>=13&&digits.length<=16&&/^\d{2}\/\d{2}$/.test(exp.value)&&Number(exp.value.slice(0,2))>=1&&Number(exp.value.slice(0,2))<=12&&cvv.value.length>=3;btn.disabled=!valid;btn.classList.toggle('ready',valid)}
+        document.getElementById('cardForm').addEventListener('submit',e=>{e.preventDefault();toast('Demo only — no payment was submitted')});
+      }else if(method==='upi'){
+        panel.innerHTML=`<div class="upi-stage"><h2>Pay by any UPI app</h2><p class="panel-copy" style="margin-left:auto;margin-right:auto">Scan the QR using any UPI app on your mobile phone like PhonePe, Paytm, GooglePay, BHIM, etc</p><div class="upi-logos" aria-label="Supported UPI apps"><span class="upi-mark phonepe">पे</span><span class="upi-mark gpay"><span style="color:#4285f4">G</span> Pay</span><span class="upi-mark paytm">Paytm</span><span class="upi-mark bhim">BHIM</span><span class="upi-mark amazon">pay</span><span class="upi-mark amazon">➤</span><span class="upi-mark freecharge">▣</span></div><button id="generateQr" class="action-btn" type="button">Generate QR Code</button><div id="qrArea" hidden></div></div>`;
+        document.getElementById('generateQr').addEventListener('click',()=>{const q=document.getElementById('qrArea');q.hidden=false;q.innerHTML=`${makeQr()}<p class="qr-caption">Scan QR and Pay</p><p class="demo-note">Demo QR preview — no payment will be processed</p>`;document.getElementById('generateQr').hidden=true});
+      }else{
+        panel.innerHTML=`<div class="bank-panel"><h2>Netbanking</h2><div class="search-wrap"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input class="bank-search" id="bankSearch" type="search" placeholder="Search banks" autocomplete="off"></div><div class="bank-list" id="bankList">${bankMarkup()}</div><button class="pay-button bank-next" id="bankPay" type="button" disabled>Proceed to Pay</button></div>`;
+        document.getElementById('bankSearch').addEventListener('input',e=>{document.getElementById('bankList').innerHTML=bankMarkup(e.target.value);wireBanks()});
+        document.getElementById('bankPay').addEventListener('click',()=>toast('Demo only — no payment was submitted'));
+        wireBanks();
+      }
+    }
+    function wireBanks(){document.querySelectorAll('.bank-row').forEach(b=>b.addEventListener('click',()=>{selectedBank=b.dataset.bank;document.querySelectorAll('.bank-row').forEach(r=>r.setAttribute('aria-pressed',String(r===b)));const next=document.getElementById('bankPay');next.disabled=false;next.classList.add('ready')}))}
+    tabs.forEach(t=>t.addEventListener('click',()=>setMethod(t.dataset.method)));
+    renderMethod();
+  </script>
+</body>
+</html>

@@ -580,21 +580,9 @@
 
     function placeOrder(){
       if(!selectedAddrId||!addresses.length){showToast('Please add a delivery address','error');return}
-      const btns=document.querySelectorAll('[onclick="placeOrder()"]');btns.forEach(b=>{b.disabled=true;b.innerHTML='<span class="flex items-center gap-2">PROCESSING... <svg class="animate-spin" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6" stroke-dasharray="30" stroke-dashoffset="10"/></svg></span>'});
-      setTimeout(()=>{
-        localStorage.removeItem('beyon_cart');showToast('Order placed successfully! 🎉');
-        setTimeout(()=>{
-          const addr=addresses.find(a=>a.id===selectedAddrId);
-          document.querySelector('main').innerHTML=`<div class="text-center py-20 anim max-w-md mx-auto">
-            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-green-50 flex items-center justify-center"><svg width="48" height="48" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"><path d="M12 24l8 8L36 16"/><circle cx="24" cy="24" r="20"/></svg></div>
-            <h2 class="text-2xl font-bold mb-2">Order Confirmed!</h2>
-            <p class="text-warm-grey mb-2">Order #BYN${Date.now().toString().slice(-6)}</p>
-            <p class="text-sm text-warm-grey mb-8">Your jewellery is on its way. We'll send you tracking details.</p>
-            <div class="card p-5 mb-6 text-left"><p class="text-sm font-semibold mb-2">Delivery Details</p><p class="text-sm text-warm-grey">${addr?.building}, ${addr?.street}</p><p class="text-sm text-warm-grey">${addr?.city}, ${addr?.state}</p><p class="text-sm font-semibold text-primary mt-2">Amount Paid: ${fmt(finalTotal())}</p></div>
-            <a href="cart.html" class="inline-block px-10 py-3.5 btn-cta text-sm">CONTINUE SHOPPING</a></div>`;
-          document.querySelectorAll('.fixed.bottom-0').forEach(el=>el.style.display='none');
-        },800);
-      },1500);
+      localStorage.setItem('beyon_payment_amount',String(finalTotal()));
+      localStorage.setItem('beyon_checkout_address',JSON.stringify(addresses.find(a=>a.id===selectedAddrId)||{}));
+      window.location.href='../pay/index.html';
     }
 
     // ═══ PAN VERIFICATION LOGIC ═══
